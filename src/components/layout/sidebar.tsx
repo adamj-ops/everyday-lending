@@ -1,5 +1,6 @@
 'use client';
 
+import { UserButton } from '@clerk/nextjs';
 import {
   Building2,
   ChevronLeft,
@@ -160,18 +161,20 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-border p-4">
+      <div className="space-y-3 border-t border-border p-4">
+        <div className="flex justify-center">
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: 'h-8 w-8',
+              },
+            }}
+          />
+        </div>
         {!isCollapsed && (
           <div className="text-center text-xs text-muted-foreground">
             <div>Version 1.0.0</div>
             <div className="mt-1">© 2024 Everyday Lending</div>
-          </div>
-        )}
-        {isCollapsed && (
-          <div className="flex justify-center">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted">
-              <span className="text-xs font-medium text-muted-foreground">EL</span>
-            </div>
           </div>
         )}
       </div>
