@@ -120,6 +120,7 @@ export function LenderDrawer({ lenderId, isOpen, onClose }: LenderDrawerProps) {
   const handleDelete = async () => {
     if (lenderId) {
       // TODO: Replace with proper confirmation dialog
+      // eslint-disable-next-line no-alert
       const confirmed = window.confirm('Are you sure you want to delete this lender?');
       if (confirmed) {
         try {

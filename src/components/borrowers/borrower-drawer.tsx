@@ -122,6 +122,7 @@ export function BorrowerDrawer({ borrowerId, isOpen, onClose }: BorrowerDrawerPr
   const handleDelete = async () => {
     if (borrowerId) {
       // TODO: Replace with proper confirmation dialog
+      // eslint-disable-next-line no-alert
       const confirmed = window.confirm('Are you sure you want to delete this borrower?');
       if (confirmed) {
         try {
