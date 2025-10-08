@@ -1,6 +1,6 @@
 'use client';
 
-import type { LenderWithParticipations } from '@/hooks/use-lenders';
+import type { LenderWithParticipations } from '@/hooks/use-lenders-client';
 import { motion } from 'framer-motion';
 import { Building2, Plus } from 'lucide-react';
 import { useState } from 'react';

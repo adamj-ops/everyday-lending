@@ -1,6 +1,6 @@
 'use client';
 
-import type { BorrowerWithLoans } from '@/hooks/use-borrowers';
+import type { BorrowerWithLoans } from '@/hooks/use-borrowers-client';
 import { motion } from 'framer-motion';
 import { Plus, Users } from 'lucide-react';
 import { useState } from 'react';

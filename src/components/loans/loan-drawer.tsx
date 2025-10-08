@@ -1,6 +1,6 @@
 'use client';
 
-import type { LoanWithDetails } from '@/hooks/use-loans';
+import type { LoanWithDetails } from '@/hooks/use-loans-client';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   FileText,
@@ -24,7 +24,7 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { useLoan, useUpdateLoan } from '@/hooks/use-loans';
+import { useLoan, useUpdateLoan } from '@/hooks/use-loans-client';
 
 type LoanDrawerProps = {
   loanId: number | null;

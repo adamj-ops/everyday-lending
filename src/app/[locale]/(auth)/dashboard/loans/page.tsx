@@ -1,6 +1,6 @@
 'use client';
 
-import type { LoanWithDetails } from '@/hooks/use-loans';
+import type { LoanWithDetails } from '@/hooks/use-loans-client';
 import { motion } from 'framer-motion';
 import { FileText, Plus } from 'lucide-react';
 import { useState } from 'react';

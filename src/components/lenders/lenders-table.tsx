@@ -1,6 +1,6 @@
 'use client';
 
-import type { LenderWithParticipations } from '@/hooks/use-lenders';
+import type { LenderWithParticipations } from '@/hooks/use-lenders-client';
 import { motion } from 'framer-motion';
 import {
   Edit,
@@ -30,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useLenders } from '@/hooks/use-lenders';
+import { useLenders } from '@/hooks/use-lenders-client';
 
 type LendersTableProps = {
   onLenderSelect: (lender: LenderWithParticipations) => void;

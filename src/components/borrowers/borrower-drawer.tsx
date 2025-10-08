@@ -1,6 +1,6 @@
 'use client';
 
-import type { BorrowerWithLoans } from '@/hooks/use-borrowers';
+import type { BorrowerWithLoans } from '@/hooks/use-borrowers-client';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   CreditCard,
@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
-import { useBorrower, useDeleteBorrower, useUpdateBorrower } from '@/hooks/use-borrowers';
+import { useBorrower, useDeleteBorrower, useUpdateBorrower } from '@/hooks/use-borrowers-client';
 
 type BorrowerDrawerProps = {
   borrowerId: number | null;
@@ -122,7 +122,7 @@ export function BorrowerDrawer({ borrowerId, isOpen, onClose }: BorrowerDrawerPr
   const handleDelete = async () => {
     if (borrowerId) {
       // TODO: Replace with proper confirmation dialog
-      const confirmed = confirm('Are you sure you want to delete this borrower?');
+      const confirmed = window.confirm('Are you sure you want to delete this borrower?');
       if (confirmed) {
         try {
           await deleteBorrower.mutateAsync(borrowerId);

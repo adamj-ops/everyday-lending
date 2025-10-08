@@ -1,6 +1,6 @@
 'use client';
 
-import type { BorrowerWithLoans } from '@/hooks/use-borrowers';
+import type { BorrowerWithLoans } from '@/hooks/use-borrowers-client';
 import { motion } from 'framer-motion';
 import {
   Edit,
@@ -30,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useBorrowers } from '@/hooks/use-borrowers';
+import { useBorrowers } from '@/hooks/use-borrowers-client';
 
 type BorrowersTableProps = {
   onBorrowerSelect: (borrower: BorrowerWithLoans) => void;

@@ -1,6 +1,6 @@
 'use client';
 
-import type { LenderWithParticipations } from '@/hooks/use-lenders';
+import type { LenderWithParticipations } from '@/hooks/use-lenders-client';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Building2,
@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
-import { useDeleteLender, useLender, useUpdateLender } from '@/hooks/use-lenders';
+import { useDeleteLender, useLender, useUpdateLender } from '@/hooks/use-lenders-client';
 
 type LenderDrawerProps = {
   lenderId: number | null;
@@ -120,7 +120,7 @@ export function LenderDrawer({ lenderId, isOpen, onClose }: LenderDrawerProps) {
   const handleDelete = async () => {
     if (lenderId) {
       // TODO: Replace with proper confirmation dialog
-      const confirmed = confirm('Are you sure you want to delete this lender?');
+      const confirmed = window.confirm('Are you sure you want to delete this lender?');
       if (confirmed) {
         try {
           await deleteLender.mutateAsync(lenderId);

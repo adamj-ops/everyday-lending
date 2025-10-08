@@ -1,6 +1,6 @@
 'use client';
 
-import type { LoanWithDetails } from '@/hooks/use-loans';
+import type { LoanWithDetails } from '@/hooks/use-loans-client';
 import { motion } from 'framer-motion';
 import {
   Edit,
@@ -29,7 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useLoans } from '@/hooks/use-loans';
+import { useLoans } from '@/hooks/use-loans-client';
 
 type LoansTableProps = {
   onLoanSelect: (loan: LoanWithDetails) => void;
