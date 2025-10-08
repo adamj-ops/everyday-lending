@@ -1,4 +1,5 @@
-import type { Metadata } from 'next';
+'use client';
+
 import { motion } from 'framer-motion';
 import {
   AlertCircle,
@@ -13,23 +14,11 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
+// Removed server-side imports for client component
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export async function generateMetadata(props: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await props.params;
-  const t = await getTranslations({
-    locale,
-    namespace: 'Dashboard',
-  });
-
-  return {
-    title: t('meta_title'),
-  };
-}
+// Metadata moved to layout since this is now a client component
 
 // Mock data - in real app, this would come from your database
 const kpiData = {
