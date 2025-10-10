@@ -2,13 +2,13 @@ import { useCallback, useState } from 'react';
 
 export type ToastType = 'default' | 'success' | 'destructive' | 'warning';
 
-export interface ToastMessage {
+export type ToastMessage = {
   id: string;
   title?: string;
   description?: string;
   type: ToastType;
   duration?: number;
-}
+};
 
 let toastCount = 0;
 
@@ -58,4 +58,3 @@ export function useToast() {
     dismissAll,
   };
 }
-

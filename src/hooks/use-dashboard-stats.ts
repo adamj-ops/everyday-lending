@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-export interface DashboardStats {
+export type DashboardStats = {
   totalLoanValue: number;
   activeLoans: number;
   totalBorrowers: number;
@@ -9,9 +9,9 @@ export interface DashboardStats {
   overduePayments: number;
   pendingDraws: number;
   completedDraws: number;
-}
+};
 
-export interface RecentLoan {
+export type RecentLoan = {
   id: number;
   loanNumber: string;
   borrower: {
@@ -23,7 +23,7 @@ export interface RecentLoan {
   } | null;
   loanAmount: string;
   status: string;
-}
+};
 
 /**
  * Fetch dashboard KPI statistics
@@ -104,4 +104,3 @@ export function useRecentLoans(limit: number = 5) {
     },
   });
 }
-

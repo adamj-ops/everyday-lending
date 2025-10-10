@@ -1,6 +1,7 @@
 'use client';
 
 import type React from 'react';
+import type { BorrowerFormData } from '@/validations/BorrowerValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -20,14 +21,13 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { formatDateForInput } from '@/lib/formatters';
-import type { BorrowerFormData } from '@/validations/BorrowerValidation';
 import { borrowerSchema } from '@/validations/BorrowerValidation';
 
-interface EditBorrowerFormProps {
+type EditBorrowerFormProps = {
   borrower: any;
   onSuccess?: () => void;
   onCancel?: () => void;
-}
+};
 
 export function EditBorrowerForm({ borrower, onSuccess, onCancel }: EditBorrowerFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -322,4 +322,3 @@ export function EditBorrowerForm({ borrower, onSuccess, onCancel }: EditBorrower
     </form>
   );
 }
-

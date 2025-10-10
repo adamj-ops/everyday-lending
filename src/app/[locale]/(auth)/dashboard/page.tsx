@@ -234,45 +234,45 @@ export default function Dashboard() {
             <CardTitle>Recent Loans</CardTitle>
           </CardHeader>
           <CardContent>
-              <div className="space-y-4">
-                {recentLoans && recentLoans.length > 0
-                  ? (
-                      recentLoans.map(loan => (
-                        <div key={loan.id} className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-muted/50">
-                          <div>
-                            <p className="font-medium">
-                              {loan.borrower
-                                ? `${loan.borrower.firstName} ${loan.borrower.lastName}`
-                                : 'No Borrower'}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {loan.property?.address || 'No Property'}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-medium">
-                              {formatCurrency(Number.parseFloat(loan.loanAmount))}
-                            </p>
-                            <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                              loan.status === 'active'
-                                ? 'bg-green-100 text-green-700'
-                                : loan.status === 'paid_off'
-                                  ? 'bg-blue-100 text-blue-700'
-                                  : 'bg-yellow-100 text-yellow-700'
-                            }`}
-                            >
-                              {loan.status.replace('_', ' ')}
-                            </span>
-                          </div>
+            <div className="space-y-4">
+              {recentLoans && recentLoans.length > 0
+                ? (
+                    recentLoans.map(loan => (
+                      <div key={loan.id} className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-muted/50">
+                        <div>
+                          <p className="font-medium">
+                            {loan.borrower
+                              ? `${loan.borrower.firstName} ${loan.borrower.lastName}`
+                              : 'No Borrower'}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {loan.property?.address || 'No Property'}
+                          </p>
                         </div>
-                      ))
-                    )
-                  : (
-                      <div className="py-8 text-center text-muted-foreground">
-                        No recent loans
+                        <div className="text-right">
+                          <p className="font-medium">
+                            {formatCurrency(Number.parseFloat(loan.loanAmount))}
+                          </p>
+                          <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                            loan.status === 'active'
+                              ? 'bg-green-100 text-green-700'
+                              : loan.status === 'paid_off'
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-yellow-100 text-yellow-700'
+                          }`}
+                          >
+                            {loan.status.replace('_', ' ')}
+                          </span>
+                        </div>
                       </div>
-                    )}
-              </div>
+                    ))
+                  )
+                : (
+                    <div className="py-8 text-center text-muted-foreground">
+                      No recent loans
+                    </div>
+                  )}
+            </div>
           </CardContent>
         </Card>
 

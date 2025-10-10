@@ -6,7 +6,6 @@ import {
   Building,
   DollarSign,
   Edit,
-  Home,
   MapPin,
   Trash2,
 } from 'lucide-react';
@@ -312,4 +311,3 @@ export function PropertyDrawer({ propertyId, isOpen, onClose }: PropertyDrawerPr
     </>
   );
 }
-

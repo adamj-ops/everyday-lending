@@ -9,15 +9,15 @@ export const propertySchema = z.object({
   state: z.string().min(1, 'State is required').max(50, 'State must be less than 50 characters'),
   zipCode: z.string().min(1, 'Zip code is required').max(20, 'Zip code must be less than 20 characters'),
   propertyType: z.string().optional().nullable(),
-  bedrooms: z.coerce.number().int().min(0, 'Bedrooms must be positive').optional().nullable(),
-  bathrooms: z.coerce.number().min(0, 'Bathrooms must be positive').optional().nullable(),
-  squareFeet: z.coerce.number().int().min(0, 'Square feet must be positive').optional().nullable(),
-  lotSize: z.coerce.number().min(0, 'Lot size must be positive').optional().nullable(),
-  yearBuilt: z.coerce.number().int().min(1800, 'Year built must be after 1800').max(new Date().getFullYear() + 1, 'Year built cannot be in the future').optional().nullable(),
-  estimatedValue: z.coerce.number().min(0, 'Estimated value must be positive').optional().nullable(),
-  purchasePrice: z.coerce.number().min(0, 'Purchase price must be positive').optional().nullable(),
-  rehabBudget: z.coerce.number().min(0, 'Rehab budget must be positive').optional().nullable(),
-  afterRepairValue: z.coerce.number().min(0, 'After repair value must be positive').optional().nullable(),
+  bedrooms: z.number().int().min(0, 'Bedrooms must be positive').optional().nullable(),
+  bathrooms: z.number().min(0, 'Bathrooms must be positive').optional().nullable(),
+  squareFeet: z.number().int().min(0, 'Square feet must be positive').optional().nullable(),
+  lotSize: z.number().min(0, 'Lot size must be positive').optional().nullable(),
+  yearBuilt: z.number().int().min(1800, 'Year built must be after 1800').max(new Date().getFullYear() + 1, 'Year built cannot be in the future').optional().nullable(),
+  estimatedValue: z.number().min(0, 'Estimated value must be positive').optional().nullable(),
+  purchasePrice: z.number().min(0, 'Purchase price must be positive').optional().nullable(),
+  rehabBudget: z.number().min(0, 'Rehab budget must be positive').optional().nullable(),
+  afterRepairValue: z.number().min(0, 'After repair value must be positive').optional().nullable(),
 });
 
 export type PropertyFormData = z.infer<typeof propertySchema>;
@@ -28,4 +28,3 @@ export type PropertyFormData = z.infer<typeof propertySchema>;
 export const propertyUpdateSchema = propertySchema.partial();
 
 export type PropertyUpdateData = z.infer<typeof propertyUpdateSchema>;
-

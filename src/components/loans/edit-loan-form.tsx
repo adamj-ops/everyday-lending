@@ -1,5 +1,6 @@
 'use client';
 
+import type { LoanFormData } from '@/validations/LoanValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -21,16 +22,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { useBorrowers } from '@/hooks/use-borrowers-client';
 import { useProperties } from '@/hooks/use-properties-client';
 import { useToast } from '@/hooks/use-toast';
-import { calculateMaturityDate, calculateMonthlyPayment } from '@/lib/loan-calculator';
 import { formatCurrency, formatDateForInput } from '@/lib/formatters';
-import type { LoanFormData } from '@/validations/LoanValidation';
+import { calculateMaturityDate, calculateMonthlyPayment } from '@/lib/loan-calculator';
 import { loanSchema } from '@/validations/LoanValidation';
 
-interface EditLoanFormProps {
+type EditLoanFormProps = {
   loan: any;
   onSuccess?: () => void;
   onCancel?: () => void;
-}
+};
 
 export function EditLoanForm({ loan, onSuccess, onCancel }: EditLoanFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +48,7 @@ export function EditLoanForm({ loan, onSuccess, onCancel }: EditLoanFormProps) {
     setValue,
     watch,
   } = useForm<LoanFormData>({
-    resolver: zodResolver(loanSchema),
+    resolver: zodResolver(loanSchema) as any,
   });
 
   // Populate form with loan data
@@ -56,12 +56,12 @@ export function EditLoanForm({ loan, onSuccess, onCancel }: EditLoanFormProps) {
     if (loan) {
       reset({
         loanNumber: loan.loanNumber || '',
-        borrowerId: loan.borrower?.id || undefined,
-        propertyId: loan.property?.id || undefined,
-        loanAmount: loan.loanAmount ? Number.parseFloat(loan.loanAmount) : undefined,
-        interestRate: loan.interestRate ? Number.parseFloat(loan.interestRate) : undefined,
-        termMonths: loan.termMonths || undefined,
-        monthlyPayment: loan.monthlyPayment ? Number.parseFloat(loan.monthlyPayment) : undefined,
+        borrowerId: loan.borrower?.id || 0,
+        propertyId: loan.property?.id || 0,
+        loanAmount: loan.loanAmount ? Number.parseFloat(loan.loanAmount) : 0,
+        interestRate: loan.interestRate ? Number.parseFloat(loan.interestRate) : 0,
+        termMonths: loan.termMonths || 0,
+        monthlyPayment: loan.monthlyPayment ? Number.parseFloat(loan.monthlyPayment) : 0,
         originationDate: loan.originationDate ? formatDateForInput(loan.originationDate) : '',
         maturityDate: loan.maturityDate ? formatDateForInput(loan.maturityDate) : '',
         status: loan.status || 'active',
@@ -210,7 +210,7 @@ export function EditLoanForm({ loan, onSuccess, onCancel }: EditLoanFormProps) {
             <CurrencyInput
               id="edit-loanAmount"
               value={watch('loanAmount') || ''}
-              onChange={value => setValue('loanAmount', value ? Number.parseFloat(value) : undefined)}
+              onChange={value => setValue('loanAmount', value ? Number.parseFloat(value) : 0 as any)}
               placeholder="250000"
             />
             {errors.loanAmount && (
@@ -358,4 +358,3 @@ export function EditLoanForm({ loan, onSuccess, onCancel }: EditLoanFormProps) {
     </form>
   );
 }
-

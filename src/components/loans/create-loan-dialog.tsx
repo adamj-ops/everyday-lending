@@ -1,5 +1,6 @@
 'use client';
 
+import type { LoanFormData } from '@/validations/LoanValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -29,16 +30,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { useBorrowers } from '@/hooks/use-borrowers-client';
 import { useProperties } from '@/hooks/use-properties-client';
 import { useToast } from '@/hooks/use-toast';
-import { calculateMaturityDate, calculateMonthlyPayment } from '@/lib/loan-calculator';
 import { formatCurrency, formatDateForInput } from '@/lib/formatters';
-import type { LoanFormData } from '@/validations/LoanValidation';
+import { calculateMaturityDate, calculateMonthlyPayment } from '@/lib/loan-calculator';
 import { loanSchema } from '@/validations/LoanValidation';
 
-interface CreateLoanDialogProps {
+type CreateLoanDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
-}
+};
 
 export function CreateLoanDialog({ open, onOpenChange, onSuccess }: CreateLoanDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,15 +56,15 @@ export function CreateLoanDialog({ open, onOpenChange, onSuccess }: CreateLoanDi
     setValue,
     watch,
   } = useForm<LoanFormData>({
-    resolver: zodResolver(loanSchema),
+    resolver: zodResolver(loanSchema) as any,
     defaultValues: {
       loanNumber: '',
-      borrowerId: undefined,
-      propertyId: undefined,
-      loanAmount: undefined,
-      interestRate: undefined,
-      termMonths: undefined,
-      monthlyPayment: undefined,
+      borrowerId: 0 as any,
+      propertyId: 0 as any,
+      loanAmount: 0 as any,
+      interestRate: 0 as any,
+      termMonths: 0 as any,
+      monthlyPayment: 0 as any,
       originationDate: formatDateForInput(new Date()),
       maturityDate: '',
       status: 'active',
@@ -220,7 +220,7 @@ export function CreateLoanDialog({ open, onOpenChange, onSuccess }: CreateLoanDi
                 <CurrencyInput
                   id="loanAmount"
                   value={watch('loanAmount') || ''}
-                  onChange={value => setValue('loanAmount', value ? Number.parseFloat(value) : undefined)}
+                  onChange={value => setValue('loanAmount', value ? Number.parseFloat(value) : 0 as any)}
                   placeholder="250000"
                 />
                 {errors.loanAmount && (
@@ -370,4 +370,3 @@ export function CreateLoanDialog({ open, onOpenChange, onSuccess }: CreateLoanDi
     </Dialog>
   );
 }
-

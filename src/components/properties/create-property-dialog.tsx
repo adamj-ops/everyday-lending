@@ -1,5 +1,6 @@
 'use client';
 
+import type { PropertyFormData } from '@/validations/PropertyValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -26,14 +27,13 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import type { PropertyFormData } from '@/validations/PropertyValidation';
 import { propertySchema } from '@/validations/PropertyValidation';
 
-interface CreatePropertyDialogProps {
+type CreatePropertyDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
-}
+};
 
 export function CreatePropertyDialog({ open, onOpenChange, onSuccess }: CreatePropertyDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -353,4 +353,3 @@ export function CreatePropertyDialog({ open, onOpenChange, onSuccess }: CreatePr
     </Dialog>
   );
 }
-

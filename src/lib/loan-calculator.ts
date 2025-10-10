@@ -31,7 +31,7 @@ export function calculateMonthlyPayment(
   // Calculate monthly payment using amortization formula
   const payment
     = (loanAmount * monthlyRate * (1 + monthlyRate) ** termMonths)
-    / ((1 + monthlyRate) ** termMonths - 1);
+      / ((1 + monthlyRate) ** termMonths - 1);
 
   return Math.round(payment * 100) / 100; // Round to 2 decimal places
 }
@@ -102,4 +102,3 @@ export function calculateNextPaymentDate(lastPaymentDate: Date | null): Date {
   nextDate.setMonth(nextDate.getMonth() + 1);
   return nextDate;
 }
-

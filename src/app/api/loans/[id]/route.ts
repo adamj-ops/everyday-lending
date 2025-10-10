@@ -1,9 +1,9 @@
 import type { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
+import { calculateMaturityDate, calculateMonthlyPayment } from '@/lib/loan-calculator';
 import { db } from '@/libs/DB';
 import { borrowers, loans, properties } from '@/models/Schema';
-import { calculateMaturityDate, calculateMonthlyPayment } from '@/lib/loan-calculator';
 import { loanUpdateSchema } from '@/validations/LoanValidation';
 
 export async function GET(
@@ -84,7 +84,7 @@ export async function PUT(
       );
     }
 
-    let data = validationResult.data;
+    const data = validationResult.data;
 
     // Recalculate monthly payment if relevant fields changed
     if (data.loanAmount !== undefined || data.interestRate !== undefined || data.termMonths !== undefined) {

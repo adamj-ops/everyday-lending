@@ -206,4 +206,3 @@ export function PropertiesTable({ onPropertySelect, onCreateProperty }: Properti
     </div>
   );
 }
-

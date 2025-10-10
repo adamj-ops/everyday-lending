@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-interface ConfirmDialogProps {
+type ConfirmDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
@@ -22,7 +22,7 @@ interface ConfirmDialogProps {
   variant?: 'default' | 'destructive';
   onConfirm: () => void;
   loading?: boolean;
-}
+};
 
 export function ConfirmDialog({
   open,
@@ -77,4 +77,3 @@ export function ConfirmDialog({
     </Dialog>
   );
 }
-

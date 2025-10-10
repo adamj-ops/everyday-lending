@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
+import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,13 +12,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
-export interface ComboboxOption {
+export type ComboboxOption = {
   value: string;
   label: string;
   subtitle?: string;
-}
+};
 
-interface ComboboxProps {
+type ComboboxProps = {
   options: ComboboxOption[];
   value?: string;
   onChange: (value: string) => void;
@@ -29,7 +29,7 @@ interface ComboboxProps {
   className?: string;
   onCreate?: () => void;
   createLabel?: string;
-}
+};
 
 export function Combobox({
   options,
@@ -92,7 +92,6 @@ export function Combobox({
               placeholder={searchPlaceholder}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              autoFocus
             />
             <div className="max-h-[300px] overflow-y-auto">
               {filteredOptions.length === 0 && (
@@ -137,4 +136,3 @@ export function Combobox({
     </>
   );
 }
-

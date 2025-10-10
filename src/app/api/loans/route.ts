@@ -1,9 +1,9 @@
 import type { NextRequest } from 'next/server';
 import { desc, eq, ilike, or } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
+import { calculateMaturityDate, calculateMonthlyPayment } from '@/lib/loan-calculator';
 import { db } from '@/libs/DB';
 import { borrowers, loans, properties } from '@/models/Schema';
-import { calculateMaturityDate, calculateMonthlyPayment } from '@/lib/loan-calculator';
 import { generateLoanNumber, loanSchema } from '@/validations/LoanValidation';
 
 export async function GET(request: NextRequest) {
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let data = validationResult.data;
+    const data = validationResult.data;
 
     // Generate loan number if not provided
     if (!data.loanNumber) {

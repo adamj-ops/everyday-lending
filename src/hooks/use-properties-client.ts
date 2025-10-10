@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-export interface Property {
+export type Property = {
   id: number;
   address: string;
   city: string;
@@ -18,7 +18,7 @@ export interface Property {
   afterRepairValue: string | null;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 /**
  * Fetch all properties with optional search
@@ -61,4 +61,3 @@ export function useProperty(id: number) {
     enabled: id > 0,
   });
 }
-

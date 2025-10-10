@@ -1,5 +1,6 @@
 'use client';
 
+import type { PropertyFormData } from '@/validations/PropertyValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -18,14 +19,13 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import type { PropertyFormData } from '@/validations/PropertyValidation';
 import { propertySchema } from '@/validations/PropertyValidation';
 
-interface EditPropertyFormProps {
+type EditPropertyFormProps = {
   property: any;
   onSuccess?: () => void;
   onCancel?: () => void;
-}
+};
 
 export function EditPropertyForm({ property, onSuccess, onCancel }: EditPropertyFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -317,4 +317,3 @@ export function EditPropertyForm({ property, onSuccess, onCancel }: EditProperty
     </form>
   );
 }
-

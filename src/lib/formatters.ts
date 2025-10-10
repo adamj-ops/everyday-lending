@@ -145,4 +145,3 @@ export function formatNumber(value: number | string | null | undefined): string 
 
   return new Intl.NumberFormat('en-US').format(numValue);
 }
-

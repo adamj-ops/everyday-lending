@@ -1,6 +1,7 @@
 'use client';
 
 import type React from 'react';
+import type { BorrowerFormData } from '@/validations/BorrowerValidation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -27,14 +28,13 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import type { BorrowerFormData } from '@/validations/BorrowerValidation';
 import { borrowerSchema } from '@/validations/BorrowerValidation';
 
-interface CreateBorrowerDialogProps {
+type CreateBorrowerDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
-}
+};
 
 export function CreateBorrowerDialog({ open, onOpenChange, onSuccess }: CreateBorrowerDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -344,4 +344,3 @@ export function CreateBorrowerDialog({ open, onOpenChange, onSuccess }: CreateBo
     </Dialog>
   );
 }
-

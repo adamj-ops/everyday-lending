@@ -14,9 +14,9 @@ export const borrowerSchema = z.object({
   zipCode: z.string().max(20, 'Zip code must be less than 20 characters').optional().nullable(),
   ssn: z.string().max(11, 'SSN must be less than 11 characters').optional().nullable(),
   dateOfBirth: z.string().optional().nullable(),
-  creditScore: z.coerce.number().int().min(300, 'Credit score must be at least 300').max(850, 'Credit score cannot exceed 850').optional().nullable(),
+  creditScore: z.number().int().min(300, 'Credit score must be at least 300').max(850, 'Credit score cannot exceed 850').optional().nullable(),
   employmentStatus: z.string().max(50, 'Employment status must be less than 50 characters').optional().nullable(),
-  annualIncome: z.coerce.number().min(0, 'Annual income must be positive').optional().nullable(),
+  annualIncome: z.number().min(0, 'Annual income must be positive').optional().nullable(),
 });
 
 export type BorrowerFormData = z.infer<typeof borrowerSchema>;
@@ -27,4 +27,3 @@ export type BorrowerFormData = z.infer<typeof borrowerSchema>;
 export const borrowerUpdateSchema = borrowerSchema.partial();
 
 export type BorrowerUpdateData = z.infer<typeof borrowerUpdateSchema>;
-
