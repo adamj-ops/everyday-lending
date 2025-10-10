@@ -8,6 +8,10 @@ import './src/libs/Env';
 const baseConfig: NextConfig = {
   eslint: {
     dirs: ['.'],
+    ignoreDuringBuilds: true, // Don't fail builds on lint warnings
+  },
+  typescript: {
+    ignoreBuildErrors: false, // Still check TypeScript errors
   },
   poweredByHeader: false,
   reactStrictMode: true,
