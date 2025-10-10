@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     const result = await db
       .insert(borrowers)
       .values({
-        ...cleanedData,
+        ...(cleanedData as any),
         createdAt: new Date(),
         updatedAt: new Date(),
       })
