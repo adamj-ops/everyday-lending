@@ -4,6 +4,7 @@ import type { LoanWithDetails } from '@/hooks/use-loans-client';
 import { motion } from 'framer-motion';
 import { FileText, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { CreateLoanDialog } from '@/components/loans/create-loan-dialog';
 import { LoanDrawer } from '@/components/loans/loan-drawer';
 import { LoansTable } from '@/components/loans/loans-table';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { Button } from '@/components/ui/button';
 export default function LoansPage() {
   const [selectedLoanId, setSelectedLoanId] = useState<number | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const handleLoanSelect = (loan: LoanWithDetails) => {
     setSelectedLoanId(loan.id);
@@ -20,6 +22,10 @@ export default function LoansPage() {
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setSelectedLoanId(null);
+  };
+
+  const handleCreateLoan = () => {
+    setIsCreateDialogOpen(true);
   };
 
   return (
@@ -40,7 +46,7 @@ export default function LoansPage() {
             Manage your loan portfolio and track borrower payments
           </p>
         </div>
-        <Button className="bg-accent hover:bg-accent/90">
+        <Button className="bg-accent hover:bg-accent/90" onClick={handleCreateLoan}>
           <Plus className="mr-2 h-4 w-4" />
           New Loan
         </Button>
@@ -54,6 +60,12 @@ export default function LoansPage() {
         loanId={selectedLoanId}
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
+      />
+
+      {/* Create Loan Dialog */}
+      <CreateLoanDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
       />
     </motion.div>
   );

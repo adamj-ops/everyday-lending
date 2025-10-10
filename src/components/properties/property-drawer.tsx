@@ -3,74 +3,57 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  CreditCard,
+  Building,
   DollarSign,
   Edit,
+  Home,
   MapPin,
   Trash2,
-  User,
 } from 'lucide-react';
 import { useState } from 'react';
-import { EditBorrowerForm } from '@/components/borrowers/edit-borrower-form';
-import { Badge } from '@/components/ui/badge';
+import { EditPropertyForm } from '@/components/properties/edit-property-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useBorrower } from '@/hooks/use-borrowers-client';
+import { useProperty } from '@/hooks/use-properties-client';
 import { useToast } from '@/hooks/use-toast';
-import { formatCurrency, formatDate, formatPhoneNumber } from '@/lib/formatters';
+import { formatCurrency, formatNumber } from '@/lib/formatters';
 
-type BorrowerDrawerProps = {
-  borrowerId: number | null;
+type PropertyDrawerProps = {
+  propertyId: number | null;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'active':
-      return 'bg-green-100 text-green-700 border-green-200';
-    case 'paid_off':
-      return 'bg-blue-100 text-blue-700 border-blue-200';
-    case 'defaulted':
-    case 'foreclosed':
-      return 'bg-red-100 text-red-700 border-red-200';
-    case 'cancelled':
-      return 'bg-yellow-100 text-yellow-700 border-yellow-200';
-    default:
-      return 'bg-gray-100 text-gray-700 border-gray-200';
-  }
-};
-
-export function BorrowerDrawer({ borrowerId, isOpen, onClose }: BorrowerDrawerProps) {
+export function PropertyDrawer({ propertyId, isOpen, onClose }: PropertyDrawerProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { data: borrower } = useBorrower(borrowerId || 0);
+  const { data: property } = useProperty(propertyId || 0);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/borrowers/${id}`, {
+      const response = await fetch(`/api/properties/${id}`, {
         method: 'DELETE',
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to delete borrower');
+        throw new Error(error.error || 'Failed to delete property');
       }
 
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['borrowers'] });
+      queryClient.invalidateQueries({ queryKey: ['properties'] });
       toast({
         title: 'Success',
-        description: 'Borrower deleted successfully',
+        description: 'Property deleted successfully',
         type: 'success',
       });
       onClose();
@@ -101,13 +84,13 @@ export function BorrowerDrawer({ borrowerId, isOpen, onClose }: BorrowerDrawerPr
   };
 
   const handleConfirmDelete = async () => {
-    if (borrowerId) {
-      await deleteMutation.mutateAsync(borrowerId);
+    if (propertyId) {
+      await deleteMutation.mutateAsync(propertyId);
       setShowDeleteDialog(false);
     }
   };
 
-  if (!borrower) {
+  if (!property) {
     return null;
   }
 
@@ -129,14 +112,12 @@ export function BorrowerDrawer({ borrowerId, isOpen, onClose }: BorrowerDrawerPr
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <SheetTitle className="text-xl font-semibold">
-                        {borrower.firstName}
-                        {' '}
-                        {borrower.lastName}
+                        {property.address}
                       </SheetTitle>
                       <div className="text-sm text-muted-foreground">
-                        Borrower ID:
+                        Property ID:
                         {' '}
-                        {borrower.id}
+                        {property.id}
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -167,60 +148,81 @@ export function BorrowerDrawer({ borrowerId, isOpen, onClose }: BorrowerDrawerPr
 
                     {/* View Tab */}
                     <TabsContent value="view" className="mt-0 space-y-6">
-                      {/* Contact Information */}
+                      {/* Location */}
                       <Card>
                         <CardHeader>
                           <CardTitle className="flex items-center space-x-2">
-                            <User className="h-5 w-5" />
-                            <span>Contact Information</span>
+                            <MapPin className="h-5 w-5" />
+                            <span>Location</span>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                          <div className="text-sm">{property.address}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {property.city}
+                            ,
+                            {' '}
+                            {property.state}
+                            {' '}
+                            {property.zipCode}
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Property Details */}
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center space-x-2">
+                            <Building className="h-5 w-5" />
+                            <span>Property Details</span>
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <Label className="text-sm font-medium text-muted-foreground">
-                                Email
+                                Property Type
                               </Label>
-                              <div className="mt-1 text-sm">{borrower.email}</div>
-                            </div>
-                            <div>
-                              <Label className="text-sm font-medium text-muted-foreground">
-                                Phone
-                              </Label>
-                              <div className="mt-1 text-sm">
-                                {borrower.phone ? formatPhoneNumber(borrower.phone) : 'N/A'}
+                              <div className="mt-1 text-sm capitalize">
+                                {property.propertyType?.replace('_', ' ') || 'N/A'}
                               </div>
                             </div>
                             <div>
                               <Label className="text-sm font-medium text-muted-foreground">
-                                Date of Birth
+                                Year Built
                               </Label>
-                              <div className="mt-1 text-sm">{formatDate(borrower.dateOfBirth)}</div>
+                              <div className="mt-1 text-sm">{property.yearBuilt || 'N/A'}</div>
                             </div>
                             <div>
                               <Label className="text-sm font-medium text-muted-foreground">
-                                SSN
+                                Bedrooms
                               </Label>
-                              <div className="mt-1 text-sm">{borrower.ssn || 'N/A'}</div>
+                              <div className="mt-1 text-sm">{property.bedrooms || 'N/A'}</div>
                             </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Address Information */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center space-x-2">
-                            <MapPin className="h-5 w-5" />
-                            <span>Address</span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                          <div className="text-sm">{borrower.address || 'N/A'}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {borrower.city && borrower.state
-                              ? `${borrower.city}, ${borrower.state} ${borrower.zipCode || ''}`
-                              : 'N/A'}
+                            <div>
+                              <Label className="text-sm font-medium text-muted-foreground">
+                                Bathrooms
+                              </Label>
+                              <div className="mt-1 text-sm">{property.bathrooms || 'N/A'}</div>
+                            </div>
+                            <div>
+                              <Label className="text-sm font-medium text-muted-foreground">
+                                Square Feet
+                              </Label>
+                              <div className="mt-1 text-sm">
+                                {property.squareFeet ? formatNumber(property.squareFeet) : 'N/A'}
+                              </div>
+                            </div>
+                            <div>
+                              <Label className="text-sm font-medium text-muted-foreground">
+                                Lot Size
+                              </Label>
+                              <div className="mt-1 text-sm">
+                                {property.lotSize
+                                  ? `${property.lotSize} acres`
+                                  : 'N/A'}
+                              </div>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -237,85 +239,53 @@ export function BorrowerDrawer({ borrowerId, isOpen, onClose }: BorrowerDrawerPr
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <Label className="text-sm font-medium text-muted-foreground">
-                                Credit Score
+                                Purchase Price
                               </Label>
-                              <div className="mt-1 text-sm">{borrower.creditScore || 'N/A'}</div>
-                            </div>
-                            <div>
-                              <Label className="text-sm font-medium text-muted-foreground">
-                                Annual Income
-                              </Label>
-                              <div className="mt-1 text-sm">
-                                {borrower.annualIncome
-                                  ? formatCurrency(Number.parseFloat(borrower.annualIncome))
+                              <div className="mt-1 text-sm font-medium">
+                                {property.purchasePrice
+                                  ? formatCurrency(Number.parseFloat(property.purchasePrice))
                                   : 'N/A'}
                               </div>
                             </div>
-                            <div className="col-span-2">
+                            <div>
                               <Label className="text-sm font-medium text-muted-foreground">
-                                Employment Status
+                                Estimated Value
                               </Label>
-                              <div className="mt-1 text-sm capitalize">
-                                {borrower.employmentStatus?.replace('_', ' ') || 'N/A'}
+                              <div className="mt-1 text-sm font-medium">
+                                {property.estimatedValue
+                                  ? formatCurrency(Number.parseFloat(property.estimatedValue))
+                                  : 'N/A'}
+                              </div>
+                            </div>
+                            <div>
+                              <Label className="text-sm font-medium text-muted-foreground">
+                                Rehab Budget
+                              </Label>
+                              <div className="mt-1 text-sm font-medium">
+                                {property.rehabBudget
+                                  ? formatCurrency(Number.parseFloat(property.rehabBudget))
+                                  : 'N/A'}
+                              </div>
+                            </div>
+                            <div>
+                              <Label className="text-sm font-medium text-muted-foreground">
+                                After Repair Value (ARV)
+                              </Label>
+                              <div className="mt-1 text-sm font-medium">
+                                {property.afterRepairValue
+                                  ? formatCurrency(Number.parseFloat(property.afterRepairValue))
+                                  : 'N/A'}
                               </div>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Loans */}
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center space-x-2">
-                            <CreditCard className="h-5 w-5" />
-                            <span>
-                              Loans (
-                              {borrower.loans.length}
-                              )
-                            </span>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          {borrower.loans.length > 0
-                            ? (
-                                <div className="space-y-3">
-                                  {borrower.loans.map(loan => (
-                                    <div
-                                      key={loan.id}
-                                      className="flex items-center justify-between rounded-lg border border-border p-3"
-                                    >
-                                      <div>
-                                        <div className="text-sm font-medium">{loan.loanNumber}</div>
-                                        <div className="text-xs text-muted-foreground">
-                                          {formatCurrency(Number.parseFloat(loan.loanAmount))}
-                                          {' '}
-                                          •
-                                          {' '}
-                                          {formatCurrency(Number.parseFloat(loan.currentBalance))}
-                                          {' '}
-                                          remaining
-                                        </div>
-                                      </div>
-                                      <Badge variant="outline" className={`text-xs ${getStatusColor(loan.status)}`}>
-                                        {loan.status.replace('_', ' ')}
-                                      </Badge>
-                                    </div>
-                                  ))}
-                                </div>
-                              )
-                            : (
-                                <div className="py-8 text-center text-muted-foreground">
-                                  No loans found for this borrower
-                                </div>
-                              )}
                         </CardContent>
                       </Card>
                     </TabsContent>
 
                     {/* Edit Tab */}
                     <TabsContent value="edit" className="mt-0">
-                      <EditBorrowerForm
-                        borrower={borrower}
+                      <EditPropertyForm
+                        property={property}
                         onSuccess={handleSaveSuccess}
                         onCancel={handleCancelEdit}
                       />
@@ -332,8 +302,8 @@ export function BorrowerDrawer({ borrowerId, isOpen, onClose }: BorrowerDrawerPr
       <ConfirmDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title="Delete Borrower"
-        description={`Are you sure you want to delete ${borrower.firstName} ${borrower.lastName}? This action cannot be undone.`}
+        title="Delete Property"
+        description={`Are you sure you want to delete ${property.address}? This action cannot be undone.`}
         confirmLabel="Delete"
         variant="destructive"
         onConfirm={handleConfirmDelete}
@@ -342,3 +312,4 @@ export function BorrowerDrawer({ borrowerId, isOpen, onClose }: BorrowerDrawerPr
     </>
   );
 }
+

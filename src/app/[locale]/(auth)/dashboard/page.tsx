@@ -14,29 +14,10 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
-// Removed server-side imports for client component
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-// Metadata moved to layout since this is now a client component
-
-// Mock data - in real app, this would come from your database
-const kpiData = {
-  totalLoanValue: 12500000,
-  activeLoans: 45,
-  totalBorrowers: 38,
-  totalProperties: 42,
-  monthlyPayments: 125000,
-  overduePayments: 3,
-  pendingDraws: 7,
-  completedDraws: 23,
-};
-
-const recentLoans = [
-  { id: 1, borrower: 'John Smith', property: '123 Main St', amount: 250000, status: 'active' },
-  { id: 2, borrower: 'Sarah Johnson', property: '456 Oak Ave', amount: 180000, status: 'active' },
-  { id: 3, borrower: 'Mike Wilson', property: '789 Pine Rd', amount: 320000, status: 'pending' },
-];
+import { useDashboardStats, useRecentLoans } from '@/hooks/use-dashboard-stats';
+import { formatCurrency } from '@/lib/formatters';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -58,6 +39,28 @@ const itemVariants = {
 };
 
 export default function Dashboard() {
+  const { data: stats, isLoading: statsLoading } = useDashboardStats();
+  const { data: recentLoans, isLoading: loansLoading } = useRecentLoans(3);
+
+  const kpiData = stats || {
+    totalLoanValue: 0,
+    activeLoans: 0,
+    totalBorrowers: 0,
+    totalProperties: 0,
+    monthlyPayments: 0,
+    overduePayments: 0,
+    pendingDraws: 0,
+    completedDraws: 0,
+  };
+
+  if (statsLoading || loansLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-accent"></div>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="space-y-6"
@@ -231,30 +234,45 @@ export default function Dashboard() {
             <CardTitle>Recent Loans</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {recentLoans.map(loan => (
-                <div key={loan.id} className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-muted/50">
-                  <div>
-                    <p className="font-medium">{loan.borrower}</p>
-                    <p className="text-sm text-muted-foreground">{loan.property}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium">
-                      $
-                      {loan.amount.toLocaleString()}
-                    </p>
-                    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                      loan.status === 'active'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                    }`}
-                    >
-                      {loan.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+              <div className="space-y-4">
+                {recentLoans && recentLoans.length > 0
+                  ? (
+                      recentLoans.map(loan => (
+                        <div key={loan.id} className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-muted/50">
+                          <div>
+                            <p className="font-medium">
+                              {loan.borrower
+                                ? `${loan.borrower.firstName} ${loan.borrower.lastName}`
+                                : 'No Borrower'}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {loan.property?.address || 'No Property'}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-medium">
+                              {formatCurrency(Number.parseFloat(loan.loanAmount))}
+                            </p>
+                            <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                              loan.status === 'active'
+                                ? 'bg-green-100 text-green-700'
+                                : loan.status === 'paid_off'
+                                  ? 'bg-blue-100 text-blue-700'
+                                  : 'bg-yellow-100 text-yellow-700'
+                            }`}
+                            >
+                              {loan.status.replace('_', ' ')}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    )
+                  : (
+                      <div className="py-8 text-center text-muted-foreground">
+                        No recent loans
+                      </div>
+                    )}
+              </div>
           </CardContent>
         </Card>
 

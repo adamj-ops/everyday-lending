@@ -3,6 +3,7 @@ import { count, desc, eq, ilike, or } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { db } from '@/libs/DB';
 import { borrowers, loans } from '@/models/Schema';
+import { borrowerSchema } from '@/validations/BorrowerValidation';
 
 export async function GET(request: NextRequest) {
   try {
@@ -77,12 +78,29 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
+    const body = await request.json();
+
+    // Validate the request body
+    const validationResult = borrowerSchema.safeParse(body);
+
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validationResult.error.issues },
+        { status: 400 },
+      );
+    }
+
+    const data = validationResult.data;
+
+    // Convert empty strings to null for optional fields
+    const cleanedData = Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [key, value === '' ? null : value]),
+    );
 
     const result = await db
       .insert(borrowers)
       .values({
-        ...data,
+        ...cleanedData,
         createdAt: new Date(),
         updatedAt: new Date(),
       })

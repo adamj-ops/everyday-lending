@@ -3,6 +3,7 @@ import { count, eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { db } from '@/libs/DB';
 import { borrowers, loans } from '@/models/Schema';
+import { borrowerUpdateSchema } from '@/validations/BorrowerValidation';
 
 export async function GET(
   _request: NextRequest,
@@ -63,18 +64,35 @@ export async function GET(
   }
 }
 
-export async function PATCH(
+export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
-    const data = await request.json();
+    const body = await request.json();
+
+    // Validate the request body
+    const validationResult = borrowerUpdateSchema.safeParse(body);
+
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validationResult.error.issues },
+        { status: 400 },
+      );
+    }
+
+    const data = validationResult.data;
+
+    // Convert empty strings to null for optional fields
+    const cleanedData = Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [key, value === '' ? null : value]),
+    );
 
     const result = await db
       .update(borrowers)
       .set({
-        ...data,
+        ...cleanedData,
         updatedAt: new Date(),
       })
       .where(eq(borrowers.id, Number.parseInt(id)))
@@ -89,6 +107,13 @@ export async function PATCH(
     console.error('Error updating borrower:', error);
     return NextResponse.json({ error: 'Failed to update borrower' }, { status: 500 });
   }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  return PUT(request, { params });
 }
 
 export async function DELETE(

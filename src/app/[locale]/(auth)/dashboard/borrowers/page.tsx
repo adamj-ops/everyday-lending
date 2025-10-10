@@ -6,11 +6,13 @@ import { Plus, Users } from 'lucide-react';
 import { useState } from 'react';
 import { BorrowerDrawer } from '@/components/borrowers/borrower-drawer';
 import { BorrowersTable } from '@/components/borrowers/borrowers-table';
+import { CreateBorrowerDialog } from '@/components/borrowers/create-borrower-dialog';
 import { Button } from '@/components/ui/button';
 
 export default function BorrowersPage() {
   const [selectedBorrowerId, setSelectedBorrowerId] = useState<number | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const handleBorrowerSelect = (borrower: BorrowerWithLoans) => {
     setSelectedBorrowerId(borrower.id);
@@ -23,8 +25,7 @@ export default function BorrowersPage() {
   };
 
   const handleCreateBorrower = () => {
-    // TODO: Implement create borrower modal/form
-    // console.log('Create new borrower');
+    setIsCreateDialogOpen(true);
   };
 
   return (
@@ -62,6 +63,12 @@ export default function BorrowersPage() {
         borrowerId={selectedBorrowerId}
         isOpen={isDrawerOpen}
         onClose={handleCloseDrawer}
+      />
+
+      {/* Create Borrower Dialog */}
+      <CreateBorrowerDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
       />
     </motion.div>
   );
