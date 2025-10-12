@@ -1,25 +1,19 @@
 import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Navbar } from '@/components/landing/navbar';
+import { setRequestLocale } from 'next-intl/server';
+import { CtaSection } from '@/components/landing/cta-section';
+import { FeaturesGrid } from '@/components/landing/features-grid';
+import { Footer } from '@/components/landing/footer';
 import { Hero } from '@/components/landing/hero';
+import { Navbar } from '@/components/landing/navbar';
+import { TestimonialGrid } from '@/components/landing/testimonial-grid';
 import { TrustedBy } from '@/components/landing/trusted-by';
 import { ValuePropSection } from '@/components/landing/value-prop-section';
-import { FeaturesGrid } from '@/components/landing/features-grid';
-import { TestimonialGrid } from '@/components/landing/testimonial-grid';
-import { CtaSection } from '@/components/landing/cta-section';
-import { Footer } from '@/components/landing/footer';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata(props: IIndexProps): Promise<Metadata> {
-  const { locale } = await props.params;
-  const t = await getTranslations({
-    locale,
-    namespace: 'Index',
-  });
-
+export async function generateMetadata(_props: IIndexProps): Promise<Metadata> {
   return {
     title: 'Everyday Lending - Modern Construction Loan Management',
     description:
