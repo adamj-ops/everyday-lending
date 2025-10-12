@@ -53,4 +53,14 @@ const ToastDescription = ({ ref, className, ...props }: React.HTMLAttributes<HTM
 };
 ToastDescription.displayName = 'ToastDescription';
 
+// Simple toast function for basic usage
+export const toast = (message: string | { title: string; description?: string; variant?: string }) => {
+  // This is a simple implementation - in production you'd want a proper toast library
+  if (typeof message === 'string') {
+    console.log(`Toast: ${message}`);
+  } else {
+    console.log(`Toast: ${message.title} - ${message.description || ''}`);
+  }
+};
+
 export { Toast, ToastDescription, ToastTitle };

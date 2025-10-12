@@ -40,7 +40,12 @@ export default async function middleware(
 ) {
   // Verify the request with Arcjet
   // Use `process.env` instead of Env to reduce bundle size in middleware
-  if (process.env.ARCJET_KEY) {
+  const arcjetKey = process.env.ARCJET_KEY;
+  const hasValidArcjetKey = arcjetKey && 
+    arcjetKey !== 'ajkey_demo_key_for_development' &&
+    arcjetKey.startsWith('ajkey_');
+    
+  if (hasValidArcjetKey) {
     const decision = await aj.protect(request);
 
     if (decision.isDenied()) {
@@ -48,9 +53,15 @@ export default async function middleware(
     }
   }
 
+  // Check if Clerk is properly configured
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const hasValidClerkKey = publishableKey && 
+    publishableKey !== 'pk_test_demo_key_for_development' &&
+    publishableKey.startsWith('pk_');
+
   // Clerk keyless mode doesn't work with i18n, this is why we need to run the middleware conditionally
   if (
-    isAuthPage(request) || isProtectedRoute(request)
+    hasValidClerkKey && (isAuthPage(request) || isProtectedRoute(request))
   ) {
     return clerkMiddleware(async (auth, req) => {
       if (isProtectedRoute(req)) {
@@ -74,6 +85,7 @@ export const config = {
   // Match all pathnames except for
   // - … if they start with `/_next`, `/_vercel` or `monitoring`
   // - … the ones containing a dot (e.g. `favicon.ico`)
-  matcher: '/((?!_next|_vercel|monitoring|.*\\..*).*)',
+  // - … API health endpoints
+  matcher: '/((?!_next|_vercel|monitoring|api/health|.*\\..*).*)',
   runtime: 'nodejs',
 };

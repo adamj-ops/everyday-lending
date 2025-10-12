@@ -163,13 +163,30 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       {/* Footer */}
       <div className="space-y-3 border-t border-border p-4">
         <div className="flex justify-center">
-          <UserButton
-            appearance={{
-              elements: {
-                avatarBox: 'h-8 w-8',
-              },
-            }}
-          />
+          {(() => {
+            const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+            const hasValidClerkKey = publishableKey && 
+              publishableKey !== 'pk_test_demo_key_for_development' &&
+              publishableKey.startsWith('pk_');
+            
+            if (!hasValidClerkKey) {
+              return (
+                <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                  <span className="text-xs text-muted-foreground">👤</span>
+                </div>
+              );
+            }
+            
+            return (
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: 'h-8 w-8',
+                  },
+                }}
+              />
+            );
+          })()}
         </div>
         {!isCollapsed && (
           <div className="text-center text-xs text-muted-foreground">

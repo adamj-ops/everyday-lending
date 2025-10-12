@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: everyday-lending-db
+    environment:
+      POSTGRES_DB: everyday_lending
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - everyday-lending-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: everyday-lending-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - everyday-lending-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: everyday-lending-app
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/everyday_lending
+      - REDIS_URL=redis://redis:6379
+      - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_demo_key_for_development
+      - CLERK_SECRET_KEY=sk_test_demo_key_for_development
+      - ARCJET_KEY=ajkey_demo_key_for_development
+      - NEXT_PUBLIC_SENTRY_DISABLED=true
+    ports:
+      - "3003:3000"
+    volumes:
+      - ..:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - everyday-lending-network
+    command: npm run dev
+
+  # Drizzle Studio (Database GUI)
+  drizzle-studio:
+    image: node:18-alpine
+    container_name: everyday-lending-drizzle-studio
+    working_dir: /app
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/everyday_lending
+    ports:
+      - "4983:4983"
+    volumes:
+      - ..:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - everyday-lending-network
+    command: npx drizzle-kit studio --host 0.0.0.0 --port 4983
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  everyday-lending-network:
+    driver: bridge

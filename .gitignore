@@ -60,3 +60,26 @@ build-archive.log
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# BMAD Method
+/reports/*.md
+/reports/*.json
+/ui-v6/
+/services/
+/db-v6/
+bmad_metrics
+.bmad-temp/
+*.bmad.log
+
+# Build artifacts
+tsconfig.tsbuildinfo
+playwright-report/
+test-results/
+local.db/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+.DS_Store

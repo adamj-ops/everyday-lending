@@ -1,6 +1,13 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Sponsors } from '@/components/Sponsors';
+import { Navbar } from '@/components/landing/navbar';
+import { Hero } from '@/components/landing/hero';
+import { TrustedBy } from '@/components/landing/trusted-by';
+import { ValuePropSection } from '@/components/landing/value-prop-section';
+import { FeaturesGrid } from '@/components/landing/features-grid';
+import { TestimonialGrid } from '@/components/landing/testimonial-grid';
+import { CtaSection } from '@/components/landing/cta-section';
+import { Footer } from '@/components/landing/footer';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
@@ -14,128 +21,120 @@ export async function generateMetadata(props: IIndexProps): Promise<Metadata> {
   });
 
   return {
-    title: t('meta_title'),
-    description: t('meta_description'),
+    title: 'Everyday Lending - Modern Construction Loan Management',
+    description:
+      'Streamline your construction lending process with powerful tools for draws, payments, and servicing. Built for lenders who value efficiency.',
   };
 }
 
 export default async function Index(props: IIndexProps) {
   const { locale } = await props.params;
   setRequestLocale(locale);
-  const t = await getTranslations({
-    locale,
-    namespace: 'Index',
-  });
 
   return (
-    <>
-      <p>
-        {`Follow `}
-        <a
-          className="text-blue-700 hover:border-b-2 hover:border-blue-700"
-          href="https://twitter.com/ixartz"
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          @Ixartz on Twitter
-        </a>
-        {` for updates and more information about the boilerplate.`}
-      </p>
-      <h2 className="mt-5 text-2xl font-bold">
-        Boilerplate Code for Your Next.js Project with Tailwind CSS
-      </h2>
-      <p className="text-base">
-        Next.js Boilerplate is a developer-friendly starter code for Next.js projects, built with Tailwind CSS and TypeScript.
-        {' '}
-        <span role="img" aria-label="zap">
-          ⚡️
-        </span>
-        {' '}
-        Designed with developer experience in mind, it includes:
-      </p>
-      <ul className="mt-3 text-base">
-        <li>🚀 Next.js with App Router support</li>
-        <li>🔥 TypeScript for type checking</li>
-        <li>💎 Tailwind CSS integration</li>
-        <li>
-          🔒 Authentication with
-          {' '}
-          <a
-            className="font-bold text-blue-700 hover:border-b-2 hover:border-blue-700"
-            href="https://clerk.com?utm_source=github&amp;utm_medium=sponsorship&amp;utm_campaign=nextjs-boilerplate"
-          >
-            Clerk
-          </a>
-          {' '}
-          (includes passwordless, social, and multi-factor auth)
-        </li>
-        <li>📦 ORM with DrizzleORM (PostgreSQL, SQLite, MySQL support)</li>
-        <li>
-          💽 Dev database with PGlite and production with
-          {' '}
-          <a
-            className="font-bold text-blue-700 hover:border-b-2 hover:border-blue-700"
-            href="https://www.prisma.io/?via=nextjsindex"
-          >
-            Prisma PostgreSQL
-          </a>
-        </li>
-        <li>
-          🌐 Multi-language support (i18n) with next-intl and
-          {' '}
-          <a
-            className="font-bold text-blue-700 hover:border-b-2 hover:border-blue-700"
-            href="https://l.crowdin.com/next-js"
-          >
-            Crowdin
-          </a>
-        </li>
-        <li>🔴 Form handling (React Hook Form) and validation (Zod)</li>
-        <li>📏 Linting and formatting (ESLint, Prettier)</li>
-        <li>🦊 Git hooks and commit linting (Husky, Commitlint)</li>
-        <li>🦺 Testing suite (Vitest, React Testing Library, Playwright)</li>
-        <li>🎉 Storybook for UI development</li>
-        <li>
-          🐰 AI-powered code reviews with
-          {' '}
-          <a
-            className="font-bold text-blue-700 hover:border-b-2 hover:border-blue-700"
-            href="https://www.coderabbit.ai?utm_source=next_js_starter&utm_medium=github&utm_campaign=next_js_starter_oss_2025"
-          >
-            CodeRabbit
-          </a>
-        </li>
-        <li>
-          🚨 Error monitoring (
-          <a
-            className="font-bold text-blue-700 hover:border-b-2 hover:border-blue-700"
-            href="https://sentry.io/for/nextjs/?utm_source=github&amp;utm_medium=paid-community&amp;utm_campaign=general-fy25q1-nextjs&amp;utm_content=github-banner-nextjsboilerplate-logo"
-          >
-            Sentry
-          </a>
-          ) and logging (LogTape, an alternative to Pino.js)
-        </li>
-        <li>🖥️ Monitoring as Code (Checkly)</li>
-        <li>
-          🔐 Security and bot protection (
-          <a
-            className="font-bold text-blue-700 hover:border-b-2 hover:border-blue-700"
-            href="https://launch.arcjet.com/Q6eLbRE"
-          >
-            Arcjet
-          </a>
-          )
-        </li>
-        <li>🤖 SEO optimization (metadata, JSON-LD, Open Graph tags)</li>
-        <li>⚙️ Development tools (VSCode config, bundler analyzer, changelog generation)</li>
-      </ul>
-      <p className="text-base">
-        Our sponsors&apos; exceptional support has made this project possible.
-        Their services integrate seamlessly with the boilerplate, and we
-        recommend trying them out.
-      </p>
-      <h2 className="mt-5 text-2xl font-bold">{t('sponsors_title')}</h2>
-      <Sponsors />
-    </>
+    <div className="min-h-screen bg-white">
+      <Navbar />
+
+      <main>
+        <Hero />
+
+        <TrustedBy />
+
+        {/* Value Prop 1: Customizable */}
+        <ValuePropSection
+          icon="🎨"
+          title="A CRM created to be your own."
+          description="Tweak anything and everything to ensure Everyday Lending fits your business, not the other way around."
+          features={[
+            {
+              title: 'Customizable Workflows',
+              description:
+                'Build workflows that match your exact lending process. From application to closing, every step can be customized.',
+              visual: '⚙️',
+            },
+            {
+              title: 'Flexible Data Models',
+              description:
+                'Create custom fields and objects to track exactly what matters to your business.',
+              visual: '📊',
+            },
+          ]}
+          testimonial={{
+            quote:
+              'The customization options are incredible. We were able to match our exact workflow within hours.',
+            author: 'John Smith',
+            company: 'Acme Construction',
+          }}
+        />
+
+        {/* Value Prop 2: Data-Driven */}
+        <ValuePropSection
+          icon="🔗"
+          title="Modeled around your data and workflows."
+          description="A CRM should go beyond deals. Everyday Lending is built for any business process."
+          features={[
+            {
+              title: 'Always Connected to Your Data',
+              description:
+                'Continually sync your financial, property, and relationship data into your workspace.',
+              visual: '🔄',
+            },
+            {
+              title: 'Custom Objects & Fields',
+              description:
+                'Easily create custom objects that match your business unique data structure.',
+              visual: '🗂️',
+            },
+          ]}
+          testimonial={{
+            quote:
+              'Having all our data in one place has been transformative. No more switching between systems.',
+            author: 'Rachel Green',
+            company: 'BuildRight',
+          }}
+        />
+
+        {/* Value Prop 3: Multiplayer */}
+        <ValuePropSection
+          icon="👥"
+          title="Designed for multiplayer."
+          description="The first truly multiplayer CRM. After all, the best work doesn't come from silos."
+          features={[
+            {
+              title: 'Real-time Collaboration',
+              description:
+                'Collaborate with your whole team and nail every task the first time. See each other work in real-time.',
+              visual: '⚡',
+            },
+            {
+              title: 'Permission Control',
+              description:
+                'Control how your team interacts with your business collections, views, and data.',
+              visual: '🔐',
+            },
+            {
+              title: 'Never Lose an Idea',
+              description:
+                'Real-time collaborative note-taking ensures every conversation is captured.',
+              visual: '📝',
+            },
+          ]}
+          testimonial={{
+            quote:
+              'Real-time collaboration has cut our communication overhead in half. Everyone stays in sync.',
+            author: 'Tom Anderson',
+            company: 'Metro Developers',
+          }}
+        />
+
+        <FeaturesGrid />
+
+        <TestimonialGrid />
+
+        <CtaSection />
+      </main>
+
+      <Footer />
+    </div>
   );
-};
+}

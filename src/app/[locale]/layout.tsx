@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { ClerkProvider } from '@clerk/nextjs';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { DemoBadge } from '@/components/DemoBadge';
+import { ClerkProviderWrapper } from '@/components/providers/clerk-provider';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { routing } from '@/libs/I18nRouting';
@@ -52,7 +52,7 @@ export default async function RootLayout(props: {
   setRequestLocale(locale);
 
   return (
-    <ClerkProvider>
+    <ClerkProviderWrapper>
       <html lang={locale}>
         <body>
           <QueryProvider>
@@ -66,6 +66,6 @@ export default async function RootLayout(props: {
           </QueryProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </ClerkProviderWrapper>
   );
 }

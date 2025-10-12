@@ -1,0 +1,222 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>0</storyId>
+    <title>LoanService Service Layer Foundation</title>
+    <status>Draft</status>
+    <generatedAt>2025-10-11</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>/docs/stories/story-1.0.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>a LoanService service layer that abstracts business logic from API routes</iWant>
+    <soThat>we have a maintainable, testable foundation for implementing loan lifecycle workflows</soThat>
+    <tasks>
+      - Task 1: Create Service Layer Structure (AC-1)
+      - Task 2: Implement CRUD Operations (AC-2)
+      - Task 3: Encapsulate Business Logic (AC-3)
+      - Task 4: Refactor API Routes (AC-4)
+      - Task 5: Write Unit Tests (AC-5)
+      - Task 6: Write Integration Tests (AC-6)
+      - Task 7: Error Handling &amp; Validation (AC-7)
+      - Task 8: Documentation (AC-8)
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC-1">Service Layer Structure Created: /src/services/ directory exists with proper TypeScript configuration, LoanService.ts class created with clear method signatures, service follows single responsibility principle, service is instantiable and injectable for testing</criterion>
+    <criterion id="AC-2">CRUD Operations Implemented: getLoans(filters?), getLoanById(id), createLoan(data), updateLoan(id, data), deleteLoan(id) all implemented using Drizzle ORM with typed results</criterion>
+    <criterion id="AC-3">Business Logic Encapsulation: Loan number generation, monthly payment calculation, and maturity date calculation moved from API routes to service methods with JSDoc documentation</criterion>
+    <criterion id="AC-4">API Routes Refactored to Use Service: /src/app/api/loans/route.ts and /src/app/api/borrowers/route.ts refactored to call LoanService methods, becoming thin wrappers</criterion>
+    <criterion id="AC-5">Comprehensive Unit Tests: tests/services/LoanService.test.ts created with Vitest, ≥90% coverage on LoanService methods, includes edge cases</criterion>
+    <criterion id="AC-6">Integration Tests: tests/integration/LoanService.integration.test.ts created with real database (PGlite), tests full CRUD lifecycle with actual Drizzle schema</criterion>
+    <criterion id="AC-7">Type Safety &amp; Error Handling: Service methods throw typed errors (LoanNotFoundError, ValidationError), Zod schemas used for input validation, TypeScript strict mode compliance</criterion>
+    <criterion id="AC-8">Documentation &amp; Dev Experience: README.md in /src/services/ explaining service layer pattern, JSDoc comments on all public methods, example usage snippets</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>/docs/solution-architecture.md</path>
+        <title>Solution Architecture - Service Layer Pattern</title>
+        <section>Architecture Pattern Decision (lines 402-466)</section>
+        <snippet>Enhanced Modular Monolith with Service Layer: Next.js App → API Routes → Services → Data Access (Drizzle ORM) → PostgreSQL. Service layer in /src/services/ for business logic isolation.</snippet>
+        <relevance>Defines the architectural pattern this story implements</relevance>
+      </doc>
+      <doc>
+        <path>/docs/solution-architecture.md</path>
+        <title>Solution Architecture - Component Boundaries</title>
+        <section>Service Layer Components (lines 726-834)</section>
+        <snippet>15 services defined including LoanService (workflow, state machine, calculations), UnderwritingService, AmortizationService, PaymentService, etc. Shows service dependencies and component boundaries.</snippet>
+        <relevance>Shows where LoanService fits in the overall architecture and its dependencies</relevance>
+      </doc>
+      <doc>
+        <path>/docs/solution-architecture.md</path>
+        <title>Solution Architecture - Project Structure</title>
+        <section>Unified Project Structure (lines 1427-1461)</section>
+        <snippet>/src/services/ directory structure with LoanService.ts, UnderwritingService.ts, AmortizationService.ts, etc. Shows how services integrate with existing /src/app/api/, /src/lib/, and /src/models/ directories.</snippet>
+        <relevance>Defines where service files should be created in the project structure</relevance>
+      </doc>
+      <doc>
+        <path>/docs/PRD.md</path>
+        <title>Product Requirements Document - Loan Lifecycle Management</title>
+        <section>Epic 3: Complete Loan Lifecycle</section>
+        <snippet>Loan lifecycle states: Application → Underwriting → Approved → Funded → Active → Paid Off / Defaulted / Foreclosed. Includes payment processing, amortization schedules, and payoff calculations.</snippet>
+        <relevance>Defines the business domain that LoanService will orchestrate</relevance>
+      </doc>
+      <doc>
+        <path>/reports/deep-dive-analysis.md</path>
+        <title>Deep Dive Analysis - Business Logic Gap</title>
+        <section>Business Logic Assessment</section>
+        <snippet>Business Logic: 4.0/10 (missing workflows, state machines). Current architecture has business logic mixed into API routes, needs service layer abstraction for maintainability and testability.</snippet>
+        <relevance>Identifies the problem this story solves</relevance>
+      </doc>
+    </docs>
+    
+    <code>
+      <artifact>
+        <path>/src/app/api/loans/route.ts</path>
+        <kind>API Route Handler</kind>
+        <symbol>GET, POST</symbol>
+        <lines>1-144</lines>
+        <reason>Current loans API route contains business logic inline (loan number generation lines 92-94, monthly payment calculation lines 96-103, maturity date calculation lines 105-110). This logic needs to be extracted to LoanService.</reason>
+      </artifact>
+      <artifact>
+        <path>/src/app/api/loans/[id]/route.ts</path>
+        <kind>API Route Handler</kind>
+        <symbol>GET, PATCH, DELETE</symbol>
+        <lines>1-67</lines>
+        <reason>Individual loan API route that will need to be refactored to use LoanService.getLoanById(), updateLoan(), deleteLoan() methods.</reason>
+      </artifact>
+      <artifact>
+        <path>/src/app/api/borrowers/route.ts</path>
+        <kind>API Route Handler</kind>
+        <symbol>GET, POST</symbol>
+        <lines>1-114</lines>
+        <reason>Borrowers route queries loans table (lines 54-63) which should be delegated to LoanService for consistency and reusability.</reason>
+      </artifact>
+      <artifact>
+        <path>/src/models/Schema.ts</path>
+        <kind>Database Schema</kind>
+        <symbol>loans, borrowers, properties</symbol>
+        <lines>all</lines>
+        <reason>Drizzle ORM schema definition that LoanService will use for database operations. Contains loans table with foreign keys to borrowers and properties.</reason>
+      </artifact>
+      <artifact>
+        <path>/src/libs/DB.ts</path>
+        <kind>Database Connection</kind>
+        <symbol>db</symbol>
+        <lines>all</lines>
+        <reason>Drizzle database instance that LoanService will import and use for all database operations.</reason>
+      </artifact>
+      <artifact>
+        <path>/src/lib/loan-calculator.ts</path>
+        <kind>Utility Functions</kind>
+        <symbol>calculateMonthlyPayment, calculateMaturityDate</symbol>
+        <lines>all</lines>
+        <reason>Existing loan calculation utilities that should be integrated into LoanService methods or called by them.</reason>
+      </artifact>
+      <artifact>
+        <path>/src/validations/LoanValidation.ts</path>
+        <kind>Validation Schema</kind>
+        <symbol>loanSchema, generateLoanNumber</symbol>
+        <lines>all</lines>
+        <reason>Zod validation schema and loan number generation function. generateLoanNumber() should be moved to LoanService, loanSchema used for input validation in service methods.</reason>
+      </artifact>
+    </code>
+    
+    <dependencies>
+      <node>
+        <package name="drizzle-orm" version="^0.44.6">Core ORM for database operations</package>
+        <package name="postgres" version="^3.4.7">PostgreSQL client</package>
+        <package name="zod" version="^4.1.12">Schema validation</package>
+        <package name="vitest" version="^3.2.4">Testing framework</package>
+        <package name="@electric-sql/pglite-socket" version="^0.0.15">In-memory PostgreSQL for integration tests</package>
+        <package name="@vitest/coverage-v8" version="^3.2.4">Code coverage reporting</package>
+        <package name="typescript" version="^5.9.3">Type safety</package>
+      </node>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint id="ARCH-1">Follow Enhanced Modular Monolith pattern: API Routes → Services → Data Access (Drizzle) → PostgreSQL. Services must be standalone classes independent of Next.js HTTP layer.</constraint>
+    <constraint id="ARCH-2">No premature abstraction: Start with single LoanService class, don't create base classes or over-engineer. Boring technology first.</constraint>
+    <constraint id="ARCH-3">Incremental migration: Refactor API routes one at a time to use service. Don't break existing functionality during transition.</constraint>
+    <constraint id="TS-1">TypeScript strict mode compliance: Zero 'any' types, full type safety, no type assertions without justification.</constraint>
+    <constraint id="TEST-1">Test-first development: Write tests alongside implementation. Target ≥90% code coverage on service methods.</constraint>
+    <constraint id="TEST-2">Testing strategy: Unit tests with mocked Drizzle database, integration tests with PGlite (in-memory PostgreSQL) using real schema.</constraint>
+    <constraint id="ERR-1">Error handling pattern: Custom error classes (LoanNotFoundError, ValidationError, DatabaseError) with proper error propagation to API layer.</constraint>
+    <constraint id="VAL-1">Input validation: Use Zod schemas to validate all inputs before database operations. Fail fast with clear validation error messages.</constraint>
+    <constraint id="DOC-1">Documentation requirement: JSDoc comments on all public service methods with examples. README.md explaining service layer pattern and usage.</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>LoanService</name>
+      <kind>Class</kind>
+      <signature>
+        class LoanService {
+          constructor(db: DrizzleDB);
+          getLoans(filters?: LoanFilters): Promise&lt;Loan[]&gt;;
+          getLoanById(id: number): Promise&lt;LoanWithRelations&gt;;
+          createLoan(data: LoanCreate): Promise&lt;Loan&gt;;
+          updateLoan(id: number, data: LoanUpdate): Promise&lt;Loan&gt;;
+          deleteLoan(id: number): Promise&lt;void&gt;;
+          generateLoanNumber(): string;
+          calculateMonthlyPayment(principal: number, rate: number, term: number): number;
+          calculateMaturityDate(originationDate: Date, termMonths: number): Date;
+        }
+      </signature>
+      <path>/src/services/LoanService.ts</path>
+      <notes>Core service interface that API routes will call. All methods should be async except utility calculation methods.</notes>
+    </interface>
+    
+    <interface>
+      <name>Drizzle Query Builder</name>
+      <kind>ORM API</kind>
+      <signature>
+        db.select().from(table).where(condition).leftJoin(table, condition);
+        db.insert(table).values(data).returning();
+        db.update(table).set(data).where(condition).returning();
+        db.delete(table).where(condition);
+      </signature>
+      <path>drizzle-orm package</path>
+      <notes>Drizzle ORM query builder API that LoanService will use. Import from @/libs/DB and @/models/Schema.</notes>
+    </interface>
+    
+    <interface>
+      <name>Zod Validation</name>
+      <kind>Validation Library</kind>
+      <signature>
+        loanSchema.safeParse(data) → { success: boolean, data?: T, error?: ZodError };
+      </signature>
+      <path>@/validations/LoanValidation</path>
+      <notes>Use safeParse for validation in service methods. Check success flag and throw ValidationError if validation fails.</notes>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Testing Framework: Vitest (configured in vitest.config.mts). Use describe/it/expect syntax. Unit tests mock external dependencies (database), integration tests use PGlite in-memory PostgreSQL with real Drizzle schema. Target ≥90% code coverage on service methods. Tests should cover happy path, error cases, edge cases (null inputs, invalid data, boundary conditions). Use beforeEach for test setup, afterEach for cleanup. Follow AAA pattern: Arrange → Act → Assert.
+    </standards>
+    
+    <locations>
+      /tests/services/ - Unit tests for service layer
+      /tests/integration/ - Integration tests with real database
+    </locations>
+    
+    <ideas>
+      <test id="AC-1">Test LoanService instantiation and method signature existence</test>
+      <test id="AC-2">Test getLoans() returns array of loans with proper filtering; test getLoanById() returns single loan with borrower/property joined; test createLoan() inserts and returns new loan; test updateLoan() modifies and returns loan; test deleteLoan() soft deletes loan</test>
+      <test id="AC-3">Test generateLoanNumber() generates unique loan numbers matching pattern L-XXXXXX; test calculateMonthlyPayment() returns correct payment for various principal/rate/term combinations; test calculateMaturityDate() correctly adds months to origination date</test>
+      <test id="AC-4">Test API routes call LoanService methods correctly (integration test or E2E test)</test>
+      <test id="AC-5">Unit tests with mocked Drizzle database: mock db.select().from().where() chains; verify service methods call correct database methods; test error handling when database throws</test>
+      <test id="AC-6">Integration tests with PGlite: create test loan → verify in database → update loan → verify changes → delete loan → verify deletion; test with borrower and property relationships</test>
+      <test id="AC-7">Test custom errors thrown: LoanNotFoundError when loan doesn't exist, ValidationError when Zod validation fails, DatabaseError when database operation fails; test error messages are clear and actionable</test>
+      <test id="AC-8">N/A - documentation verified manually</test>
+    </ideas>
+  </tests>
+</story-context>
+

@@ -1,5 +1,6 @@
-import { ClerkProvider } from '@clerk/nextjs';
+// import { ClerkProvider } from '@clerk/nextjs';
 import { setRequestLocale } from 'next-intl/server';
+import { ClerkProviderWrapper } from '@/components/providers/clerk-provider';
 import { routing } from '@/libs/I18nRouting';
 import { ClerkLocalizations } from '@/utils/AppConfig';
 
@@ -24,7 +25,7 @@ export default async function AuthLayout(props: {
   }
 
   return (
-    <ClerkProvider
+    <ClerkProviderWrapper
       appearance={{
         cssLayerName: 'clerk', // Ensure Clerk is compatible with Tailwind CSS v4
       }}
@@ -36,6 +37,6 @@ export default async function AuthLayout(props: {
       afterSignOutUrl={afterSignOutUrl}
     >
       {props.children}
-    </ClerkProvider>
+    </ClerkProviderWrapper>
   );
 }
