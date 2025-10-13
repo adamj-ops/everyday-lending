@@ -400,4 +400,3 @@ async processPayment(loanId: number, amount: number, method: string) {
 **Story Points:** 8 (Estimated)
 **Epic:** 2.0 (Payment Processing Platform Foundation)
 **Priority:** P0 (Blocker for payment automation features)
-

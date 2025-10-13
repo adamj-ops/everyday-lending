@@ -1,128 +1,177 @@
+/**
+ * Individual Payment API Routes
+ *
+ * GET /api/payments/[id] - Get payment by ID
+ * PATCH /api/payments/[id] - Update payment
+ * DELETE /api/payments/[id] - Delete payment
+ */
+
 import type { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/libs/DB';
-import { borrowers, loans, payments } from '@/models/Schema';
-import { paymentUpdateSchema } from '@/validations/PaymentValidation';
+import { payments } from '@/models/Schema';
+import { LoanService } from '@/services/LoanService';
+import { PaymentService } from '@/services/PaymentService';
+import { PlaidService } from '@/services/PlaidService';
+import { StripeService } from '@/services/StripeService';
 
+// Validation schemas
+const UpdatePaymentSchema = z.object({
+  notes: z.string().optional(),
+  paymentMethod: z.enum(['ach', 'wire', 'check', 'credit_card']).optional(),
+});
+
+// Initialize services
+const loanService = new LoanService();
+const stripeService = new StripeService();
+const plaidService = new PlaidService();
+const paymentService = new PaymentService(loanService, stripeService, plaidService);
+
+/**
+ * GET /api/payments/[id]
+ * Get payment by ID
+ */
 export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  request: NextRequest,
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = await params;
+    const paymentId = Number.parseInt(params.id);
 
-    const result = await db
-      .select({
-        id: payments.id,
-        loanId: payments.loanId,
-        paymentDate: payments.paymentDate,
-        amount: payments.amount,
-        principalAmount: payments.principalAmount,
-        interestAmount: payments.interestAmount,
-        feesAmount: payments.feesAmount,
-        lateFeeAmount: payments.lateFeeAmount,
-        paymentType: payments.paymentType,
-        paymentMethod: payments.paymentMethod,
-        referenceNumber: payments.referenceNumber,
-        notes: payments.notes,
-        createdAt: payments.createdAt,
-        updatedAt: payments.updatedAt,
-        loan: {
-          id: loans.id,
-          loanNumber: loans.loanNumber,
-          loanAmount: loans.loanAmount,
-          currentBalance: loans.currentBalance,
-          status: loans.status,
-        },
-        borrower: {
-          id: borrowers.id,
-          firstName: borrowers.firstName,
-          lastName: borrowers.lastName,
-          email: borrowers.email,
-        },
-      })
-      .from(payments)
-      .leftJoin(loans, eq(payments.loanId, loans.id))
-      .leftJoin(borrowers, eq(loans.borrowerId, borrowers.id))
-      .where(eq(payments.id, Number.parseInt(id)))
-      .limit(1);
-
-    if (!result[0]) {
-      return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
+    if (isNaN(paymentId)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid payment ID' },
+        { status: 400 },
+      );
     }
 
-    return NextResponse.json(result[0]);
+    const payment = await paymentService.getPaymentById(paymentId);
+
+    if (!payment) {
+      return NextResponse.json(
+        { success: false, error: 'Payment not found' },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: payment,
+    });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch payment' }, { status: 500 });
+    console.error('GET /api/payments/[id] failed:', error);
+
+    return NextResponse.json(
+      { success: false, error: 'Failed to retrieve payment' },
+      { status: 500 },
+    );
   }
 }
 
+/**
+ * PATCH /api/payments/[id]
+ * Update payment
+ */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = await params;
+    const paymentId = Number.parseInt(params.id);
+
+    if (isNaN(paymentId)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid payment ID' },
+        { status: 400 },
+      );
+    }
+
     const body = await request.json();
-    const validated = paymentUpdateSchema.parse(body);
+    const validatedData = UpdatePaymentSchema.parse(body);
 
     // Check if payment exists
-    const existingPayment = await db
-      .select()
-      .from(payments)
-      .where(eq(payments.id, Number.parseInt(id)))
-      .limit(1);
-
-    if (!existingPayment[0]) {
-      return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
+    const existingPayment = await paymentService.getPaymentById(paymentId);
+    if (!existingPayment) {
+      return NextResponse.json(
+        { success: false, error: 'Payment not found' },
+        { status: 404 },
+      );
     }
 
     // Update payment
-    const updatedPayment = await db
-      .update(payments)
+    const [updatedPayment] = await db.update(payments)
       .set({
-        ...validated,
-        paymentDate: validated.paymentDate ? new Date(validated.paymentDate) : undefined,
+        ...validatedData,
         updatedAt: new Date(),
       })
-      .where(eq(payments.id, Number.parseInt(id)))
+      .where(eq(payments.id, paymentId))
       .returning();
 
-    return NextResponse.json(updatedPayment[0]);
+    return NextResponse.json({
+      success: true,
+      data: updatedPayment,
+      message: 'Payment updated successfully',
+    });
   } catch (error) {
-    if (error instanceof Error && error.message.includes('validation')) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+    console.error('PATCH /api/payments/[id] failed:', error);
+
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid request data', details: error.errors },
+        { status: 400 },
+      );
     }
-    return NextResponse.json({ error: 'Failed to update payment' }, { status: 500 });
+
+    return NextResponse.json(
+      { success: false, error: 'Failed to update payment' },
+      { status: 500 },
+    );
   }
 }
 
+/**
+ * DELETE /api/payments/[id]
+ * Delete payment
+ */
 export async function DELETE(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  request: NextRequest,
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = await params;
+    const paymentId = Number.parseInt(params.id);
+
+    if (isNaN(paymentId)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid payment ID' },
+        { status: 400 },
+      );
+    }
 
     // Check if payment exists
-    const existingPayment = await db
-      .select()
-      .from(payments)
-      .where(eq(payments.id, Number.parseInt(id)))
-      .limit(1);
-
-    if (!existingPayment[0]) {
-      return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
+    const existingPayment = await paymentService.getPaymentById(paymentId);
+    if (!existingPayment) {
+      return NextResponse.json(
+        { success: false, error: 'Payment not found' },
+        { status: 404 },
+      );
     }
 
     // Delete payment
-    await db
-      .delete(payments)
-      .where(eq(payments.id, Number.parseInt(id)));
+    await db.delete(payments)
+      .where(eq(payments.id, paymentId));
 
-    return NextResponse.json({ message: 'Payment deleted successfully' });
+    return NextResponse.json({
+      success: true,
+      message: 'Payment deleted successfully',
+    });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete payment' }, { status: 500 });
+    console.error('DELETE /api/payments/[id] failed:', error);
+
+    return NextResponse.json(
+      { success: false, error: 'Failed to delete payment' },
+      { status: 500 },
+    );
   }
 }

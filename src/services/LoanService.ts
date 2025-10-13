@@ -1,48 +1,48 @@
 /**
  * LoanService - Core business logic for loan lifecycle management
- * 
+ *
  * Responsibilities:
  * - Loan creation and validation
  * - State transitions (application → approved → funded → servicing → paid-off)
  * - Payment calculations and scheduling
  * - Draw request processing
  * - Compliance and audit logging
- * 
+ *
  * Architecture: Enhanced Modular Monolith Service Layer
  * Dependencies: Supabase (DB), XState (workflows), Redis (cache)
  */
 
-import { createClient } from '@supabase/supabase-js'
-import { createMachine } from 'xstate'
+import { eq } from 'drizzle-orm';
+import { createMachine } from 'xstate';
+import { db } from '@/libs/DB';
+import { loans } from '@/models/Schema';
 
 // Types (will be imported from shared types later)
-interface Loan {
-  id: string
-  borrowerId: string
-  lenderId: string
-  propertyId: string
-  amount: number
-  interestRate: number
-  termMonths: number
-  status: 'application' | 'underwriting' | 'approved' | 'funded' | 'servicing' | 'paid-off' | 'defaulted'
-  createdAt: Date
-  updatedAt: Date
-}
+type Loan = {
+  id: string;
+  borrowerId: string;
+  lenderId: string;
+  propertyId: string;
+  amount: number;
+  interestRate: number;
+  termMonths: number;
+  status: 'application' | 'underwriting' | 'approved' | 'funded' | 'servicing' | 'paid-off' | 'defaulted';
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-interface CreateLoanRequest {
-  borrowerId: string
-  lenderId: string
-  propertyId: string
-  amount: number
-  interestRate: number
-  termMonths: number
-}
+type CreateLoanRequest = {
+  borrowerId: string;
+  lenderId: string;
+  propertyId: string;
+  amount: number;
+  interestRate: number;
+  termMonths: number;
+};
 
 export class LoanService {
-  // private supabase: ReturnType<typeof createClient>
-
-  constructor(_supabaseClient: ReturnType<typeof createClient>) {
-    // this.supabase = supabaseClient
+  constructor() {
+    // Service initialized
   }
 
   /**
@@ -55,12 +55,29 @@ export class LoanService {
     // 3. Insert loan record
     // 4. Trigger state machine transition
     // 5. Log audit trail
-    
-    throw new Error('LoanService.createLoan not yet implemented')
+
+    throw new Error('LoanService.createLoan not yet implemented');
   }
 
   /**
    * Get loan by ID with full details
+   */
+  async getLoanById(loanId: number): Promise<any | null> {
+    try {
+      const [loan] = await db.select()
+        .from(loans)
+        .where(eq(loans.id, loanId))
+        .limit(1);
+
+      return loan || null;
+    } catch (error) {
+      console.error('Failed to get loan by ID:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get loan by ID with full details (legacy method)
    */
   async getLoan(_loanId: string): Promise<Loan | null> {
     // TODO: Implement loan retrieval
@@ -68,8 +85,8 @@ export class LoanService {
     // 2. Include payment history
     // 3. Include draw requests
     // 4. Cache result in Redis
-    
-    throw new Error('LoanService.getLoan not yet implemented')
+
+    throw new Error('LoanService.getLoan not yet implemented');
   }
 
   /**
@@ -81,8 +98,8 @@ export class LoanService {
     // 2. Update database
     // 3. Trigger side effects (notifications, payments, etc.)
     // 4. Log audit trail
-    
-    throw new Error('LoanService.updateLoanStatus not yet implemented')
+
+    throw new Error('LoanService.updateLoanStatus not yet implemented');
   }
 
   /**
@@ -91,8 +108,8 @@ export class LoanService {
   calculateMonthlyPayment(_amount: number, _interestRate: number, _termMonths: number): number {
     // TODO: Implement payment calculation
     // Use standard loan payment formula
-    
-    throw new Error('LoanService.calculateMonthlyPayment not yet implemented')
+
+    throw new Error('LoanService.calculateMonthlyPayment not yet implemented');
   }
 
   /**
@@ -100,8 +117,8 @@ export class LoanService {
    */
   generatePaymentSchedule(_loan: Loan): Array<{ date: Date; amount: number; principal: number; interest: number }> {
     // TODO: Implement payment schedule generation
-    
-    throw new Error('LoanService.generatePaymentSchedule not yet implemented')
+
+    throw new Error('LoanService.generatePaymentSchedule not yet implemented');
   }
 }
 
@@ -110,41 +127,41 @@ export const loanLifecycleMachine = createMachine({
   id: 'loanLifecycle',
   initial: 'application',
   states: {
-    application: {
+    'application': {
       on: {
-        SUBMIT: 'underwriting'
-      }
+        SUBMIT: 'underwriting',
+      },
     },
-    underwriting: {
+    'underwriting': {
       on: {
         APPROVE: 'approved',
-        REJECT: 'rejected'
-      }
+        REJECT: 'rejected',
+      },
     },
-    approved: {
+    'approved': {
       on: {
-        FUND: 'funded'
-      }
+        FUND: 'funded',
+      },
     },
-    funded: {
+    'funded': {
       on: {
-        START_SERVICING: 'servicing'
-      }
+        START_SERVICING: 'servicing',
+      },
     },
-    servicing: {
+    'servicing': {
       on: {
         PAY_OFF: 'paid-off',
-        DEFAULT: 'defaulted'
-      }
+        DEFAULT: 'defaulted',
+      },
     },
     'paid-off': {
-      type: 'final'
+      type: 'final',
     },
-    defaulted: {
-      type: 'final'
+    'defaulted': {
+      type: 'final',
     },
-    rejected: {
-      type: 'final'
-    }
-  }
-})
+    'rejected': {
+      type: 'final',
+    },
+  },
+});
