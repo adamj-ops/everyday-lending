@@ -41,10 +41,10 @@ export default async function middleware(
   // Verify the request with Arcjet
   // Use `process.env` instead of Env to reduce bundle size in middleware
   const arcjetKey = process.env.ARCJET_KEY;
-  const hasValidArcjetKey = arcjetKey && 
-    arcjetKey !== 'ajkey_demo_key_for_development' &&
-    arcjetKey.startsWith('ajkey_');
-    
+  const hasValidArcjetKey = arcjetKey
+    && arcjetKey !== 'ajkey_demo_key_for_development'
+    && arcjetKey.startsWith('ajkey_');
+
   if (hasValidArcjetKey) {
     const decision = await aj.protect(request);
 
@@ -55,9 +55,9 @@ export default async function middleware(
 
   // Check if Clerk is properly configured
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-  const hasValidClerkKey = publishableKey && 
-    publishableKey !== 'pk_test_demo_key_for_development' &&
-    publishableKey.startsWith('pk_');
+  const hasValidClerkKey = publishableKey
+    && publishableKey !== 'pk_test_demo_key_for_development'
+    && publishableKey.startsWith('pk_');
 
   // Clerk keyless mode doesn't work with i18n, this is why we need to run the middleware conditionally
   if (
@@ -69,9 +69,11 @@ export default async function middleware(
 
         const signInUrl = new URL(`${locale}/sign-in`, req.url);
 
-        await auth.protect({
-          unauthenticatedUrl: signInUrl.toString(),
-        });
+        const { userId } = await auth();
+        
+        if (!userId) {
+          return NextResponse.redirect(signInUrl);
+        }
       }
 
       return handleI18nRouting(req);
