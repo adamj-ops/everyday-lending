@@ -50,56 +50,62 @@ export default async function middleware(
   const hasValidSupabaseConfig = supabaseUrl && supabaseAnonKey;
 
   if (hasValidSupabaseConfig) {
-    let response = NextResponse.next({ request });
+    try {
+      const response = NextResponse.next({ request });
 
-    // Create Supabase client
-    const supabase = createServerClient(
-      supabaseUrl,
-      supabaseAnonKey,
-      {
-        cookies: {
-          getAll() {
-            return request.cookies.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              request.cookies.set(name, value);
-              response.cookies.set(name, value, options);
-            });
+      // Create Supabase client
+      const supabase = createServerClient(
+        supabaseUrl,
+        supabaseAnonKey,
+        {
+          cookies: {
+            getAll() {
+              return request.cookies.getAll();
+            },
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value, options }) => {
+                request.cookies.set(name, value);
+                response.cookies.set(name, value, options);
+              });
+            },
           },
         },
+      );
+
+      // Get user session
+      const { data: { user } } = await supabase.auth.getUser();
+
+      const pathname = request.nextUrl.pathname;
+      const locale = pathname.match(/^\/([^/]+)/)?.[1] || '';
+
+      // Check if route is protected
+      const isProtected = protectedRoutes.some(route =>
+        pathname.includes(route),
+      );
+
+      const isAuthPage = authRoutes.some(route =>
+        pathname.includes(route),
+      );
+
+      // Redirect to sign-in if accessing protected route without auth
+      if (isProtected && !user) {
+        const signInUrl = new URL(`/${locale}/sign-in`, request.url);
+        return NextResponse.redirect(signInUrl);
       }
-    );
 
-    // Get user session
-    const { data: { user } } = await supabase.auth.getUser();
+      // Redirect to dashboard if accessing auth pages while authenticated
+      if (isAuthPage && user) {
+        const dashboardUrl = new URL(`/${locale}/dashboard`, request.url);
+        return NextResponse.redirect(dashboardUrl);
+      }
 
-    const pathname = request.nextUrl.pathname;
-    const locale = pathname.match(/^\/([^/]+)/)?.[1] || '';
-    
-    // Check if route is protected
-    const isProtected = protectedRoutes.some(route => 
-      pathname.includes(route)
-    );
-    
-    const isAuthPage = authRoutes.some(route => 
-      pathname.includes(route)
-    );
-
-    // Redirect to sign-in if accessing protected route without auth
-    if (isProtected && !user) {
-      const signInUrl = new URL(`/${locale}/sign-in`, request.url);
-      return NextResponse.redirect(signInUrl);
+      // Apply i18n routing
+      return handleI18nRouting(request);
+    } catch (error) {
+      console.error('Supabase middleware error:', error);
+      // Fall back to i18n routing only if Supabase fails
+      return handleI18nRouting(request);
     }
-
-    // Redirect to dashboard if accessing auth pages while authenticated
-    if (isAuthPage && user) {
-      const dashboardUrl = new URL(`/${locale}/dashboard`, request.url);
-      return NextResponse.redirect(dashboardUrl);
-    }
-
-    // Apply i18n routing
-    return handleI18nRouting(request);
   }
 
   return handleI18nRouting(request);
