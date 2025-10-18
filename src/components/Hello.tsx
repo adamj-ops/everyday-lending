@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
+import { createServerAuthClient } from '@/lib/supabase-server';
 import { Sponsors } from './Sponsors';
-import { createServerAuthClient } from '@/lib/supabase-auth';
 
 export const Hello = async () => {
   const t = await getTranslations('Dashboard');

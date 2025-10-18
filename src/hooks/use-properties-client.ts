@@ -1,23 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
 
-export type Property = {
-  id: number;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  propertyType: string | null;
-  bedrooms: number | null;
-  bathrooms: string | null;
-  squareFeet: number | null;
-  lotSize: string | null;
-  yearBuilt: number | null;
-  estimatedValue: string | null;
-  purchasePrice: string | null;
-  rehabBudget: string | null;
-  afterRepairValue: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+import type { Property, PropertyCreateData, PropertyUpdateData } from '@/services/frontend/PropertyService';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  FrontendPropertyService,
+
+} from '@/services/frontend/PropertyService';
+
+// Re-export types for backward compatibility
+export type { Property, PropertyCreateData, PropertyUpdateData };
+
+// Query keys
+const QUERY_KEYS = {
+  properties: ['properties'] as const,
+  property: (id: number) => ['property', id] as const,
 };
 
 /**
@@ -25,21 +21,9 @@ export type Property = {
  */
 export function useProperties(searchQuery: string = '') {
   return useQuery<Property[]>({
-    queryKey: ['properties', searchQuery],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (searchQuery) {
-        params.append('search', searchQuery);
-      }
-
-      const response = await fetch(`/api/properties?${params.toString()}`);
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch properties');
-      }
-
-      return response.json();
-    },
+    queryKey: [...QUERY_KEYS.properties, searchQuery],
+    queryFn: () => FrontendPropertyService.getProperties(searchQuery),
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 
@@ -47,17 +31,53 @@ export function useProperties(searchQuery: string = '') {
  * Fetch a single property by ID
  */
 export function useProperty(id: number) {
-  return useQuery<Property>({
-    queryKey: ['property', id],
-    queryFn: async () => {
-      const response = await fetch(`/api/properties/${id}`);
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch property');
-      }
-
-      return response.json();
-    },
+  return useQuery<Property | null>({
+    queryKey: QUERY_KEYS.property(id),
+    queryFn: () => FrontendPropertyService.getPropertyById(id),
     enabled: id > 0,
+  });
+}
+
+/**
+ * Create property mutation
+ */
+export function useCreateProperty() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: PropertyCreateData) => FrontendPropertyService.createProperty(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.properties });
+    },
+  });
+}
+
+/**
+ * Update property mutation
+ */
+export function useUpdateProperty() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: PropertyUpdateData }) =>
+      FrontendPropertyService.updateProperty(id, data),
+    onSuccess: (updatedProperty, { id }) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.properties });
+      queryClient.setQueryData(QUERY_KEYS.property(id), updatedProperty);
+    },
+  });
+}
+
+/**
+ * Delete property mutation
+ */
+export function useDeleteProperty() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => FrontendPropertyService.deleteProperty(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.properties });
+    },
   });
 }

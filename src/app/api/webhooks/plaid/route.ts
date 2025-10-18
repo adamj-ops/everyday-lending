@@ -6,16 +6,6 @@
 
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { LoanService } from '@/services/LoanService';
-import { PaymentService } from '@/services/PaymentService';
-import { PlaidService } from '@/services/PlaidService';
-import { StripeService } from '@/services/StripeService';
-
-// Initialize services
-const loanService = new LoanService();
-const stripeService = new StripeService();
-const plaidService = new PlaidService();
-const paymentService = new PaymentService(loanService, stripeService, plaidService);
 
 /**
  * POST /api/webhooks/plaid
@@ -74,7 +64,7 @@ export async function POST(request: NextRequest) {
 /**
  * Handle transfer-related webhooks
  */
-async function handleTransferWebhook(webhookCode: string, transferId: string, body: any) {
+async function handleTransferWebhook(webhookCode: string, transferId: string, _body: any) {
   switch (webhookCode) {
     case 'TRANSFER_STATUS_UPDATED':
       console.log(`Transfer ${transferId} status updated`);
@@ -99,7 +89,7 @@ async function handleTransferWebhook(webhookCode: string, transferId: string, bo
 /**
  * Handle item-related webhooks
  */
-async function handleItemWebhook(webhookCode: string, itemId: string, body: any) {
+async function handleItemWebhook(webhookCode: string, itemId: string, _body: any) {
   switch (webhookCode) {
     case 'ITEM_LOGIN_REQUIRED':
       console.log(`Item ${itemId} requires re-authentication`);
@@ -119,7 +109,7 @@ async function handleItemWebhook(webhookCode: string, itemId: string, body: any)
 /**
  * Handle account-related webhooks
  */
-async function handleAccountWebhook(webhookCode: string, accountId: string, body: any) {
+async function handleAccountWebhook(webhookCode: string, accountId: string, _body: any) {
   switch (webhookCode) {
     case 'ACCOUNT_BALANCE_UPDATED':
       console.log(`Account ${accountId} balance updated`);

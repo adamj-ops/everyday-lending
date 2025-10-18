@@ -2,10 +2,13 @@ import type { Metadata } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { Toaster as SonnerToaster } from 'sonner';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
+import { CommandPalette } from '@/components/CommandPalette';
 import { DemoBadge } from '@/components/DemoBadge';
 import { QueryProvider } from '@/components/providers/query-provider';
-import { Toaster } from '@/components/ui/toaster';
+import { ShortcutHelpModal } from '@/components/ShortcutHelpModal';
+import { ShortcutProvider } from '@/contexts/ShortcutContext';
 import { routing } from '@/libs/I18nRouting';
 import '@/styles/global.css';
 
@@ -55,11 +58,15 @@ export default async function RootLayout(props: {
       <body>
         <QueryProvider>
           <NextIntlClientProvider>
-            <PostHogProvider>
-              {props.children}
-            </PostHogProvider>
-            <DemoBadge />
-            <Toaster />
+            <ShortcutProvider>
+              <PostHogProvider>
+                {props.children}
+              </PostHogProvider>
+              <DemoBadge />
+              <SonnerToaster position="top-right" richColors closeButton />
+              <CommandPalette />
+              <ShortcutHelpModal />
+            </ShortcutProvider>
           </NextIntlClientProvider>
         </QueryProvider>
       </body>

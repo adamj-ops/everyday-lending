@@ -32,8 +32,9 @@ export function PaymentsTable() {
   const limit = 10;
 
   const { data: paymentsData, isLoading } = usePayments(searchTerm, statusFilter, page, limit);
-  const payments = paymentsData?.payments || [];
-  const pagination = paymentsData?.pagination;
+  const payments = paymentsData?.data || [];
+  const total = paymentsData?.total || 0;
+  const pagination = { total, page, limit, totalPages: Math.ceil(total / limit) };
 
   const getStatusIcon = (payment: any) => {
     // Determine status based on payment date and other factors

@@ -1,41 +1,41 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase-auth'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import Link from 'next/link'
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { createClient } from '@/lib/supabase-client';
 
-interface SignInFormProps {
-  locale: string
-}
+type SignInFormProps = {
+  locale: string;
+};
 
 export function SignInForm({ locale }: SignInFormProps) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
-  const supabase = createClient()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const supabase = createClient();
 
   async function handleSignIn(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
-    })
+    });
 
     if (error) {
-      setError(error.message)
-      setLoading(false)
+      setError(error.message);
+      setLoading(false);
     } else {
-      router.push(`/${locale}/dashboard`)
-      router.refresh()
+      router.push(`/${locale}/dashboard`);
+      router.refresh();
     }
   }
 
@@ -62,7 +62,7 @@ export function SignInForm({ locale }: SignInFormProps) {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               required
               placeholder="you@example.com"
             />
@@ -74,7 +74,7 @@ export function SignInForm({ locale }: SignInFormProps) {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               required
               placeholder="••••••••"
             />
@@ -86,12 +86,13 @@ export function SignInForm({ locale }: SignInFormProps) {
         </form>
 
         <p className="text-center text-sm text-gray-600">
-          Don't have an account?{' '}
+          Don't have an account?
+          {' '}
           <Link href={`/${locale}/sign-up`} className="font-medium text-blue-600 hover:underline">
             Sign up
           </Link>
         </p>
       </div>
     </div>
-  )
+  );
 }

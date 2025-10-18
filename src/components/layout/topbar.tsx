@@ -11,8 +11,8 @@ import {
   Settings,
   User,
 } from 'lucide-react';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/use-auth';
-import { createClient } from '@/lib/supabase-auth';
+import { createClient } from '@/lib/supabase-client';
 
 type TopbarProps = {
   title?: string;
@@ -144,7 +144,7 @@ export function Topbar({
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               className="text-destructive focus:text-destructive"
               onClick={handleSignOut}
             >

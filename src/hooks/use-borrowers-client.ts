@@ -1,66 +1,15 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  FrontendBorrowerService,
+  type BorrowerWithLoans,
+  type BorrowerUpdateData,
+  type BorrowerCreateData,
+} from '@/services/frontend/BorrowerService';
 
-// Types
-export type BorrowerWithLoans = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string | null;
-  address: string | null;
-  city: string | null;
-  state: string | null;
-  zipCode: string | null;
-  ssn: string | null;
-  dateOfBirth: Date | null;
-  creditScore: number | null;
-  employmentStatus: string | null;
-  annualIncome: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  loans: {
-    id: number;
-    loanNumber: string;
-    loanAmount: string;
-    status: 'active' | 'paid_off' | 'defaulted' | 'foreclosed' | 'cancelled';
-    currentBalance: string;
-  }[];
-  activeLoansCount: number;
-};
-
-export type BorrowerUpdateData = {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string | null;
-  address?: string | null;
-  city?: string | null;
-  state?: string | null;
-  zipCode?: string | null;
-  ssn?: string | null;
-  dateOfBirth?: Date | null;
-  creditScore?: number | null;
-  employmentStatus?: string | null;
-  annualIncome?: string | null;
-};
-
-export type BorrowerCreateData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  ssn?: string;
-  dateOfBirth?: Date;
-  creditScore?: number;
-  employmentStatus?: string;
-  annualIncome?: string;
-};
+// Re-export types for backward compatibility
+export type { BorrowerWithLoans, BorrowerUpdateData, BorrowerCreateData };
 
 // Query keys
 const QUERY_KEYS = {
@@ -68,91 +17,51 @@ const QUERY_KEYS = {
   borrower: (id: number) => ['borrowers', id] as const,
 };
 
-// Fetch all borrowers with loan counts
+/**
+ * Fetch all borrowers with loan counts
+ */
 export function useBorrowers(searchQuery?: string) {
   return useQuery({
     queryKey: [...QUERY_KEYS.borrowers, searchQuery],
-    queryFn: async (): Promise<BorrowerWithLoans[]> => {
-      const url = searchQuery
-        ? `/api/borrowers?search=${encodeURIComponent(searchQuery)}`
-        : '/api/borrowers';
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Failed to fetch borrowers');
-      }
-
-      return response.json();
-    },
+    queryFn: () => FrontendBorrowerService.getBorrowers(searchQuery),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 
-// Fetch single borrower by ID with loans
+/**
+ * Fetch single borrower by ID with loans
+ */
 export function useBorrower(id: number) {
   return useQuery({
     queryKey: QUERY_KEYS.borrower(id),
-    queryFn: async (): Promise<BorrowerWithLoans | null> => {
-      const response = await fetch(`/api/borrowers/${id}`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          return null;
-        }
-        throw new Error('Failed to fetch borrower');
-      }
-
-      return response.json();
-    },
+    queryFn: () => FrontendBorrowerService.getBorrowerById(id),
     enabled: !!id,
   });
 }
 
-// Create borrower mutation
+/**
+ * Create borrower mutation
+ */
 export function useCreateBorrower() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: BorrowerCreateData) => {
-      const response = await fetch('/api/borrowers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create borrower');
-      }
-
-      return response.json();
-    },
+    mutationFn: (data: BorrowerCreateData) => FrontendBorrowerService.createBorrower(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.borrowers });
     },
   });
 }
 
-// Update borrower mutation
+/**
+ * Update borrower mutation
+ */
 export function useUpdateBorrower() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: BorrowerUpdateData }) => {
-      const response = await fetch(`/api/borrowers/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update borrower');
-      }
-
-      return response.json();
-    },
+    mutationFn: ({ id, data }: { id: number; data: BorrowerUpdateData }) =>
+      FrontendBorrowerService.updateBorrower(id, data),
     onSuccess: (updatedBorrower, { id }) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.borrowers });
       queryClient.setQueryData(QUERY_KEYS.borrower(id), updatedBorrower);
@@ -160,22 +69,14 @@ export function useUpdateBorrower() {
   });
 }
 
-// Delete borrower mutation
+/**
+ * Delete borrower mutation
+ */
 export function useDeleteBorrower() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: number) => {
-      const response = await fetch(`/api/borrowers/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete borrower');
-      }
-
-      return response.json();
-    },
+    mutationFn: (id: number) => FrontendBorrowerService.deleteBorrower(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.borrowers });
     },

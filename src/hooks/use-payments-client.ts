@@ -1,145 +1,59 @@
 'use client';
 
+import type {
+  CreatePaymentData,
+  Payment,
+  PaymentStats,
+  UpdatePaymentData,
+} from '@/services/frontend/PaymentService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/toast';
+import { FrontendPaymentService } from '@/services/frontend/PaymentService';
 
-export type Payment = {
-  id: number;
-  loanId: number;
-  paymentDate: string;
-  amount: number;
-  principalAmount: number;
-  interestAmount: number;
-  feesAmount: number;
-  lateFeeAmount: number;
-  paymentType: string;
-  paymentMethod: string;
-  referenceNumber?: string;
-  notes?: string;
-  createdAt: string;
-  updatedAt: string;
-  loan: {
-    id: number;
-    loanNumber: string;
-    loanAmount: number;
-    currentBalance: number;
-    status: string;
-  };
-  borrower: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
-};
+// Re-export types for backward compatibility
+export type { CreatePaymentData, Payment, PaymentStats, UpdatePaymentData };
 
-export type PaymentStats = {
-  totalPayments: number;
-  totalCount: number;
-  pendingPayments: number;
-  overduePayments: number;
-  successRate: number;
-  month: number;
-  year: number;
-};
-
-export type CreatePaymentData = {
-  loanNumber: string;
-  amount: number;
-  paymentDate: string;
-  paymentMethod: 'ACH' | 'Wire' | 'Check' | 'Card';
-  referenceNumber?: string;
-  notes?: string;
-};
-
-export type UpdatePaymentData = {
-  amount?: number;
-  paymentDate?: string;
-  paymentMethod?: 'ACH' | 'Wire' | 'Check' | 'Card';
-  referenceNumber?: string;
-  notes?: string;
-};
-
+/**
+ * Fetch payments with filters and pagination
+ */
 export function usePayments(search?: string, status?: string, page = 1, limit = 10) {
   return useQuery({
     queryKey: ['payments', { search, status, page, limit }],
-    queryFn: async () => {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: limit.toString(),
-      });
-
-      if (search) {
-        params.append('search', search);
-      }
-      if (status) {
-        params.append('status', status);
-      }
-
-      const response = await fetch(`/api/payments?${params}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch payments');
-      }
-      return response.json();
-    },
+    queryFn: () => FrontendPaymentService.getPayments({ search, status, page, limit }),
+    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 }
 
+/**
+ * Fetch single payment by ID
+ */
 export function usePayment(id: number) {
   return useQuery({
     queryKey: ['payment', id],
-    queryFn: async () => {
-      const response = await fetch(`/api/payments/${id}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch payment');
-      }
-      return response.json() as Promise<Payment>;
-    },
+    queryFn: () => FrontendPaymentService.getPaymentById(id),
     enabled: !!id,
   });
 }
 
+/**
+ * Fetch payment statistics
+ */
 export function usePaymentStats(month?: number, year?: number) {
   return useQuery({
     queryKey: ['payment-stats', { month, year }],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (month) {
-        params.append('month', month.toString());
-      }
-      if (year) {
-        params.append('year', year.toString());
-      }
-
-      const response = await fetch(`/api/payments/stats?${params}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch payment stats');
-      }
-      return response.json() as Promise<PaymentStats>;
-    },
+    queryFn: () => FrontendPaymentService.getPaymentStats({ month, year }),
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 
+/**
+ * Create payment mutation
+ */
 export function useCreatePayment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: CreatePaymentData) => {
-      const response = await fetch('/api/payments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to create payment');
-      }
-
-      return response.json();
-    },
+    mutationFn: (data: CreatePaymentData) => FrontendPaymentService.createPayment(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
       queryClient.invalidateQueries({ queryKey: ['payment-stats'] });
@@ -158,26 +72,15 @@ export function useCreatePayment() {
   });
 }
 
+/**
+ * Update payment mutation
+ */
 export function useUpdatePayment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: UpdatePaymentData }) => {
-      const response = await fetch(`/api/payments/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update payment');
-      }
-
-      return response.json();
-    },
+    mutationFn: ({ id, data }: { id: number; data: UpdatePaymentData }) =>
+      FrontendPaymentService.updatePayment(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
       queryClient.invalidateQueries({ queryKey: ['payment', id] });
@@ -197,22 +100,14 @@ export function useUpdatePayment() {
   });
 }
 
+/**
+ * Delete payment mutation
+ */
 export function useDeletePayment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: number) => {
-      const response = await fetch(`/api/payments/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to delete payment');
-      }
-
-      return response.json();
-    },
+    mutationFn: (id: number) => FrontendPaymentService.deletePayment(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
       queryClient.invalidateQueries({ queryKey: ['payment-stats'] });

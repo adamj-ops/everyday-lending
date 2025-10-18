@@ -6,7 +6,7 @@
  */
 
 import type { NextRequest } from 'next/server';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, count as drizzleCount, desc, eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/libs/DB';
@@ -85,9 +85,10 @@ export async function GET(request: NextRequest) {
       .offset(validatedParams.offset);
 
     // Get total count for pagination
-    const [{ count }] = await db.select({ count: db.count() })
+    const [countResult] = await db.select({ count: drizzleCount() })
       .from(payments)
       .where(conditions.length > 0 ? and(...conditions) : undefined);
+    const count = countResult?.count ?? 0;
 
     return NextResponse.json({
       success: true,
@@ -104,7 +105,7 @@ export async function GET(request: NextRequest) {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Invalid query parameters', details: error.errors },
+        { success: false, error: 'Invalid query parameters', details: error.issues },
         { status: 400 },
       );
     }
@@ -140,7 +141,7 @@ export async function POST(request: NextRequest) {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Invalid request data', details: error.errors },
+        { success: false, error: 'Invalid request data', details: error.issues },
         { status: 400 },
       );
     }

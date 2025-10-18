@@ -21,9 +21,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
-    persistSession: true,      // Enable session persistence
-    autoRefreshToken: true,    // Enable token refresh
-    detectSessionInUrl: true,  // Enable OAuth redirects
+    persistSession: true, // Enable session persistence
+    autoRefreshToken: true, // Enable token refresh
+    detectSessionInUrl: true, // Enable OAuth redirects
   },
   realtime: {
     // Enable realtime for live updates

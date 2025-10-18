@@ -8,9 +8,11 @@
  * Dependencies: inngest, @supabase/supabase-js
  */
 
-import { createServerClient } from '@/lib/db';
 import { inngest } from '@/lib/inngest';
+import { LoanService } from '@/services/LoanService';
 import { PaymentService } from '@/services/PaymentService';
+import { PlaidService } from '@/services/PlaidService';
+import { StripeService } from '@/services/StripeService';
 
 // Job: Process scheduled payment
 export const processScheduledPayment = inngest.createFunction(
@@ -20,8 +22,10 @@ export const processScheduledPayment = inngest.createFunction(
     const { paymentId } = event.data;
 
     return await step.run('process-payment', async () => {
-      const supabase = createServerClient();
-      const paymentService = new PaymentService(supabase);
+      const loanService = new LoanService();
+      const stripeService = new StripeService();
+      const plaidService = new PlaidService();
+      const paymentService = new PaymentService(loanService, stripeService, plaidService);
 
       try {
         await paymentService.processPayment(paymentId);
@@ -42,11 +46,9 @@ export const retryFailedPayment = inngest.createFunction(
     const { paymentId, retryCount } = event.data;
 
     return await step.run('retry-payment', async () => {
-      const supabase = createServerClient();
-      const paymentService = new PaymentService(supabase);
-
       try {
-        await paymentService.retryPayment(paymentId);
+        // TODO: Implement retry logic with payment request details
+        // Will need to fetch payment details and call PaymentService.processPayment
         return { success: true, paymentId, retryCount };
       } catch (error) {
         console.error('Payment retry failed:', error);

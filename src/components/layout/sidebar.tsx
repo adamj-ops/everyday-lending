@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuth } from '@/hooks/use-auth';
 import {
   Building2,
   ChevronLeft,
@@ -17,6 +16,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 
 const navigation = [

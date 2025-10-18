@@ -1,56 +1,54 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase-auth'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import Link from 'next/link'
+import Link from 'next/link';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { createClient } from '@/lib/supabase-client';
 
-interface SignUpFormProps {
-  locale: string
-}
+type SignUpFormProps = {
+  locale: string;
+};
 
 export function SignUpForm({ locale }: SignUpFormProps) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-  const _router = useRouter()
-  const supabase = createClient()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const supabase = createClient();
 
   async function handleSignUp(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-    setMessage('')
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setMessage('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      setLoading(false)
-      return
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
-      setLoading(false)
-      return
+      setError('Password must be at least 6 characters');
+      setLoading(false);
+      return;
     }
 
     const { error } = await supabase.auth.signUp({
       email,
       password,
-    })
+    });
 
     if (error) {
-      setError(error.message)
-      setLoading(false)
+      setError(error.message);
+      setLoading(false);
     } else {
-      setMessage('Check your email for a confirmation link!')
-      setLoading(false)
+      setMessage('Check your email for a confirmation link!');
+      setLoading(false);
     }
   }
 
@@ -83,7 +81,7 @@ export function SignUpForm({ locale }: SignUpFormProps) {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               required
               placeholder="you@example.com"
             />
@@ -95,7 +93,7 @@ export function SignUpForm({ locale }: SignUpFormProps) {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               required
               placeholder="••••••••"
               minLength={6}
@@ -108,7 +106,7 @@ export function SignUpForm({ locale }: SignUpFormProps) {
               id="confirmPassword"
               type="password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={e => setConfirmPassword(e.target.value)}
               required
               placeholder="••••••••"
               minLength={6}
@@ -121,12 +119,13 @@ export function SignUpForm({ locale }: SignUpFormProps) {
         </form>
 
         <p className="text-center text-sm text-gray-600">
-          Already have an account?{' '}
+          Already have an account?
+          {' '}
           <Link href={`/${locale}/sign-in`} className="font-medium text-blue-600 hover:underline">
             Sign in
           </Link>
         </p>
       </div>
     </div>
-  )
+  );
 }

@@ -1,52 +1,15 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { 
+  FrontendLoanService,
+  type LoanWithDetails,
+  type LoanUpdateData,
+  type LoanCreateData,
+} from '@/services/frontend/LoanService';
 
-// Types
-export type LoanWithDetails = {
-  id: number;
-  loanNumber: string;
-  loanAmount: string;
-  interestRate: string;
-  termMonths: number;
-  monthlyPayment: string;
-  originationDate: Date;
-  maturityDate: Date;
-  status: 'active' | 'paid_off' | 'defaulted' | 'foreclosed' | 'cancelled';
-  currentBalance: string;
-  principalPaid: string | null;
-  interestPaid: string | null;
-  feesPaid: string | null;
-  lateFeesPaid: string | null;
-  lastPaymentDate: Date | null;
-  nextPaymentDate: Date | null;
-  notes: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  borrower: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string | null;
-  } | null;
-  property: {
-    id: number;
-    address: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  } | null;
-};
-
-export type LoanUpdateData = {
-  status?: 'active' | 'paid_off' | 'defaulted' | 'foreclosed' | 'cancelled';
-  interestRate?: string;
-  termMonths?: number;
-  monthlyPayment?: string;
-  maturityDate?: Date;
-  notes?: string | null;
-};
+// Re-export types for backward compatibility
+export type { LoanWithDetails, LoanUpdateData, LoanCreateData };
 
 // Query keys
 const QUERY_KEYS = {
@@ -54,68 +17,68 @@ const QUERY_KEYS = {
   loan: (id: number) => ['loans', id] as const,
 };
 
-// Fetch all loans with borrower and property details
+/**
+ * Fetch all loans with borrower and property details
+ */
 export function useLoans(searchQuery?: string) {
   return useQuery({
     queryKey: [...QUERY_KEYS.loans, searchQuery],
-    queryFn: async (): Promise<LoanWithDetails[]> => {
-      const url = searchQuery
-        ? `/api/loans?search=${encodeURIComponent(searchQuery)}`
-        : '/api/loans';
-
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Failed to fetch loans');
-      }
-
-      return response.json();
-    },
+    queryFn: () => FrontendLoanService.getLoans(searchQuery),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 
-// Fetch single loan by ID
+/**
+ * Fetch single loan by ID
+ */
 export function useLoan(id: number) {
   return useQuery({
     queryKey: QUERY_KEYS.loan(id),
-    queryFn: async (): Promise<LoanWithDetails | null> => {
-      const response = await fetch(`/api/loans/${id}`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          return null;
-        }
-        throw new Error('Failed to fetch loan');
-      }
-
-      return response.json();
-    },
+    queryFn: () => FrontendLoanService.getLoanById(id),
     enabled: !!id,
   });
 }
 
-// Update loan mutation
+/**
+ * Create loan mutation
+ */
+export function useCreateLoan() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: LoanCreateData) => FrontendLoanService.createLoan(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.loans });
+    },
+  });
+}
+
+/**
+ * Update loan mutation
+ */
 export function useUpdateLoan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: LoanUpdateData }) => {
-      const response = await fetch(`/api/loans/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update loan');
-      }
-
-      return response.json();
-    },
+    mutationFn: ({ id, data }: { id: number; data: LoanUpdateData }) => 
+      FrontendLoanService.updateLoan(id, data),
     onSuccess: (updatedLoan, { id }) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.loans });
       queryClient.setQueryData(QUERY_KEYS.loan(id), updatedLoan);
+    },
+  });
+}
+
+/**
+ * Delete loan mutation
+ */
+export function useDeleteLoan() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => FrontendLoanService.deleteLoan(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.loans });
     },
   });
 }
