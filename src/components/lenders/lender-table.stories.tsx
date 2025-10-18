@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import type { Lender } from './lender-table';
 import { fn } from '@storybook/test';
 import { LenderTable } from './lender-table';
-import type { Lender } from './lender-table';
 
 const meta = {
   title: 'Lenders/LenderTable',

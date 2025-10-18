@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // Types
-export interface ServicingIncome {
+export type ServicingIncome = {
   id: string;
   loanId: string;
   feeTypeId: string;
@@ -23,9 +23,9 @@ export interface ServicingIncome {
     firstName: string;
     lastName: string;
   };
-}
+};
 
-export interface FeeType {
+export type FeeType = {
   id: string;
   name: string;
   description?: string;
@@ -34,9 +34,9 @@ export interface FeeType {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-}
+};
 
-export interface ServicingStats {
+export type ServicingStats = {
   totalIncome: number;
   totalFees: number;
   activeLoans: number;
@@ -44,24 +44,24 @@ export interface ServicingStats {
   overdueIncome: number;
   efficiencyRate: number;
   period: string;
-}
+};
 
-export interface CreateServicingIncomeInput {
+export type CreateServicingIncomeInput = {
   loanId: string;
   feeTypeId: string;
   amount: number;
   receivedDate: string;
   status?: 'received' | 'pending' | 'overdue';
   notes?: string;
-}
+};
 
-export interface CreateFeeTypeInput {
+export type CreateFeeTypeInput = {
   name: string;
   description?: string;
   feeType: 'percentage' | 'fixed';
   amount: number;
   isActive?: boolean;
-}
+};
 
 // Query keys
 const queryKeys = {
@@ -85,10 +85,18 @@ export function useServicingIncome(params?: {
     queryKey: queryKeys.servicingIncomeList(params),
     queryFn: async () => {
       const searchParams = new URLSearchParams();
-      if (params?.search) searchParams.set('search', params.search);
-      if (params?.status) searchParams.set('status', params.status);
-      if (params?.page) searchParams.set('page', params.page.toString());
-      if (params?.limit) searchParams.set('limit', params.limit.toString());
+      if (params?.search) {
+        searchParams.set('search', params.search);
+      }
+      if (params?.status) {
+        searchParams.set('status', params.status);
+      }
+      if (params?.page) {
+        searchParams.set('page', params.page.toString());
+      }
+      if (params?.limit) {
+        searchParams.set('limit', params.limit.toString());
+      }
 
       const response = await fetch(`/api/servicing?${searchParams}`);
       if (!response.ok) {
@@ -199,10 +207,18 @@ export function useFeeTypes(params?: {
     queryKey: queryKeys.feeTypesList(params),
     queryFn: async () => {
       const searchParams = new URLSearchParams();
-      if (params?.search) searchParams.set('search', params.search);
-      if (params?.isActive !== undefined) searchParams.set('isActive', params.isActive.toString());
-      if (params?.page) searchParams.set('page', params.page.toString());
-      if (params?.limit) searchParams.set('limit', params.limit.toString());
+      if (params?.search) {
+        searchParams.set('search', params.search);
+      }
+      if (params?.isActive !== undefined) {
+        searchParams.set('isActive', params.isActive.toString());
+      }
+      if (params?.page) {
+        searchParams.set('page', params.page.toString());
+      }
+      if (params?.limit) {
+        searchParams.set('limit', params.limit.toString());
+      }
 
       const response = await fetch(`/api/fee-types?${searchParams}`);
       if (!response.ok) {

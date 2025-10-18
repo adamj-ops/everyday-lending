@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from 'react';
 import { ArrowUpDown, MoreHorizontal, Search } from 'lucide-react';
+import * as React from 'react';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
-export interface Borrower {
+export type Borrower = {
   id: string;
   name: string;
   email: string;
@@ -31,9 +31,9 @@ export interface Borrower {
   creditScore: number;
   totalLoans: number;
   status: 'active' | 'inactive' | 'pending';
-}
+};
 
-interface BorrowerTableProps {
+type BorrowerTableProps = {
   /**
    * Array of borrowers to display
    */
@@ -68,7 +68,7 @@ interface BorrowerTableProps {
    * Custom className
    */
   className?: string;
-}
+};
 
 type SortField = 'name' | 'creditScore' | 'totalLoans';
 type SortDirection = 'asc' | 'desc';
@@ -109,8 +109,9 @@ export function BorrowerTable({
 
   // Filter borrowers based on search
   const filteredBorrowers = React.useMemo(() => {
-    if (!searchQuery)
+    if (!searchQuery) {
       return borrowers;
+    }
 
     const query = searchQuery.toLowerCase();
     return borrowers.filter(
@@ -145,8 +146,7 @@ export function BorrowerTable({
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
-    }
-    else {
+    } else {
       setSortField(field);
       setSortDirection('asc');
     }
@@ -181,13 +181,13 @@ export function BorrowerTable({
     <div className={cn('flex flex-col h-full', className)}>
       {/* Header with Search */}
       {showSearch && (
-        <div className="px-4 py-3 border-b border-[#eeeff1]">
+        <div className="border-b border-[#eeeff1] px-4 py-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#b8b9bb]" />
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#b8b9bb]" />
             <Input
               type="search"
               placeholder="Search borrowers..."
-              className="pl-10 h-7"
+              className="h-7 pl-10"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -198,8 +198,8 @@ export function BorrowerTable({
       {/* Table */}
       <div className="flex-1 overflow-auto">
         <Table>
-          <TableHeader className="sticky top-0 bg-white z-10">
-            <TableRow className="border-b border-[#eeeff1] h-[37px]">
+          <TableHeader className="sticky top-0 z-10 bg-white">
+            <TableRow className="h-[37px] border-b border-[#eeeff1]">
               <TableHead className="w-12 px-4">
                 {/* Checkbox placeholder */}
               </TableHead>
@@ -207,7 +207,7 @@ export function BorrowerTable({
                 <button
                   type="button"
                   onClick={() => handleSort('name')}
-                  className="flex items-center gap-2 font-medium text-sm text-foreground hover:text-foreground/80"
+                  className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-foreground/80"
                 >
                   Borrower
                   <ArrowUpDown className="h-4 w-4" />
@@ -217,7 +217,7 @@ export function BorrowerTable({
                 <button
                   type="button"
                   onClick={() => handleSort('creditScore')}
-                  className="flex items-center gap-2 font-medium text-sm text-foreground hover:text-foreground/80"
+                  className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-foreground/80"
                 >
                   Credit Score
                   <ArrowUpDown className="h-4 w-4" />
@@ -227,7 +227,7 @@ export function BorrowerTable({
                 <button
                   type="button"
                   onClick={() => handleSort('totalLoans')}
-                  className="flex items-center gap-2 font-medium text-sm text-foreground hover:text-foreground/80"
+                  className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-foreground/80"
                 >
                   Total Loans
                   <ArrowUpDown className="h-4 w-4" />
@@ -240,7 +240,7 @@ export function BorrowerTable({
           <TableBody>
             {sortedBorrowers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-12">
+                <TableCell colSpan={6} className="py-12 text-center">
                   <div className="text-[#696a6c]">
                     {searchQuery ? 'No borrowers found' : 'No borrowers yet'}
                   </div>
@@ -250,7 +250,7 @@ export function BorrowerTable({
               sortedBorrowers.map(borrower => (
                 <TableRow
                   key={borrower.id}
-                  className="cursor-pointer hover:bg-[#fbfbfb] border-b border-[#eeeff1] h-[37px]"
+                  className="h-[37px] cursor-pointer border-b border-[#eeeff1] hover:bg-[#fbfbfb]"
                   onClick={() => onRowClick?.(borrower)}
                 >
                   <TableCell className="px-4">
@@ -267,10 +267,10 @@ export function BorrowerTable({
                         size="md"
                       />
                       <div>
-                        <p className="font-medium text-sm text-foreground">
+                        <p className="text-sm font-medium text-foreground">
                           {borrower.name}
                         </p>
-                        <p className="text-xs text-[#696a6c] font-semibold">
+                        <p className="text-xs font-semibold text-[#696a6c]">
                           {borrower.email}
                         </p>
                       </div>
@@ -283,7 +283,8 @@ export function BorrowerTable({
                   </TableCell>
                   <TableCell className="px-4">
                     <span className="text-sm text-foreground">
-                      ${borrower.totalLoans.toLocaleString()}
+                      $
+                      {borrower.totalLoans.toLocaleString()}
                     </span>
                   </TableCell>
                   <TableCell className="px-4">
@@ -336,7 +337,7 @@ export function BorrowerTable({
 
       {/* Footer with count */}
       {sortedBorrowers.length > 0 && (
-        <div className="px-4 py-3 border-t border-[#eeeff1]">
+        <div className="border-t border-[#eeeff1] px-4 py-3">
           <p className="text-sm text-[#696a6c]">
             Showing
             {' '}

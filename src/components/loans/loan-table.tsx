@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from 'react';
 import { ArrowUpDown, MoreHorizontal, Search } from 'lucide-react';
+import * as React from 'react';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
-export interface Loan {
+export type Loan = {
   id: string;
   loanNumber: string;
   borrower: {
@@ -53,9 +53,9 @@ export interface Loan {
   originationDate: string;
   maturityDate: string;
   loanType: 'fix_and_flip' | 'bridge' | 'term' | 'construction';
-}
+};
 
-export interface LoanTableProps {
+export type LoanTableProps = {
   loans: Loan[];
   onRowClick?: (loan: Loan) => void;
   onEdit?: (loan: Loan) => void;
@@ -64,16 +64,16 @@ export interface LoanTableProps {
   showSearch?: boolean;
   isLoading?: boolean;
   className?: string;
-}
+};
 
-type SortField =
-  | 'loanNumber'
-  | 'borrowerName'
-  | 'principalAmount'
-  | 'currentBalance'
-  | 'interestRate'
-  | 'originationDate'
-  | 'maturityDate';
+type SortField
+  = | 'loanNumber'
+    | 'borrowerName'
+    | 'principalAmount'
+    | 'currentBalance'
+    | 'interestRate'
+    | 'originationDate'
+    | 'maturityDate';
 type SortDirection = 'asc' | 'desc';
 
 /**
@@ -92,12 +92,13 @@ export function LoanTable({
 }: LoanTableProps) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [sortField, setSortField] = React.useState<SortField>('loanNumber');
-  const [sortDirection, setSortDirection] =
-    React.useState<SortDirection>('asc');
+  const [sortDirection, setSortDirection]
+    = React.useState<SortDirection>('asc');
 
   const filteredLoans = React.useMemo(() => {
-    if (!searchQuery)
+    if (!searchQuery) {
       return loans;
+    }
 
     const query = searchQuery.toLowerCase();
     return loans.filter(
@@ -148,10 +149,12 @@ export function LoanTable({
           return 0;
       }
 
-      if (aValue < bValue)
+      if (aValue < bValue) {
         return sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue)
+      }
+      if (aValue > bValue) {
         return sortDirection === 'asc' ? 1 : -1;
+      }
       return 0;
     });
   }, [filteredLoans, sortField, sortDirection]);
@@ -159,8 +162,7 @@ export function LoanTable({
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    }
-    else {
+    } else {
       setSortField(field);
       setSortDirection('asc');
     }
@@ -217,7 +219,7 @@ export function LoanTable({
       <div className={cn('space-y-4', className)}>
         {showSearch && (
           <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
             <Input
               placeholder="Search loans..."
               className="pl-9"
@@ -236,7 +238,7 @@ export function LoanTable({
     <div className={cn('space-y-4', className)}>
       {showSearch && (
         <div className="relative w-full max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
           <Input
             placeholder="Search loans..."
             value={searchQuery}
@@ -246,205 +248,207 @@ export function LoanTable({
         </div>
       )}
 
-      {sortedLoans.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <p className="text-sm font-medium text-neutral-800">
-            No loans found
-          </p>
-          <p className="text-sm text-neutral-500 mt-1">
-            {searchQuery
-              ? 'Try adjusting your search'
-              : 'Get started by creating your first loan'}
-          </p>
-        </div>
-      ) : (
-        <div className="border border-neutral-200 rounded-lg overflow-hidden">
-          <Table>
-            <TableHeader className="sticky top-0 bg-white z-10">
-              <TableRow className="border-b border-[#eeeff1] h-[37px] hover:bg-white">
-                <TableHead
-                  className="cursor-pointer select-none"
-                  onClick={() => handleSort('loanNumber')}
-                >
-                  <div className="flex items-center gap-2">
-                    Loan Number
-                    <ArrowUpDown className="h-4 w-4 text-neutral-400" />
-                  </div>
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer select-none"
-                  onClick={() => handleSort('borrowerName')}
-                >
-                  <div className="flex items-center gap-2">
-                    Borrower
-                    <ArrowUpDown className="h-4 w-4 text-neutral-400" />
-                  </div>
-                </TableHead>
-                <TableHead>Lender</TableHead>
-                <TableHead>Property</TableHead>
-                <TableHead
-                  className="cursor-pointer select-none"
-                  onClick={() => handleSort('principalAmount')}
-                >
-                  <div className="flex items-center gap-2">
-                    Principal
-                    <ArrowUpDown className="h-4 w-4 text-neutral-400" />
-                  </div>
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer select-none"
-                  onClick={() => handleSort('currentBalance')}
-                >
-                  <div className="flex items-center gap-2">
-                    Balance
-                    <ArrowUpDown className="h-4 w-4 text-neutral-400" />
-                  </div>
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer select-none"
-                  onClick={() => handleSort('interestRate')}
-                >
-                  <div className="flex items-center gap-2">
-                    Rate
-                    <ArrowUpDown className="h-4 w-4 text-neutral-400" />
-                  </div>
-                </TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead
-                  className="cursor-pointer select-none"
-                  onClick={() => handleSort('maturityDate')}
-                >
-                  <div className="flex items-center gap-2">
-                    Maturity
-                    <ArrowUpDown className="h-4 w-4 text-neutral-400" />
-                  </div>
-                </TableHead>
-                <TableHead className="w-12" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedLoans.map(loan => (
-                <TableRow
-                  key={loan.id}
-                  className="cursor-pointer hover:bg-[#fbfbfb] border-b border-[#eeeff1] h-[37px]"
-                  onClick={() => onRowClick?.(loan)}
-                >
-                  <TableCell className="font-mono text-sm font-medium text-neutral-800">
-                    {loan.loanNumber}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar
-                        src={loan.borrower.avatar}
-                        fallback={getBorrowerInitials(loan.borrower.name)}
-                        size="sm"
-                      />
-                      <span className="text-sm text-neutral-800">
-                        {loan.borrower.name}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar
-                        src={loan.lender.avatar}
-                        fallback={getBorrowerInitials(loan.lender.name)}
-                        size="sm"
-                      />
-                      <span className="text-sm text-neutral-800">
-                        {loan.lender.name}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="text-sm text-neutral-800">
-                        {loan.property.address}
-                      </p>
-                      <p className="text-xs text-neutral-500">
-                        {loan.property.city}
-                        ,
-                        {' '}
-                        {loan.property.state}
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-neutral-800">
-                    $
-                    {loan.principalAmount.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-neutral-800">
-                    $
-                    {loan.currentBalance.toLocaleString()}
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-neutral-800">
-                    {loan.interestRate.toFixed(2)}
-                    %
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm text-neutral-600">
-                      {getLoanTypeLabel(loan.loanType)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusVariant(loan.status)}>
-                      {loan.status.replace('_', ' ')}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-sm text-neutral-600">
-                    {formatDate(loan.maturityDate)}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onViewDetails?.(loan);
-                          }}
-                        >
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEdit?.(loan);
-                          }}
-                        >
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>Export</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-error"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDelete?.(loan);
-                          }}
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+      {sortedLoans.length === 0
+        ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <p className="text-sm font-medium text-neutral-800">
+                No loans found
+              </p>
+              <p className="mt-1 text-sm text-neutral-500">
+                {searchQuery
+                  ? 'Try adjusting your search'
+                  : 'Get started by creating your first loan'}
+              </p>
+            </div>
+          )
+        : (
+            <div className="overflow-hidden rounded-lg border border-neutral-200">
+              <Table>
+                <TableHeader className="sticky top-0 z-10 bg-white">
+                  <TableRow className="h-[37px] border-b border-[#eeeff1] hover:bg-white">
+                    <TableHead
+                      className="cursor-pointer select-none"
+                      onClick={() => handleSort('loanNumber')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Loan Number
+                        <ArrowUpDown className="h-4 w-4 text-neutral-400" />
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer select-none"
+                      onClick={() => handleSort('borrowerName')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Borrower
+                        <ArrowUpDown className="h-4 w-4 text-neutral-400" />
+                      </div>
+                    </TableHead>
+                    <TableHead>Lender</TableHead>
+                    <TableHead>Property</TableHead>
+                    <TableHead
+                      className="cursor-pointer select-none"
+                      onClick={() => handleSort('principalAmount')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Principal
+                        <ArrowUpDown className="h-4 w-4 text-neutral-400" />
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer select-none"
+                      onClick={() => handleSort('currentBalance')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Balance
+                        <ArrowUpDown className="h-4 w-4 text-neutral-400" />
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer select-none"
+                      onClick={() => handleSort('interestRate')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Rate
+                        <ArrowUpDown className="h-4 w-4 text-neutral-400" />
+                      </div>
+                    </TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead
+                      className="cursor-pointer select-none"
+                      onClick={() => handleSort('maturityDate')}
+                    >
+                      <div className="flex items-center gap-2">
+                        Maturity
+                        <ArrowUpDown className="h-4 w-4 text-neutral-400" />
+                      </div>
+                    </TableHead>
+                    <TableHead className="w-12" />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedLoans.map(loan => (
+                    <TableRow
+                      key={loan.id}
+                      className="h-[37px] cursor-pointer border-b border-[#eeeff1] hover:bg-[#fbfbfb]"
+                      onClick={() => onRowClick?.(loan)}
+                    >
+                      <TableCell className="font-mono text-sm font-medium text-neutral-800">
+                        {loan.loanNumber}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar
+                            src={loan.borrower.avatar}
+                            fallback={getBorrowerInitials(loan.borrower.name)}
+                            size="sm"
+                          />
+                          <span className="text-sm text-neutral-800">
+                            {loan.borrower.name}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar
+                            src={loan.lender.avatar}
+                            fallback={getBorrowerInitials(loan.lender.name)}
+                            size="sm"
+                          />
+                          <span className="text-sm text-neutral-800">
+                            {loan.lender.name}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="text-sm text-neutral-800">
+                            {loan.property.address}
+                          </p>
+                          <p className="text-xs text-neutral-500">
+                            {loan.property.city}
+                            ,
+                            {' '}
+                            {loan.property.state}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono text-sm text-neutral-800">
+                        $
+                        {loan.principalAmount.toLocaleString()}
+                      </TableCell>
+                      <TableCell className="font-mono text-sm text-neutral-800">
+                        $
+                        {loan.currentBalance.toLocaleString()}
+                      </TableCell>
+                      <TableCell className="font-mono text-sm text-neutral-800">
+                        {loan.interestRate.toFixed(2)}
+                        %
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-neutral-600">
+                          {getLoanTypeLabel(loan.loanType)}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={getStatusVariant(loan.status)}>
+                          {loan.status.replace('_', ' ')}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-neutral-600">
+                        {formatDate(loan.maturityDate)}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onViewDetails?.(loan);
+                              }}
+                            >
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onEdit?.(loan);
+                              }}
+                            >
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>Export</DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-error"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete?.(loan);
+                              }}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
     </div>
   );
 }

@@ -1,10 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
-interface ValuePropSectionProps {
+type ValuePropSectionProps = {
   icon: string;
   title: string;
   description: string;
@@ -18,7 +16,7 @@ interface ValuePropSectionProps {
     author: string;
     company: string;
   };
-}
+};
 
 export function ValuePropSection({
   icon,
@@ -28,45 +26,45 @@ export function ValuePropSection({
   testimonial,
 }: ValuePropSectionProps) {
   return (
-    <section className="bg-white border-b border-[#eeeff1] py-24">
-      <div className="max-w-[1440px] mx-auto px-6">
-        <div className="max-w-[1252px] mx-auto">
+    <section className="border-b border-[#eeeff1] bg-white py-24">
+      <div className="mx-auto max-w-[1440px] px-6">
+        <div className="mx-auto max-w-[1252px]">
           <div className="flex gap-6">
             {/* Icon Column */}
-            <div className="flex flex-col items-center w-[82px] shrink-0">
-              <div className="w-12 h-12 rounded bg-[#19bbe8] text-white flex items-center justify-center text-2xl mb-4">
+            <div className="flex w-[82px] shrink-0 flex-col items-center">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded bg-[#19bbe8] text-2xl text-white">
                 {icon}
               </div>
-              <div className="w-[1.5px] h-full bg-[#eeeff1]" />
+              <div className="h-full w-[1.5px] bg-[#eeeff1]" />
             </div>
 
             {/* Content Column */}
             <div className="flex-1">
               {/* Header */}
               <div className="mb-16">
-                <h2 className="text-[48px] leading-tight font-bold text-foreground mb-4">
+                <h2 className="mb-4 text-[48px] leading-tight font-bold text-foreground">
                   {title}
                 </h2>
-                <p className="text-base text-[#696a6c] max-w-[540px]">
+                <p className="max-w-[540px] text-base text-[#696a6c]">
                   {description}
                 </p>
               </div>
 
               {/* Features Grid */}
-              <div className="space-y-6 mb-12">
+              <div className="mb-12 space-y-6">
                 {features.map((feature, index) => (
                   <div
                     key={index}
-                    className="border border-[#eeeff1] rounded-lg p-10 bg-white hover:shadow-sm transition-shadow"
+                    className="rounded-lg border border-[#eeeff1] bg-white p-10 transition-shadow hover:shadow-sm"
                   >
-                    <h3 className="text-sm font-bold text-foreground mb-2">
+                    <h3 className="mb-2 text-sm font-bold text-foreground">
                       {feature.title}
                     </h3>
-                    <p className="text-sm text-[#696a6c] mb-6">
+                    <p className="mb-6 text-sm text-[#696a6c]">
                       {feature.description}
                     </p>
                     {feature.visual && (
-                      <div className="bg-gradient-to-br from-[#276bf0]/5 to-[#19bbe8]/5 rounded border border-[#eeeff1] aspect-video flex items-center justify-center">
+                      <div className="flex aspect-video items-center justify-center rounded border border-[#eeeff1] bg-gradient-to-br from-[#276bf0]/5 to-[#19bbe8]/5">
                         <span className="text-4xl">{feature.visual}</span>
                       </div>
                     )}
@@ -76,12 +74,14 @@ export function ValuePropSection({
 
               {/* Testimonial */}
               {testimonial && (
-                <div className="max-w-[610px] mx-auto bg-[#fbfbfb] rounded-lg p-8 border border-[#eeeff1]">
-                  <p className="text-sm text-foreground mb-4 italic">
-                    &quot;{testimonial.quote}&quot;
+                <div className="mx-auto max-w-[610px] rounded-lg border border-[#eeeff1] bg-[#fbfbfb] p-8">
+                  <p className="mb-4 text-sm text-foreground italic">
+                    &quot;
+                    {testimonial.quote}
+                    &quot;
                   </p>
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-md bg-[#19bbe8] text-white flex items-center justify-center text-xs font-bold">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-md bg-[#19bbe8] text-xs font-bold text-white">
                       {testimonial.author
                         .split(' ')
                         .map(n => n[0])

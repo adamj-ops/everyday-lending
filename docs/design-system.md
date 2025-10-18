@@ -94,13 +94,13 @@ Status Colors         → Success, warning, error, info states
 const colors = {
   // Brand Colors (Everyday Blue - Primary)
   brand: {
-    DEFAULT: '#158CB6',      // Everyday Blue
+    DEFAULT: '#158CB6', // Everyday Blue
     50: '#E5F5FA',
     100: '#CCE9F4',
     200: '#99D4E9',
     300: '#66BEDE',
     400: '#33A9D3',
-    500: '#158CB6',           // Primary
+    500: '#158CB6', // Primary
     600: '#137CA0',
     700: '#0F5D78',
     800: '#0A3D50',
@@ -115,7 +115,7 @@ const colors = {
     200: '#ADDBEB',
     300: '#84C9E1',
     400: '#5BB7D7',
-    500: '#3B9FC2',           // Primary Accent (lighter than brand)
+    500: '#3B9FC2', // Primary Accent (lighter than brand)
     600: '#2E7F9B',
     700: '#225F74',
     800: '#17404D',
@@ -124,16 +124,16 @@ const colors = {
 
   // Neutral Palette (Attio-inspired slate/gray)
   neutral: {
-    50: '#F8FAFC',           // Lightest backgrounds
-    100: '#F1F5F9',          // Card backgrounds
-    200: '#E2E8F0',          // Borders, dividers
-    300: '#CBD5E1',          // Disabled states
-    400: '#94A3B8',          // Placeholder text
-    500: '#64748B',          // Secondary text
-    600: '#475569',          // Body text
-    700: '#334155',          // Headings
-    800: '#1E293B',          // Dark headings
-    900: '#0F172A',          // Darkest text
+    50: '#F8FAFC', // Lightest backgrounds
+    100: '#F1F5F9', // Card backgrounds
+    200: '#E2E8F0', // Borders, dividers
+    300: '#CBD5E1', // Disabled states
+    400: '#94A3B8', // Placeholder text
+    500: '#64748B', // Secondary text
+    600: '#475569', // Body text
+    700: '#334155', // Headings
+    800: '#1E293B', // Dark headings
+    900: '#0F172A', // Darkest text
   },
 
   // Semantic Colors
@@ -157,7 +157,7 @@ const colors = {
     light: '#DBEAFE',
     dark: '#1E3A8A',
   },
-}
+};
 ```
 
 ### Color Usage Guidelines
@@ -190,12 +190,10 @@ const colors = {
 
 ```css
 /* Primary Font */
---font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-             Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+--font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 
 /* Monospace (for codes, IDs, numbers) */
---font-mono: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code',
-             'Courier New', monospace;
+--font-mono: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', 'Courier New', monospace;
 ```
 
 ### Type Scale
@@ -276,9 +274,9 @@ The application uses a 5-zone layout inspired by Attio:
 Global navigation and search
 
 ```tsx
-<header className="h-16 border-b border-neutral-200 bg-white px-6 flex items-center justify-between">
+<header className="flex h-16 items-center justify-between border-b border-neutral-200 bg-white px-6">
   {/* Logo, Search, Profile */}
-</header>
+</header>;
 ```
 
 #### Left Sidebar (Width: 240px / 64px collapsed)
@@ -287,7 +285,7 @@ Primary navigation - Attio pattern
 ```tsx
 <aside className="w-60 border-r border-neutral-200 bg-neutral-50">
   {/* Navigation with collapsible sections */}
-</aside>
+</aside>;
 ```
 
 #### Main Content (Fluid)
@@ -296,7 +294,7 @@ Data tables and views - Attio pattern
 ```tsx
 <main className="flex-1 overflow-auto bg-white p-6">
   {/* Table/Kanban/Dashboard views */}
-</main>
+</main>;
 ```
 
 #### Right Drawer (Width: 400px)
@@ -305,7 +303,7 @@ Contextual detail panel - Attio pattern
 ```tsx
 <aside className="w-96 border-l border-neutral-200 bg-white">
   {/* Contextual details, activity, notes */}
-</aside>
+</aside>;
 ```
 
 #### Modal Layer
@@ -313,21 +311,21 @@ Forms and confirmations
 
 ```tsx
 <Dialog className="fixed inset-0 z-50 bg-black/50">
-  <DialogContent className="bg-white rounded-xl shadow-2xl max-w-2xl">
+  <DialogContent className="max-w-2xl rounded-xl bg-white shadow-2xl">
     {/* Forms, confirmations, onboarding */}
   </DialogContent>
-</Dialog>
+</Dialog>;
 ```
 
 #### Floating Helper
 Contextual assistance
 
 ```tsx
-<div className="fixed bottom-6 right-6 z-40">
-  <Button className="rounded-full shadow-lg bg-accent-500">
+<div className="fixed right-6 bottom-6 z-40">
+  <Button className="bg-accent-500 rounded-full shadow-lg">
     {/* AI assistant */}
   </Button>
-</div>
+</div>;
 ```
 
 ---
@@ -358,12 +356,12 @@ All components built on **Shadcn UI** with custom theming.
 ```tsx
 <Card className="p-6">
   <p className="text-sm text-neutral-500">Total Loans</p>
-  <p className="text-3xl font-semibold text-neutral-800 mt-1">$24.8M</p>
-  <div className="flex items-center gap-2 mt-2">
+  <p className="mt-1 text-3xl font-semibold text-neutral-800">$24.8M</p>
+  <div className="mt-2 flex items-center gap-2">
     <TrendingUp className="text-success" />
     <span className="text-sm text-success">+12.5%</span>
   </div>
-</Card>
+</Card>;
 ```
 
 ### Table (Attio Pattern)
@@ -372,12 +370,15 @@ All components built on **Shadcn UI** with custom theming.
 <Table>
   <TableHeader>
     <TableRow>
-      <TableHead>Borrower <SortIcon /></TableHead>
+      <TableHead>
+        Borrower
+        <SortIcon />
+      </TableHead>
       <TableHead>Status</TableHead>
     </TableRow>
   </TableHeader>
   <TableBody>
-    <TableRow className="hover:bg-neutral-50 cursor-pointer">
+    <TableRow className="cursor-pointer hover:bg-neutral-50">
       <TableCell>
         <div className="flex items-center gap-3">
           <Avatar src={avatar} />
@@ -392,7 +393,7 @@ All components built on **Shadcn UI** with custom theming.
       </TableCell>
     </TableRow>
   </TableBody>
-</Table>
+</Table>;
 ```
 
 ### Detail Drawer (Attio Pattern)
@@ -405,7 +406,7 @@ All components built on **Shadcn UI** with custom theming.
       <div className="flex-1">
         <h3 className="text-xl font-semibold">{name}</h3>
         <p className="text-sm text-neutral-500">{email}</p>
-        <div className="flex gap-2 mt-2">
+        <div className="mt-2 flex gap-2">
           <Badge variant="success">Active</Badge>
         </div>
       </div>
@@ -418,7 +419,7 @@ All components built on **Shadcn UI** with custom theming.
       <TabsContent value="details">{/* Details */}</TabsContent>
     </Tabs>
   </SheetContent>
-</Sheet>
+</Sheet>;
 ```
 
 ### Status Badges
@@ -444,7 +445,7 @@ All components built on **Shadcn UI** with custom theming.
 
 **Hover (Button):**
 ```tsx
-className="transition-all duration-150 hover:shadow-md hover:-translate-y-0.5"
+className = 'transition-all duration-150 hover:shadow-md hover:-translate-y-0.5';
 ```
 
 **Fade + Slide:**
@@ -453,7 +454,7 @@ className="transition-all duration-150 hover:shadow-md hover:-translate-y-0.5"
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.3 }}
-/>
+/>;
 ```
 
 **Modal:**
@@ -462,7 +463,7 @@ className="transition-all duration-150 hover:shadow-md hover:-translate-y-0.5"
   initial={{ opacity: 0, scale: 0.95 }}
   animate={{ opacity: 1, scale: 1 }}
   exit={{ opacity: 0, scale: 0.95 }}
-/>
+/>;
 ```
 
 **Reduced Motion:**
@@ -494,13 +495,13 @@ Multi-step modal with progress:
       <Button onClick={handleNext}>Continue</Button>
     </DialogFooter>
   </DialogContent>
-</Dialog>
+</Dialog>;
 ```
 
 ### Dashboard Template
 
 ```tsx
-<div className="p-6 space-y-6">
+<div className="space-y-6 p-6">
   <h1 className="text-4xl font-semibold">Dashboard</h1>
   <div className="grid grid-cols-4 gap-4">
     <MetricCard label="Total Loans" value="$24.8M" trend={12.5} />
@@ -509,7 +510,7 @@ Multi-step modal with progress:
     <Card><LineChart /></Card>
     <Card><BarChart /></Card>
   </div>
-</div>
+</div>;
 ```
 
 ### Data Table + Drawer (Attio)
@@ -526,7 +527,7 @@ Multi-step modal with progress:
   <Sheet open={drawerOpen}>
     <SheetContent>{/* Details */}</SheetContent>
   </Sheet>
-</div>
+</div>;
 ```
 
 ---
@@ -565,9 +566,10 @@ Update with color tokens from [Color System](#color-system) section.
 
 ```tsx
 // src/providers/theme-provider.tsx
-import { ThemeProvider as NextThemesProvider } from 'next-themes'
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
+
 export function ThemeProvider({ children }) {
-  return <NextThemesProvider>{children}</NextThemesProvider>
+  return <NextThemesProvider>{children}</NextThemesProvider>;
 }
 ```
 

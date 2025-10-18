@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import type { FormStep } from './multi-step-form';
 import { fn } from '@storybook/test';
 import { useState } from 'react';
-import { MultiStepForm, type FormStep } from './multi-step-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { MultiStepForm } from './multi-step-form';
 
 const meta = {
   title: 'Forms/MultiStepForm',
@@ -64,8 +65,8 @@ const simpleSteps: FormStep[] = [
     description: 'Confirm your information',
     component: (
       <div className="space-y-4">
-        <div className="border border-neutral-200 rounded-lg p-4">
-          <h3 className="text-sm font-semibold text-neutral-700 mb-2">
+        <div className="rounded-lg border border-neutral-200 p-4">
+          <h3 className="mb-2 text-sm font-semibold text-neutral-700">
             Summary
           </h3>
           <p className="text-sm text-neutral-600">
@@ -129,14 +130,14 @@ const ValidationDemo = () => {
       title: 'Confirmation',
       component: (
         <div className="space-y-4">
-          <div className="border border-neutral-200 rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-neutral-700 mb-2">
+          <div className="rounded-lg border border-neutral-200 p-4">
+            <h3 className="mb-2 text-sm font-semibold text-neutral-700">
               Your Information
             </h3>
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <dt className="text-neutral-500">Name:</dt>
-                <dd className="text-neutral-800 font-medium">{name}</dd>
+                <dd className="font-medium text-neutral-800">{name}</dd>
               </div>
               <div className="flex justify-between">
                 <dt className="text-neutral-500">Email:</dt>
@@ -305,7 +306,7 @@ const AsyncValidationDemo = () => {
               onChange={e => setUsername(e.target.value)}
               placeholder="johndoe"
             />
-            <p className="text-xs text-neutral-500 mt-1">
+            <p className="mt-1 text-xs text-neutral-500">
               Will check availability (simulated 2s delay)
             </p>
           </div>
@@ -334,11 +335,11 @@ const AsyncValidationDemo = () => {
       title: 'Success',
       component: (
         <div className="space-y-4">
-          <div className="border border-success rounded-lg p-4 bg-success-50">
-            <h3 className="text-sm font-semibold text-success-700 mb-2">
+          <div className="bg-success-50 rounded-lg border border-success p-4">
+            <h3 className="text-success-700 mb-2 text-sm font-semibold">
               Username Available
             </h3>
-            <p className="text-sm text-success-600">
+            <p className="text-success-600 text-sm">
               The username "
               {username}
               " is available!

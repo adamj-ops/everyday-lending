@@ -231,10 +231,10 @@ Generate the YAML incorporating everything discovered:
 agent:
   metadata:
     id: bmad/{{target_module}}/agents/{{agent_filename}}.md
-    name: { { agent_name } } # The name we chose together
-    title: { { agent_title } } # From the role that emerged
-    icon: { { agent_icon } } # The perfect emoji
-    module: { { target_module } }
+    name: {{agent_name}} # The name we chose together
+    title: {{agent_title}} # From the role that emerged
+    icon: {{agent_icon}} # The perfect emoji
+    module: {{target_module}}
 
   persona:
     role: |
@@ -243,13 +243,13 @@ agent:
       {{The background that emerged}}
     communication_style: |
       {{The style they loved}}
-    principles: { { The beliefs we articulated } }
+    principles: {{The beliefs we articulated}}
 
   # Features we explored
-  prompts: { { if discussed } }
-  critical_actions: { { if needed } }
+  prompts: {{if discussed}}
+  critical_actions: {{if needed}}
 
-  menu: { { The capabilities we built } }
+  menu: {{The capabilities we built}}
 ```
 
 <critical>Save based on agent type:</critical>

@@ -23,7 +23,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-interface Draw {
+type Draw = {
   id: number;
   loanNumber: string;
   borrowerName: string;
@@ -36,7 +36,7 @@ interface Draw {
   disbursementDate?: string;
   description?: string;
   contractorName?: string;
-}
+};
 
 // Mock data - will be replaced with real API calls
 const mockDraws: Draw[] = [
@@ -85,14 +85,14 @@ export function DrawsTable() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [draws] = useState<Draw[]>(mockDraws);
 
-  const filteredDraws = draws.filter(draw => {
-    const matchesSearch = 
-      draw.borrowerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      draw.loanNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      draw.contractorName?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+  const filteredDraws = draws.filter((draw) => {
+    const matchesSearch
+      = draw.borrowerName.toLowerCase().includes(searchTerm.toLowerCase())
+        || draw.loanNumber.toLowerCase().includes(searchTerm.toLowerCase())
+        || draw.contractorName?.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesStatus = statusFilter === 'all' || draw.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -155,14 +155,14 @@ export function DrawsTable() {
             </Button>
           </div>
         </div>
-        
+
         {/* Search and Filter Controls */}
         <div className="flex items-center space-x-4">
           <div className="flex-1">
             <Input
               placeholder="Search by borrower, loan number, or contractor..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="max-w-sm"
             />
           </div>
@@ -180,7 +180,7 @@ export function DrawsTable() {
           </Select>
         </div>
       </CardHeader>
-      
+
       <CardContent>
         <div className="rounded-md border">
           <Table>
@@ -198,73 +198,86 @@ export function DrawsTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredDraws.length > 0 ? (
-                filteredDraws.map((draw) => (
-                  <motion.tr
-                    key={draw.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                    className="hover:bg-muted/50"
-                  >
-                    <TableCell className="font-medium">
-                      {draw.loanNumber}
-                    </TableCell>
-                    <TableCell>{draw.borrowerName}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">#{draw.drawNumber}</Badge>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {formatCurrency(draw.requestedAmount)}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {draw.approvedAmount ? formatCurrency(draw.approvedAmount) : 'N/A'}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        {getStatusIcon(draw.status)}
-                        {getStatusBadge(draw.status)}
-                      </div>
-                    </TableCell>
-                    <TableCell>{formatDate(draw.requestDate)}</TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {draw.contractorName || 'N/A'}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end space-x-2">
-                        <Button variant="ghost" size="sm">
-                          View Details
-                        </Button>
-                        {draw.status === 'pending' && (
-                          <Button variant="outline" size="sm">
-                            Approve
-                          </Button>
-                        )}
-                        {draw.status === 'approved' && (
-                          <Button variant="outline" size="sm">
-                            Disburse
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </motion.tr>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
-                    No draws found matching your criteria
-                  </TableCell>
-                </TableRow>
-              )}
+              {filteredDraws.length > 0
+                ? (
+                    filteredDraws.map(draw => (
+                      <motion.tr
+                        key={draw.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.2 }}
+                        className="hover:bg-muted/50"
+                      >
+                        <TableCell className="font-medium">
+                          {draw.loanNumber}
+                        </TableCell>
+                        <TableCell>{draw.borrowerName}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
+                            #
+                            {draw.drawNumber}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {formatCurrency(draw.requestedAmount)}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {draw.approvedAmount ? formatCurrency(draw.approvedAmount) : 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            {getStatusIcon(draw.status)}
+                            {getStatusBadge(draw.status)}
+                          </div>
+                        </TableCell>
+                        <TableCell>{formatDate(draw.requestDate)}</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {draw.contractorName || 'N/A'}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            <Button variant="ghost" size="sm">
+                              View Details
+                            </Button>
+                            {draw.status === 'pending' && (
+                              <Button variant="outline" size="sm">
+                                Approve
+                              </Button>
+                            )}
+                            {draw.status === 'approved' && (
+                              <Button variant="outline" size="sm">
+                                Disburse
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </motion.tr>
+                    ))
+                  )
+                : (
+                    <TableRow>
+                      <TableCell colSpan={9} className="py-8 text-center text-muted-foreground">
+                        No draws found matching your criteria
+                      </TableCell>
+                    </TableRow>
+                  )}
             </TableBody>
           </Table>
         </div>
-        
+
         {/* Pagination would go here */}
         {filteredDraws.length > 0 && (
           <div className="flex items-center justify-between pt-4">
             <div className="text-sm text-muted-foreground">
-              Showing {filteredDraws.length} of {draws.length} draws
+              Showing
+              {' '}
+              {filteredDraws.length}
+              {' '}
+              of
+              {' '}
+              {draws.length}
+              {' '}
+              draws
             </div>
             <div className="flex items-center space-x-2">
               <Button variant="outline" size="sm" disabled>

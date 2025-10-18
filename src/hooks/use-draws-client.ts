@@ -1,9 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/toast';
 
-export interface Draw {
+export type Draw = {
   id: number;
   loanId: number;
   drawNumber: number;
@@ -34,44 +34,44 @@ export interface Draw {
     lastName: string;
     email: string;
   };
-}
+};
 
-export interface DrawStats {
+export type DrawStats = {
   totalDraws: number;
   pendingDraws: number;
   approvedDraws: number;
   completedDraws: number;
   month: number;
   year: number;
-}
+};
 
-export interface CreateDrawData {
+export type CreateDrawData = {
   loanNumber: string;
   drawNumber: number;
   requestedAmount: number;
   description: string;
   contractorName?: string;
   workCompleted?: string;
-}
+};
 
-export interface UpdateDrawData {
+export type UpdateDrawData = {
   requestedAmount?: number;
   approvedAmount?: number;
   description?: string;
   contractorName?: string;
   workCompleted?: string;
   notes?: string;
-}
+};
 
-export interface ApproveDrawData {
+export type ApproveDrawData = {
   approvedAmount: number;
   notes?: string;
-}
+};
 
-export interface DisburseDrawData {
+export type DisburseDrawData = {
   disbursementDate: string;
   notes?: string;
-}
+};
 
 export function useDraws(search?: string, status?: string, page = 1, limit = 10) {
   return useQuery({
@@ -81,9 +81,13 @@ export function useDraws(search?: string, status?: string, page = 1, limit = 10)
         page: page.toString(),
         limit: limit.toString(),
       });
-      
-      if (search) params.append('search', search);
-      if (status) params.append('status', status);
+
+      if (search) {
+        params.append('search', search);
+      }
+      if (status) {
+        params.append('status', status);
+      }
 
       const response = await fetch(`/api/draws?${params}`);
       if (!response.ok) {
@@ -113,8 +117,12 @@ export function useDrawStats(month?: number, year?: number) {
     queryKey: ['draw-stats', { month, year }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (month) params.append('month', month.toString());
-      if (year) params.append('year', year.toString());
+      if (month) {
+        params.append('month', month.toString());
+      }
+      if (year) {
+        params.append('year', year.toString());
+      }
 
       const response = await fetch(`/api/draws/stats?${params}`);
       if (!response.ok) {

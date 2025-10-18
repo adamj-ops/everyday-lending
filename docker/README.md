@@ -77,7 +77,7 @@ The Docker setup uses the following environment variables:
 If you get port conflicts, you can modify the ports in `docker-compose.yml`:
 ```yaml
 ports:
-  - "3001:3000"  # Use port 3001 instead of 3000
+  - '3001:3000' # Use port 3001 instead of 3000
 ```
 
 ### Database Connection Issues

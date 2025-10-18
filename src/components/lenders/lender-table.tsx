@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from 'react';
 import { ArrowUpDown, MoreHorizontal, Search } from 'lucide-react';
+import * as React from 'react';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
-export interface Lender {
+export type Lender = {
   id: string;
   name: string;
   email: string;
@@ -32,9 +32,9 @@ export interface Lender {
   totalFunded: number;
   activeLoans: number;
   status: 'active' | 'inactive' | 'pending';
-}
+};
 
-interface LenderTableProps {
+type LenderTableProps = {
   lenders: Lender[];
   onRowClick?: (lender: Lender) => void;
   onEdit?: (lender: Lender) => void;
@@ -42,7 +42,7 @@ interface LenderTableProps {
   showSearch?: boolean;
   isLoading?: boolean;
   className?: string;
-}
+};
 
 type SortField = 'name' | 'investmentCapacity' | 'totalFunded' | 'activeLoans';
 type SortDirection = 'asc' | 'desc';
@@ -81,8 +81,9 @@ export function LenderTable({
   const [sortDirection, setSortDirection] = React.useState<SortDirection>('asc');
 
   const filteredLenders = React.useMemo(() => {
-    if (!searchQuery)
+    if (!searchQuery) {
       return lenders;
+    }
 
     const query = searchQuery.toLowerCase();
     return lenders.filter(
@@ -116,8 +117,7 @@ export function LenderTable({
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
-    }
-    else {
+    } else {
       setSortField(field);
       setSortDirection('asc');
     }
@@ -147,13 +147,13 @@ export function LenderTable({
   return (
     <div className={cn('flex flex-col h-full', className)}>
       {showSearch && (
-        <div className="px-4 py-3 border-b border-[#eeeff1]">
+        <div className="border-b border-[#eeeff1] px-4 py-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#b8b9bb]" />
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#b8b9bb]" />
             <Input
               type="search"
               placeholder="Search lenders..."
-              className="pl-10 h-7"
+              className="h-7 pl-10"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
             />
@@ -163,14 +163,14 @@ export function LenderTable({
 
       <div className="flex-1 overflow-auto">
         <Table>
-          <TableHeader className="sticky top-0 bg-white z-10">
-            <TableRow className="border-b border-[#eeeff1] h-[37px]">
+          <TableHeader className="sticky top-0 z-10 bg-white">
+            <TableRow className="h-[37px] border-b border-[#eeeff1]">
               <TableHead className="w-12 px-4" />
               <TableHead className="px-4">
                 <button
                   type="button"
                   onClick={() => handleSort('name')}
-                  className="flex items-center gap-2 font-medium text-sm text-foreground hover:text-foreground/80"
+                  className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-foreground/80"
                 >
                   Lender
                   <ArrowUpDown className="h-4 w-4" />
@@ -180,7 +180,7 @@ export function LenderTable({
                 <button
                   type="button"
                   onClick={() => handleSort('investmentCapacity')}
-                  className="flex items-center gap-2 font-medium text-sm text-foreground hover:text-foreground/80"
+                  className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-foreground/80"
                 >
                   Investment Capacity
                   <ArrowUpDown className="h-4 w-4" />
@@ -190,7 +190,7 @@ export function LenderTable({
                 <button
                   type="button"
                   onClick={() => handleSort('totalFunded')}
-                  className="flex items-center gap-2 font-medium text-sm text-foreground hover:text-foreground/80"
+                  className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-foreground/80"
                 >
                   Total Funded
                   <ArrowUpDown className="h-4 w-4" />
@@ -200,7 +200,7 @@ export function LenderTable({
                 <button
                   type="button"
                   onClick={() => handleSort('activeLoans')}
-                  className="flex items-center gap-2 font-medium text-sm text-foreground hover:text-foreground/80"
+                  className="flex items-center gap-2 text-sm font-medium text-foreground hover:text-foreground/80"
                 >
                   Active Loans
                   <ArrowUpDown className="h-4 w-4" />
@@ -211,106 +211,110 @@ export function LenderTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedLenders.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-12">
-                  <div className="text-[#696a6c]">
-                    {searchQuery ? 'No lenders found' : 'No lenders yet'}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              sortedLenders.map(lender => (
-                <TableRow
-                  key={lender.id}
-                  className="cursor-pointer hover:bg-[#fbfbfb] border-b border-[#eeeff1] h-[37px]"
-                  onClick={() => onRowClick?.(lender)}
-                >
-                  <TableCell className="px-4" />
-                  <TableCell className="px-4">
-                    <div className="flex items-center gap-3">
-                      <Avatar
-                        src={lender.avatar}
-                        fallback={lender.name
-                          .split(' ')
-                          .map(n => n[0])
-                          .join('')}
-                        size="md"
-                      />
-                      <div>
-                        <p className="font-medium text-sm text-foreground">
-                          {lender.name}
-                        </p>
-                        <p className="text-xs text-[#696a6c] font-semibold">
-                          {lender.email}
-                        </p>
+            {sortedLenders.length === 0
+              ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="py-12 text-center">
+                      <div className="text-[#696a6c]">
+                        {searchQuery ? 'No lenders found' : 'No lenders yet'}
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="px-4">
-                    <span className="text-sm text-foreground">
-                      ${lender.investmentCapacity.toLocaleString()}
-                    </span>
-                  </TableCell>
-                  <TableCell className="px-4">
-                    <span className="text-sm text-foreground">
-                      ${lender.totalFunded.toLocaleString()}
-                    </span>
-                  </TableCell>
-                  <TableCell className="px-4">
-                    <span className="text-sm text-foreground">
-                      {lender.activeLoans}
-                    </span>
-                  </TableCell>
-                  <TableCell className="px-4">
-                    <Badge variant="category">
-                      {lender.status.charAt(0).toUpperCase() + lender.status.slice(1)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="px-4">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
-                        <Button variant="ghost" size="icon-sm">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onEdit?.(lender);
-                          }}
-                        >
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          View Loans
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-error"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDelete?.(lender);
-                          }}
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+                    </TableCell>
+                  </TableRow>
+                )
+              : (
+                  sortedLenders.map(lender => (
+                    <TableRow
+                      key={lender.id}
+                      className="h-[37px] cursor-pointer border-b border-[#eeeff1] hover:bg-[#fbfbfb]"
+                      onClick={() => onRowClick?.(lender)}
+                    >
+                      <TableCell className="px-4" />
+                      <TableCell className="px-4">
+                        <div className="flex items-center gap-3">
+                          <Avatar
+                            src={lender.avatar}
+                            fallback={lender.name
+                              .split(' ')
+                              .map(n => n[0])
+                              .join('')}
+                            size="md"
+                          />
+                          <div>
+                            <p className="text-sm font-medium text-foreground">
+                              {lender.name}
+                            </p>
+                            <p className="text-xs font-semibold text-[#696a6c]">
+                              {lender.email}
+                            </p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-4">
+                        <span className="text-sm text-foreground">
+                          $
+                          {lender.investmentCapacity.toLocaleString()}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-4">
+                        <span className="text-sm text-foreground">
+                          $
+                          {lender.totalFunded.toLocaleString()}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-4">
+                        <span className="text-sm text-foreground">
+                          {lender.activeLoans}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-4">
+                        <Badge variant="category">
+                          {lender.status.charAt(0).toUpperCase() + lender.status.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="px-4">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}>
+                            <Button variant="ghost" size="icon-sm">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onEdit?.(lender);
+                              }}
+                            >
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              View Loans
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-error"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete?.(lender);
+                              }}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
           </TableBody>
         </Table>
       </div>
 
       {sortedLenders.length > 0 && (
-        <div className="px-4 py-3 border-t border-[#eeeff1]">
+        <div className="border-t border-[#eeeff1] px-4 py-3">
           <p className="text-sm text-[#696a6c]">
             Showing
             {' '}

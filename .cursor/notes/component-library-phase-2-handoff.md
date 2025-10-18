@@ -31,7 +31,7 @@ Phase 2 builds on the design system established in Phase 1, adding complete data
 
 **Props**:
 ```typescript
-interface LenderTableProps {
+type LenderTableProps = {
   lenders: Lender[];
   onRowClick?: (lender: Lender) => void;
   onEdit?: (lender: Lender) => void;
@@ -39,9 +39,9 @@ interface LenderTableProps {
   showSearch?: boolean;
   isLoading?: boolean;
   className?: string;
-}
+};
 
-interface Lender {
+type Lender = {
   id: string;
   name: string;
   email: string;
@@ -50,18 +50,18 @@ interface Lender {
   totalFunded: number;
   activeLoans: number;
   status: 'active' | 'inactive' | 'pending';
-}
+};
 ```
 
 **Usage Example**:
 ```tsx
 <LenderTable
   lenders={lenders}
-  onRowClick={(lender) => setSelectedLender(lender)}
-  onEdit={(lender) => openEditModal(lender)}
-  onDelete={(lender) => handleDelete(lender)}
+  onRowClick={lender => setSelectedLender(lender)}
+  onEdit={lender => openEditModal(lender)}
+  onDelete={lender => handleDelete(lender)}
   showSearch
-/>
+/>;
 ```
 
 **Storybook Stories**: 13 variants
@@ -87,13 +87,13 @@ interface Lender {
 
 **Props**:
 ```typescript
-interface LenderDetailDrawerProps {
+type LenderDetailDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   lender: Lender | null;
   onEdit?: (lender: Lender) => void;
   onDelete?: (lender: Lender) => void;
-}
+};
 ```
 
 **Usage Example**:
@@ -104,7 +104,7 @@ interface LenderDetailDrawerProps {
   lender={selectedLender}
   onEdit={handleEdit}
   onDelete={handleDelete}
-/>
+/>;
 ```
 
 **Storybook Stories**: 3 complete management interfaces
@@ -133,7 +133,7 @@ interface LenderDetailDrawerProps {
 
 **Props**:
 ```typescript
-interface LoanTableProps {
+type LoanTableProps = {
   loans: Loan[];
   onRowClick?: (loan: Loan) => void;
   onEdit?: (loan: Loan) => void;
@@ -142,9 +142,9 @@ interface LoanTableProps {
   showSearch?: boolean;
   isLoading?: boolean;
   className?: string;
-}
+};
 
-interface Loan {
+type Loan = {
   id: string;
   loanNumber: string;
   borrower: {
@@ -167,18 +167,18 @@ interface Loan {
   originationDate: string;
   maturityDate: string;
   loanType: 'fix_and_flip' | 'bridge' | 'term' | 'construction';
-}
+};
 ```
 
 **Usage Example**:
 ```tsx
 <LoanTable
   loans={loans}
-  onRowClick={(loan) => setSelectedLoan(loan)}
-  onEdit={(loan) => openEditModal(loan)}
-  onViewDetails={(loan) => openDetailDrawer(loan)}
+  onRowClick={loan => setSelectedLoan(loan)}
+  onEdit={loan => openEditModal(loan)}
+  onViewDetails={loan => openDetailDrawer(loan)}
   showSearch
-/>
+/>;
 ```
 
 **Storybook Stories**: 14 variants
@@ -205,13 +205,13 @@ interface Loan {
 
 **Props**:
 ```typescript
-interface LoanDetailDrawerProps {
+type LoanDetailDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   loan: Loan | null;
   onEdit?: (loan: Loan) => void;
   onDelete?: (loan: Loan) => void;
-}
+};
 ```
 
 **Usage Example**:
@@ -222,7 +222,7 @@ interface LoanDetailDrawerProps {
   loan={selectedLoan}
   onEdit={handleEdit}
   onDelete={handleDelete}
-/>
+/>;
 ```
 
 **Storybook Stories**: 4 complete management interfaces
@@ -251,7 +251,7 @@ interface LoanDetailDrawerProps {
 
 **Props**:
 ```typescript
-interface MultiStepFormProps {
+type MultiStepFormProps = {
   steps: FormStep[];
   onComplete: () => void | Promise<void>;
   onCancel?: () => void;
@@ -259,15 +259,15 @@ interface MultiStepFormProps {
   allowSkip?: boolean;
   showStepNumbers?: boolean;
   className?: string;
-}
+};
 
-interface FormStep {
+type FormStep = {
   id: string;
   title: string;
   description?: string;
   component: React.ReactNode;
   validate?: () => boolean | Promise<boolean>;
-}
+};
 ```
 
 **Usage Example**:
@@ -288,7 +288,7 @@ const steps: FormStep[] = [
   onComplete={handleSubmit}
   onCancel={handleCancel}
   showStepNumbers
-/>
+/>;
 ```
 
 **Storybook Stories**: 9 variants
@@ -323,12 +323,12 @@ const steps: FormStep[] = [
 
 **Props**:
 ```typescript
-interface LoanApplicationFormProps {
+type LoanApplicationFormProps = {
   onComplete: (data: LoanApplicationData) => void | Promise<void>;
   onCancel?: () => void;
-}
+};
 
-interface LoanApplicationData {
+type LoanApplicationData = {
   borrowerName: string;
   borrowerEmail: string;
   borrowerPhone: string;
@@ -345,7 +345,7 @@ interface LoanApplicationData {
   loanTerm: string;
   lenderName: string;
   lenderEmail: string;
-}
+};
 ```
 
 **Usage Example**:
@@ -356,7 +356,7 @@ interface LoanApplicationData {
     // POST to /api/loans
   }}
   onCancel={() => router.push('/loans')}
-/>
+/>;
 ```
 
 **Storybook Stories**: 5 variants
@@ -448,9 +448,9 @@ All components accept data as props. To integrate with API routes:
 'use client';
 
 import { useState } from 'react';
-import { useLendersClient } from '@/hooks/use-lenders-client';
-import { LenderTable } from '@/components/lenders/lender-table';
 import { LenderDetailDrawer } from '@/components/lenders/lender-detail-drawer';
+import { LenderTable } from '@/components/lenders/lender-table';
+import { useLendersClient } from '@/hooks/use-lenders-client';
 
 export default function LendersPage() {
   const { lenders, isLoading, updateLender, deleteLender } = useLendersClient();

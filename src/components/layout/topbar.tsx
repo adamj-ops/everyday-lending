@@ -12,6 +12,7 @@ import {
   User,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -22,12 +23,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/hooks/use-auth';
+import { createClient } from '@/lib/supabase-auth';
 
 type TopbarProps = {
   title?: string;
   subtitle?: string;
   onMenuClick?: () => void;
   showMenuButton?: boolean;
+  locale?: string;
 };
 
 export function Topbar({
@@ -35,8 +39,18 @@ export function Topbar({
   subtitle,
   onMenuClick,
   showMenuButton = false,
+  locale = 'en',
 }: TopbarProps) {
   const [searchValue, setSearchValue] = useState('');
+  const { user } = useAuth();
+  const router = useRouter();
+  const supabase = createClient();
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    router.push(`/${locale}/sign-in`);
+    router.refresh();
+  }
 
   return (
     <motion.header
@@ -95,7 +109,7 @@ export function Topbar({
         >
           <Bell className="h-4 w-4" />
           <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-accent">
-            <span className="text-[8px] font-medium text-accent-foreground">3</span>
+            <span className="text-accent-foreground text-[8px] font-medium">3</span>
           </span>
         </Button>
 
@@ -108,11 +122,11 @@ export function Topbar({
             >
               <div className="flex items-center space-x-2">
                 <div className="flex h-7 w-7 items-center justify-center rounded-full bg-accent">
-                  <User className="h-4 w-4 text-accent-foreground" />
+                  <User className="text-accent-foreground h-4 w-4" />
                 </div>
                 <div className="hidden text-left sm:block">
-                  <div className="text-sm font-medium text-foreground">John Doe</div>
-                  <div className="text-xs text-muted-foreground">Admin</div>
+                  <div className="text-sm font-medium text-foreground">{user?.email || 'User'}</div>
+                  <div className="text-xs text-muted-foreground">Member</div>
                 </div>
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </div>
@@ -130,7 +144,10 @@ export function Topbar({
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:text-destructive">
+            <DropdownMenuItem 
+              className="text-destructive focus:text-destructive"
+              onClick={handleSignOut}
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Sign out
             </DropdownMenuItem>

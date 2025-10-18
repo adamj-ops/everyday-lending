@@ -1,8 +1,8 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,12 +28,12 @@ import { toast } from '@/components/ui/toast';
 const drawSchema = z.object({
   loanNumber: z.string().min(1, 'Loan number is required'),
   drawNumber: z.string().min(1, 'Draw number is required').refine(
-    (val) => !isNaN(Number(val)) && Number(val) > 0,
-    'Draw number must be a positive number'
+    val => !isNaN(Number(val)) && Number(val) > 0,
+    'Draw number must be a positive number',
   ),
   requestedAmount: z.string().min(1, 'Requested amount is required').refine(
-    (val) => !isNaN(Number(val)) && Number(val) > 0,
-    'Amount must be a positive number'
+    val => !isNaN(Number(val)) && Number(val) > 0,
+    'Amount must be a positive number',
   ),
   description: z.string().min(1, 'Description is required'),
   contractorName: z.string().optional(),
@@ -42,11 +42,11 @@ const drawSchema = z.object({
 
 type DrawFormData = z.infer<typeof drawSchema>;
 
-interface CreateDrawDialogProps {
+type CreateDrawDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
-}
+};
 
 export function CreateDrawDialog({
   open,
@@ -69,16 +69,16 @@ export function CreateDrawDialog({
 
   const onSubmit = async (data: DrawFormData) => {
     setIsSubmitting(true);
-    
+
     try {
       // TODO: Replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       toast({
         title: 'Draw Requested',
         description: `Draw request #${data.drawNumber} for loan ${data.loanNumber} has been submitted successfully.`,
       });
-      
+
       form.reset();
       onOpenChange(false);
       onSuccess?.();
@@ -107,7 +107,7 @@ export function CreateDrawDialog({
             Submit a new draw request for construction work. This will be reviewed and approved before disbursement.
           </DialogDescription>
         </DialogHeader>
-        
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -124,7 +124,7 @@ export function CreateDrawDialog({
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="drawNumber"
@@ -132,10 +132,10 @@ export function CreateDrawDialog({
                   <FormItem>
                     <FormLabel>Draw Number</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="1" 
-                        {...field} 
+                      <Input
+                        type="number"
+                        placeholder="1"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -143,7 +143,7 @@ export function CreateDrawDialog({
                 )}
               />
             </div>
-            
+
             <FormField
               control={form.control}
               name="requestedAmount"
@@ -151,18 +151,18 @@ export function CreateDrawDialog({
                 <FormItem>
                   <FormLabel>Requested Amount</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
-                      step="0.01" 
-                      placeholder="25000.00" 
-                      {...field} 
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="25000.00"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="description"
@@ -170,17 +170,17 @@ export function CreateDrawDialog({
                 <FormItem>
                   <FormLabel>Work Description</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Describe the work completed or to be completed..." 
-                      className="resize-none" 
-                      {...field} 
+                    <Textarea
+                      placeholder="Describe the work completed or to be completed..."
+                      className="resize-none"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="contractorName"
@@ -194,7 +194,7 @@ export function CreateDrawDialog({
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="workCompleted"
@@ -202,17 +202,17 @@ export function CreateDrawDialog({
                 <FormItem>
                   <FormLabel>Work Completed Details (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Additional details about completed work..." 
-                      className="resize-none" 
-                      {...field} 
+                    <Textarea
+                      placeholder="Additional details about completed work..."
+                      className="resize-none"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancel

@@ -137,20 +137,20 @@ Tasks should be used for:
 ### Required: install-module-config.yaml
 
 ```yaml
-module_name: 'Module Name'
-module_code: 'module-code'
+module_name: Module Name
+module_code: module-code
 
 install_steps:
-  - name: 'Create directories'
-    action: 'mkdir'
+  - name: Create directories
+    action: mkdir
     paths: [...]
 
-  - name: 'Copy files'
-    action: 'copy'
+  - name: Copy files
+    action: copy
     mappings: [...]
 
-  - name: 'Register module'
-    action: 'register'
+  - name: Register module
+    action: register
 ```
 
 ### Optional: installer.js

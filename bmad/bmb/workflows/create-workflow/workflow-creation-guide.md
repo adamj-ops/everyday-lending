@@ -23,8 +23,8 @@ Create a folder with these files:
 
 ```yaml
 # workflow.yaml (REQUIRED)
-name: 'my-workflow'
-description: 'What this workflow does'
+name: my-workflow
+description: What this workflow does
 installed_path: '{project-root}/bmad/module/workflows/my-workflow'
 template: '{installed_path}/template.md'
 instructions: '{installed_path}/instructions.md'
@@ -98,8 +98,8 @@ my-workflow/
 
 ```yaml
 # Basic metadata
-name: 'workflow-name'
-description: 'Clear purpose statement'
+name: workflow-name
+description: Clear purpose statement
 
 # Paths
 installed_path: '{project-root}/bmad/module/workflows/name'
@@ -113,7 +113,7 @@ default_output_file: '{output_folder}/document.md'
 # Advanced options
 autonomous: true # Skip user checkpoints
 recommended_inputs: # Expected input docs
-  - input_doc: 'path/to/doc.md'
+  - input_doc: path/to/doc.md
 ```
 
 ### Common Patterns
@@ -506,24 +506,24 @@ Add this section to your workflow.yaml:
 
 ```yaml
 web_bundle:
-  name: 'workflow-name'
-  description: 'Workflow description'
-  author: 'Your Name'
+  name: workflow-name
+  description: Workflow description
+  author: Your Name
 
   # Core files (bmad/-relative paths)
-  instructions: 'bmad/module/workflows/workflow/instructions.md'
-  validation: 'bmad/module/workflows/workflow/checklist.md'
-  template: 'bmad/module/workflows/workflow/template.md'
+  instructions: bmad/module/workflows/workflow/instructions.md
+  validation: bmad/module/workflows/workflow/checklist.md
+  template: bmad/module/workflows/workflow/template.md
 
   # Data files (no config_source allowed)
-  data_file: 'bmad/module/workflows/workflow/data.csv'
+  data_file: bmad/module/workflows/workflow/data.csv
 
   # Complete file list - CRITICAL!
   web_bundle_files:
-    - 'bmad/module/workflows/workflow/instructions.md'
-    - 'bmad/module/workflows/workflow/checklist.md'
-    - 'bmad/module/workflows/workflow/template.md'
-    - 'bmad/module/workflows/workflow/data.csv'
+    - bmad/module/workflows/workflow/instructions.md
+    - bmad/module/workflows/workflow/checklist.md
+    - bmad/module/workflows/workflow/template.md
+    - bmad/module/workflows/workflow/data.csv
     # Include ALL referenced files
 ```
 
@@ -546,39 +546,39 @@ web_bundle:
 
 ```yaml
 web_bundle:
-  name: 'analyze-requirements'
-  description: 'Requirements analysis workflow'
-  author: 'BMad Team'
+  name: analyze-requirements
+  description: Requirements analysis workflow
+  author: BMad Team
 
-  instructions: 'bmad/bmm/workflows/analyze-requirements/instructions.md'
-  validation: 'bmad/bmm/workflows/analyze-requirements/checklist.md'
-  template: 'bmad/bmm/workflows/analyze-requirements/template.md'
+  instructions: bmad/bmm/workflows/analyze-requirements/instructions.md
+  validation: bmad/bmm/workflows/analyze-requirements/checklist.md
+  template: bmad/bmm/workflows/analyze-requirements/template.md
 
   # Data files
-  techniques_data: 'bmad/bmm/workflows/analyze-requirements/techniques.csv'
-  patterns_data: 'bmad/bmm/workflows/analyze-requirements/patterns.json'
+  techniques_data: bmad/bmm/workflows/analyze-requirements/techniques.csv
+  patterns_data: bmad/bmm/workflows/analyze-requirements/patterns.json
 
   # Sub-workflow reference
-  validation_workflow: 'bmad/bmm/workflows/validate-requirements/workflow.yaml'
+  validation_workflow: bmad/bmm/workflows/validate-requirements/workflow.yaml
 
   web_bundle_files:
     # Core workflow files
-    - 'bmad/bmm/workflows/analyze-requirements/instructions.md'
-    - 'bmad/bmm/workflows/analyze-requirements/checklist.md'
-    - 'bmad/bmm/workflows/analyze-requirements/template.md'
+    - bmad/bmm/workflows/analyze-requirements/instructions.md
+    - bmad/bmm/workflows/analyze-requirements/checklist.md
+    - bmad/bmm/workflows/analyze-requirements/template.md
 
     # Data files
-    - 'bmad/bmm/workflows/analyze-requirements/techniques.csv'
-    - 'bmad/bmm/workflows/analyze-requirements/patterns.json'
+    - bmad/bmm/workflows/analyze-requirements/techniques.csv
+    - bmad/bmm/workflows/analyze-requirements/patterns.json
 
     # Sub-workflow and its files
-    - 'bmad/bmm/workflows/validate-requirements/workflow.yaml'
-    - 'bmad/bmm/workflows/validate-requirements/instructions.md'
-    - 'bmad/bmm/workflows/validate-requirements/checklist.md'
+    - bmad/bmm/workflows/validate-requirements/workflow.yaml
+    - bmad/bmm/workflows/validate-requirements/instructions.md
+    - bmad/bmm/workflows/validate-requirements/checklist.md
 
     # Shared templates referenced in instructions
-    - 'bmad/bmm/templates/requirement-item.md'
-    - 'bmad/bmm/templates/validation-criteria.md'
+    - bmad/bmm/templates/requirement-item.md
+    - bmad/bmm/templates/validation-criteria.md
 ```
 
 ## Troubleshooting

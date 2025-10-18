@@ -123,10 +123,10 @@ create-agent/
 agent:
   metadata:
     id: bmad/{{module}}/agents/{{agent_filename}}.md
-    name: { { agent_name } }
-    title: { { agent_title } }
-    icon: { { agent_icon } }
-    module: { { module } }
+    name: {{agent_name}}
+    title: {{agent_title}}
+    icon: {{agent_icon}}
+    module: {{module}}
   persona:
     role: '...'
     identity: '...'

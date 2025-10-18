@@ -1,8 +1,9 @@
 'use client';
 
-import * as React from 'react';
+import type { Lender } from './lender-table';
 import { MoreHorizontal } from 'lucide-react';
 
+import * as React from 'react';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,23 +20,22 @@ import {
   // SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import type { Lender } from './lender-table';
-
-interface LenderDetailDrawerProps {
+type LenderDetailDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   lender: Lender | null;
   onEdit?: (lender: Lender) => void;
   onDelete?: (lender: Lender) => void;
-}
+};
 
-interface DetailFieldProps {
+type DetailFieldProps = {
   label: string;
   value: string | number;
   mono?: boolean;
-}
+};
 
 function DetailField({ label, value, mono = false }: DetailFieldProps) {
   return (
@@ -58,8 +58,9 @@ export function LenderDetailDrawer({
   onEdit,
   onDelete,
 }: LenderDetailDrawerProps) {
-  if (!lender)
+  if (!lender) {
     return null;
+  }
 
   const getStatusVariant = (status: Lender['status']) => {
     switch (status) {
@@ -79,7 +80,7 @@ export function LenderDetailDrawer({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-96 sm:w-[540px] p-0">
+      <SheetContent className="w-96 p-0 sm:w-[540px]">
         {/* Header */}
         <div className="border-b border-neutral-100 p-6">
           <div className="flex items-start gap-4">
@@ -97,7 +98,7 @@ export function LenderDetailDrawer({
               <SheetDescription className="mt-1">
                 {lender.email}
               </SheetDescription>
-              <div className="flex gap-2 mt-3">
+              <div className="mt-3 flex gap-2">
                 <Badge variant={getStatusVariant(lender.status)}>
                   {lender.status.charAt(0).toUpperCase() + lender.status.slice(1)}
                 </Badge>
@@ -132,17 +133,17 @@ export function LenderDetailDrawer({
 
         {/* Tabs */}
         <Tabs defaultValue="details" className="flex-1">
-          <TabsList className="w-full justify-start border-b border-neutral-100 rounded-none px-6">
+          <TabsList className="w-full justify-start rounded-none border-b border-neutral-100 px-6">
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="details" className="p-6 space-y-6 mt-0">
+          <TabsContent value="details" className="mt-0 space-y-6 p-6">
             {/* Investment Information */}
             <div>
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Investment Information
               </h3>
               <dl className="space-y-4">
@@ -175,7 +176,7 @@ export function LenderDetailDrawer({
             </div>
 
             <div className="border-t border-neutral-100 pt-6">
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Contact Information
               </h3>
               <dl className="space-y-4">
@@ -199,7 +200,7 @@ export function LenderDetailDrawer({
             </div>
 
             <div className="border-t border-neutral-100 pt-6">
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Investment Preferences
               </h3>
               <dl className="space-y-4">
@@ -226,15 +227,15 @@ export function LenderDetailDrawer({
             </div>
           </TabsContent>
 
-          <TabsContent value="portfolio" className="p-6 space-y-4 mt-0">
+          <TabsContent value="portfolio" className="mt-0 space-y-4 p-6">
             <div>
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Funded Loans
               </h3>
               <div className="space-y-2">
                 {/* Loan cards */}
-                <div className="p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 cursor-pointer">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="cursor-pointer rounded-lg border border-neutral-200 p-4 hover:bg-neutral-50">
+                  <div className="mb-2 flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         123 Main St, Springfield
@@ -249,8 +250,8 @@ export function LenderDetailDrawer({
                   </div>
                 </div>
 
-                <div className="p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 cursor-pointer">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="cursor-pointer rounded-lg border border-neutral-200 p-4 hover:bg-neutral-50">
+                  <div className="mb-2 flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         789 Oak Ave, Riverside
@@ -268,60 +269,60 @@ export function LenderDetailDrawer({
             </div>
 
             <div className="border-t border-neutral-100 pt-4">
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Portfolio Performance
               </h3>
               <dl className="space-y-3">
                 <div className="flex justify-between">
                   <dt className="text-sm text-neutral-500">Total Returns</dt>
-                  <dd className="text-sm font-mono font-semibold text-success">
+                  <dd className="font-mono text-sm font-semibold text-success">
                     +14.2%
                   </dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-sm text-neutral-500">Avg Loan Term</dt>
-                  <dd className="text-sm font-mono text-neutral-800">18 months</dd>
+                  <dd className="font-mono text-sm text-neutral-800">18 months</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-sm text-neutral-500">Default Rate</dt>
-                  <dd className="text-sm font-mono text-neutral-800">0%</dd>
+                  <dd className="font-mono text-sm text-neutral-800">0%</dd>
                 </div>
               </dl>
             </div>
           </TabsContent>
 
-          <TabsContent value="activity" className="p-6 mt-0">
+          <TabsContent value="activity" className="mt-0 p-6">
             <div className="space-y-4">
               {/* Activity Timeline */}
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-brand-500 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-brand-500" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Funded new loan
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     2 hours ago • $800,000
                   </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-neutral-300 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-neutral-300" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Payment received
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     Yesterday • $12,500
                   </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-neutral-300 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-neutral-300" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Profile updated
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     3 days ago
                   </p>
                 </div>
@@ -329,8 +330,8 @@ export function LenderDetailDrawer({
             </div>
           </TabsContent>
 
-          <TabsContent value="documents" className="p-6 mt-0">
-            <div className="text-neutral-500 text-center py-8">
+          <TabsContent value="documents" className="mt-0 p-6">
+            <div className="py-8 text-center text-neutral-500">
               No documents uploaded
             </div>
           </TabsContent>

@@ -73,15 +73,15 @@ export const typography = {
     secondary: ['Inter', 'system-ui', 'sans-serif'],
   },
   fontSize: {
-    xs: '9.5px',
-    sm: '10px',
-    smPlus: '10.5px',
-    base: '12px',
-    basePlus: '12.5px',
-    md: '13px',
-    lg: '14px',
-    xl: '16px',
-    xlPlus: '16.5px',
+    'xs': '9.5px',
+    'sm': '10px',
+    'smPlus': '10.5px',
+    'base': '12px',
+    'basePlus': '12.5px',
+    'md': '13px',
+    'lg': '14px',
+    'xl': '16px',
+    'xlPlus': '16.5px',
     '2xl': '24px',
   },
   fontWeight: {
@@ -115,14 +115,14 @@ export const spacing = {
 } as const;
 
 export const borderRadius = {
-  none: '0',
-  sm: '2px',
-  DEFAULT: '4px',
-  md: '5px',
-  lg: '8px',
-  xl: '10px',
+  'none': '0',
+  'sm': '2px',
+  'DEFAULT': '4px',
+  'md': '5px',
+  'lg': '8px',
+  'xl': '10px',
   '2xl': '20px',
-  full: '9999px',
+  'full': '9999px',
 } as const;
 
 export const shadows = {

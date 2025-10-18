@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-
-import { BorrowerDetailDrawer } from './borrower-detail-drawer';
 import type { Borrower } from './borrower-table';
+
+import { useState } from 'react';
+import { BorrowerDetailDrawer } from './borrower-detail-drawer';
 import { BorrowerTable } from './borrower-table';
 
 const mockBorrowers: Borrower[] = [
@@ -85,7 +85,7 @@ export const TableWithDrawer: Story = {
     };
 
     return (
-      <div className="h-screen flex">
+      <div className="flex h-screen">
         <div className="flex-1 overflow-hidden">
           <BorrowerTable
             borrowers={mockBorrowers}
@@ -125,7 +125,7 @@ export const FullDashboardLayout: Story = {
     return (
       <div className="min-h-screen bg-neutral-50">
         {/* Top Bar */}
-        <header className="h-16 border-b border-neutral-200 bg-white px-6 flex items-center justify-between">
+        <header className="flex h-16 items-center justify-between border-b border-neutral-200 bg-white px-6">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-semibold text-neutral-800">
               Everyday Lending
@@ -140,16 +140,16 @@ export const FullDashboardLayout: Story = {
           {/* Left Sidebar */}
           <aside className="w-60 border-r border-neutral-200 bg-white p-4">
             <nav className="space-y-1">
-              <div className="px-3 py-2 text-sm font-medium text-brand-600 bg-brand-50 rounded-lg">
+              <div className="rounded-lg bg-brand-50 px-3 py-2 text-sm font-medium text-brand-600">
                 Borrowers
               </div>
-              <div className="px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 rounded-lg cursor-pointer">
+              <div className="cursor-pointer rounded-lg px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50">
                 Lenders
               </div>
-              <div className="px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 rounded-lg cursor-pointer">
+              <div className="cursor-pointer rounded-lg px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50">
                 Loans
               </div>
-              <div className="px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 rounded-lg cursor-pointer">
+              <div className="cursor-pointer rounded-lg px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50">
                 Properties
               </div>
             </nav>

@@ -1,8 +1,9 @@
 'use client';
 
-import * as React from 'react';
+import type { Loan } from './loan-table';
 import { MoreHorizontal } from 'lucide-react';
 
+import * as React from 'react';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,23 +20,22 @@ import {
   // SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import type { Loan } from './loan-table';
-
-interface LoanDetailDrawerProps {
+type LoanDetailDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   loan: Loan | null;
   onEdit?: (loan: Loan) => void;
   onDelete?: (loan: Loan) => void;
-}
+};
 
-interface DetailFieldProps {
+type DetailFieldProps = {
   label: string;
   value: string | number;
   mono?: boolean;
-}
+};
 
 function DetailField({ label, value, mono = false }: DetailFieldProps) {
   return (
@@ -59,8 +59,9 @@ export function LoanDetailDrawer({
   onEdit,
   onDelete,
 }: LoanDetailDrawerProps) {
-  if (!loan)
+  if (!loan) {
     return null;
+  }
 
   const getStatusVariant = (status: Loan['status']) => {
     switch (status) {
@@ -119,12 +120,12 @@ export function LoanDetailDrawer({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-96 sm:w-[540px] p-0">
+      <SheetContent className="w-96 p-0 sm:w-[540px]">
         {/* Header */}
         <div className="border-b border-neutral-100 p-6">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <SheetTitle className="text-2xl font-mono">
+              <SheetTitle className="font-mono text-2xl">
                 {loan.loanNumber}
               </SheetTitle>
               <SheetDescription className="mt-1">
@@ -133,7 +134,7 @@ export function LoanDetailDrawer({
                 {' '}
                 {loan.property.city}
               </SheetDescription>
-              <div className="flex gap-2 mt-3">
+              <div className="mt-3 flex gap-2">
                 <Badge variant={getStatusVariant(loan.status)}>
                   {loan.status.replace('_', ' ')}
                 </Badge>
@@ -167,7 +168,7 @@ export function LoanDetailDrawer({
 
         {/* Tabs */}
         <Tabs defaultValue="details" className="flex-1">
-          <TabsList className="w-full justify-start border-b border-neutral-100 rounded-none px-6">
+          <TabsList className="w-full justify-start rounded-none border-b border-neutral-100 px-6">
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="parties">Parties</TabsTrigger>
             <TabsTrigger value="payments">Payments</TabsTrigger>
@@ -175,10 +176,10 @@ export function LoanDetailDrawer({
             <TabsTrigger value="activity">Activity</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="details" className="p-6 space-y-6 mt-0">
+          <TabsContent value="details" className="mt-0 space-y-6 p-6">
             {/* Loan Details */}
             <div>
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Loan Information
               </h3>
               <dl className="space-y-4">
@@ -214,7 +215,7 @@ export function LoanDetailDrawer({
             </div>
 
             <div className="border-t border-neutral-100 pt-6">
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Payment Summary
               </h3>
               <dl className="space-y-4">
@@ -240,7 +241,7 @@ export function LoanDetailDrawer({
             </div>
 
             <div className="border-t border-neutral-100 pt-6">
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Property Information
               </h3>
               <dl className="space-y-4">
@@ -262,13 +263,13 @@ export function LoanDetailDrawer({
             </div>
           </TabsContent>
 
-          <TabsContent value="parties" className="p-6 space-y-6 mt-0">
+          <TabsContent value="parties" className="mt-0 space-y-6 p-6">
             {/* Borrower */}
             <div>
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Borrower
               </h3>
-              <div className="flex items-center gap-3 p-4 border border-neutral-200 rounded-lg">
+              <div className="flex items-center gap-3 rounded-lg border border-neutral-200 p-4">
                 <Avatar
                   src={loan.borrower.avatar}
                   fallback={getBorrowerInitials(loan.borrower.name)}
@@ -285,10 +286,10 @@ export function LoanDetailDrawer({
 
             {/* Lender */}
             <div>
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Lender
               </h3>
-              <div className="flex items-center gap-3 p-4 border border-neutral-200 rounded-lg">
+              <div className="flex items-center gap-3 rounded-lg border border-neutral-200 p-4">
                 <Avatar
                   src={loan.lender.avatar}
                   fallback={getBorrowerInitials(loan.lender.name)}
@@ -305,12 +306,12 @@ export function LoanDetailDrawer({
 
             {/* Additional Parties */}
             <div>
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Additional Parties
               </h3>
               <div className="space-y-2">
-                <div className="p-4 border border-neutral-200 rounded-lg">
-                  <div className="flex justify-between items-center">
+                <div className="rounded-lg border border-neutral-200 p-4">
+                  <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         John Smith Law Firm
@@ -321,8 +322,8 @@ export function LoanDetailDrawer({
                     </div>
                   </div>
                 </div>
-                <div className="p-4 border border-neutral-200 rounded-lg">
-                  <div className="flex justify-between items-center">
+                <div className="rounded-lg border border-neutral-200 p-4">
+                  <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         ABC Title Company
@@ -335,15 +336,15 @@ export function LoanDetailDrawer({
             </div>
           </TabsContent>
 
-          <TabsContent value="payments" className="p-6 space-y-4 mt-0">
+          <TabsContent value="payments" className="mt-0 space-y-4 p-6">
             <div>
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Payment History
               </h3>
               <div className="space-y-2">
                 {/* Payment records */}
-                <div className="p-4 border border-neutral-200 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="rounded-lg border border-neutral-200 p-4">
+                  <div className="mb-2 flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         Payment #8
@@ -352,19 +353,19 @@ export function LoanDetailDrawer({
                     </div>
                     <Badge variant="default">Paid</Badge>
                   </div>
-                  <div className="flex justify-between text-sm mt-2">
+                  <div className="mt-2 flex justify-between text-sm">
                     <span className="text-neutral-500">Amount:</span>
                     <span className="font-mono text-neutral-800">
                       $5,700.00
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm mt-1">
+                  <div className="mt-1 flex justify-between text-sm">
                     <span className="text-neutral-500">Principal:</span>
                     <span className="font-mono text-neutral-600">
                       $1,200.00
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm mt-1">
+                  <div className="mt-1 flex justify-between text-sm">
                     <span className="text-neutral-500">Interest:</span>
                     <span className="font-mono text-neutral-600">
                       $4,500.00
@@ -372,8 +373,8 @@ export function LoanDetailDrawer({
                   </div>
                 </div>
 
-                <div className="p-4 border border-neutral-200 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="rounded-lg border border-neutral-200 p-4">
+                  <div className="mb-2 flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         Payment #7
@@ -382,7 +383,7 @@ export function LoanDetailDrawer({
                     </div>
                     <Badge variant="default">Paid</Badge>
                   </div>
-                  <div className="flex justify-between text-sm mt-2">
+                  <div className="mt-2 flex justify-between text-sm">
                     <span className="text-neutral-500">Amount:</span>
                     <span className="font-mono text-neutral-800">
                       $5,700.00
@@ -390,8 +391,8 @@ export function LoanDetailDrawer({
                   </div>
                 </div>
 
-                <div className="p-4 border border-neutral-200 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="rounded-lg border border-neutral-200 p-4">
+                  <div className="mb-2 flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         Payment #6
@@ -400,7 +401,7 @@ export function LoanDetailDrawer({
                     </div>
                     <Badge variant="default">Paid</Badge>
                   </div>
-                  <div className="flex justify-between text-sm mt-2">
+                  <div className="mt-2 flex justify-between text-sm">
                     <span className="text-neutral-500">Amount:</span>
                     <span className="font-mono text-neutral-800">
                       $5,700.00
@@ -411,14 +412,14 @@ export function LoanDetailDrawer({
             </div>
           </TabsContent>
 
-          <TabsContent value="documents" className="p-6 space-y-4 mt-0">
+          <TabsContent value="documents" className="mt-0 space-y-4 p-6">
             <div>
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Loan Documents
               </h3>
               <div className="space-y-2">
-                <div className="p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 cursor-pointer">
-                  <div className="flex justify-between items-center">
+                <div className="cursor-pointer rounded-lg border border-neutral-200 p-4 hover:bg-neutral-50">
+                  <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         Promissory Note
@@ -431,8 +432,8 @@ export function LoanDetailDrawer({
                   </div>
                 </div>
 
-                <div className="p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 cursor-pointer">
-                  <div className="flex justify-between items-center">
+                <div className="cursor-pointer rounded-lg border border-neutral-200 p-4 hover:bg-neutral-50">
+                  <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         Deed of Trust
@@ -445,8 +446,8 @@ export function LoanDetailDrawer({
                   </div>
                 </div>
 
-                <div className="p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 cursor-pointer">
-                  <div className="flex justify-between items-center">
+                <div className="cursor-pointer rounded-lg border border-neutral-200 p-4 hover:bg-neutral-50">
+                  <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         Property Appraisal
@@ -459,8 +460,8 @@ export function LoanDetailDrawer({
                   </div>
                 </div>
 
-                <div className="p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 cursor-pointer">
-                  <div className="flex justify-between items-center">
+                <div className="cursor-pointer rounded-lg border border-neutral-200 p-4 hover:bg-neutral-50">
+                  <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         Title Insurance
@@ -476,60 +477,60 @@ export function LoanDetailDrawer({
             </div>
           </TabsContent>
 
-          <TabsContent value="activity" className="p-6 mt-0">
+          <TabsContent value="activity" className="mt-0 p-6">
             <div className="space-y-4">
               {/* Activity Timeline */}
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-brand-500 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-brand-500" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Payment received
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     Nov 1, 2024 • $5,700.00
                   </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-neutral-300 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-neutral-300" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Payment received
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     Oct 1, 2024 • $5,700.00
                   </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-neutral-300 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-neutral-300" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Payment received
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     Sep 1, 2024 • $5,700.00
                   </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-neutral-300 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-neutral-300" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Document uploaded
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     Mar 15, 2024 • Promissory Note
                   </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-neutral-300 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-neutral-300" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Loan funded
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     Mar 15, 2024 •
                     {' '}
                     {formatCurrency(loan.principalAmount)}

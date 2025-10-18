@@ -20,13 +20,13 @@ Added complete color palette from design system:
 **Usage:**
 ```tsx
 // Brand blue
-className="bg-brand-500 text-white"
+className = 'bg-brand-500 text-white';
 
 // Accent sky blue
-className="bg-accent-500 hover:bg-accent-600"
+className = 'bg-accent-500 hover:bg-accent-600';
 
 // Neutrals
-className="text-neutral-600 border-neutral-200"
+className = 'text-neutral-600 border-neutral-200';
 ```
 
 ### 2. MetricCard Component ✅
@@ -51,7 +51,7 @@ import { MetricCard } from '@/components/ui/metric-card';
   value="$24.8M"
   trend={12.5}
   trendContext="vs last month"
-/>
+/>;
 ```
 
 ### 3. Storybook Documentation ✅
@@ -107,7 +107,7 @@ import { MetricCard } from '@/components/ui/metric-card';
     value="$892K"
     trend={15.3}
   />
-</div>
+</div>;
 ```
 
 ### With API Data
@@ -127,10 +127,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-6">
       <h1 className="text-4xl font-semibold text-neutral-800">Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           label="Total Loans"
           value={stats.totalLoans}

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-import { LenderTable } from './lender-table';
-import { LenderDetailDrawer } from './lender-detail-drawer';
 import type { Lender } from './lender-table';
+import { useState } from 'react';
+import { LenderDetailDrawer } from './lender-detail-drawer';
+import { LenderTable } from './lender-table';
 
 /**
  * Complete lender management interface showing the table and detail drawer working together.
@@ -76,10 +76,10 @@ const LenderManagement = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex h-screen flex-col">
       <div className="border-b border-neutral-200 p-6">
         <h1 className="text-2xl font-semibold text-neutral-800">Lenders</h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <p className="mt-1 text-sm text-neutral-500">
           Manage your lenders and track investment capacity
         </p>
       </div>
@@ -164,12 +164,12 @@ const HighUtilizationManagement = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex h-screen flex-col">
       <div className="border-b border-neutral-200 p-6">
         <h1 className="text-2xl font-semibold text-neutral-800">
           High Utilization Lenders
         </h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <p className="mt-1 text-sm text-neutral-500">
           Lenders with high capacity utilization rates
         </p>
       </div>
@@ -234,12 +234,12 @@ const PendingApprovalsManagement = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex h-screen flex-col">
       <div className="border-b border-neutral-200 p-6">
         <h1 className="text-2xl font-semibold text-neutral-800">
           Pending Lenders
         </h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <p className="mt-1 text-sm text-neutral-500">
           Lenders awaiting approval and onboarding
         </p>
       </div>

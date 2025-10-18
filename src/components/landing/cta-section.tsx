@@ -1,18 +1,18 @@
 'use client';
 
+import Link from 'next/link';
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 export function CtaSection() {
   return (
-    <section className="bg-[#276bf0] relative overflow-hidden">
-      <div className="max-w-[1440px] mx-auto px-6 py-24">
-        <div className="max-w-[1252px] mx-auto">
+    <section className="relative overflow-hidden bg-[#276bf0]">
+      <div className="mx-auto max-w-[1440px] px-6 py-24">
+        <div className="mx-auto max-w-[1252px]">
           <div className="flex items-center justify-between">
             {/* Content */}
             <div className="max-w-[494px]">
-              <h2 className="text-[48px] leading-tight font-bold text-white mb-6">
+              <h2 className="mb-6 text-[48px] leading-tight font-bold text-white">
                 Ready to build your team&apos;s dream CRM?
               </h2>
               <div className="flex gap-3">
@@ -35,10 +35,10 @@ export function CtaSection() {
             </div>
 
             {/* Graphic Placeholder */}
-            <div className="w-[740px] h-[362px] bg-white/10 rounded-lg flex items-center justify-center">
+            <div className="flex h-[362px] w-[740px] items-center justify-center rounded-lg bg-white/10">
               <div className="text-center">
-                <div className="text-6xl mb-4 opacity-50">📈</div>
-                <p className="text-sm text-white/70 font-semibold">
+                <div className="mb-4 text-6xl opacity-50">📈</div>
+                <p className="text-sm font-semibold text-white/70">
                   Analytics Preview
                 </p>
               </div>

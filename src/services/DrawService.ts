@@ -1,45 +1,45 @@
 /**
  * DrawService - Construction draw management
- * 
+ *
  * Responsibilities:
  * - Draw request creation and validation
  * - Approval workflow management
  * - Disbursement processing
  * - Progress tracking and documentation
  * - Compliance and audit logging
- * 
+ *
  * Architecture: Enhanced Modular Monolith Service Layer
  * Dependencies: Supabase, XState, Redis, Inngest
  */
 
-import { createClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/supabase'
-import { createMachine } from 'xstate'
+import type { createClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/supabase';
+import { createMachine } from 'xstate';
 
 // Types (will be imported from shared types later)
-interface DrawRequest {
-  id: string
-  loanId: string
-  amount: number
-  description: string
-  status: 'pending' | 'approved' | 'disbursed' | 'rejected'
-  requestedBy: string
-  approvedBy?: string
-  disbursedBy?: string
-  requestedDate: Date
-  approvedDate?: Date
-  disbursedDate?: Date
-  documents: string[]
-  createdAt: Date
-  updatedAt: Date
-}
+type DrawRequest = {
+  id: string;
+  loanId: string;
+  amount: number;
+  description: string;
+  status: 'pending' | 'approved' | 'disbursed' | 'rejected';
+  requestedBy: string;
+  approvedBy?: string;
+  disbursedBy?: string;
+  requestedDate: Date;
+  approvedDate?: Date;
+  disbursedDate?: Date;
+  documents: string[];
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-interface CreateDrawRequest {
-  loanId: string
-  amount: number
-  description: string
-  documents?: string[]
-}
+type CreateDrawRequest = {
+  loanId: string;
+  amount: number;
+  description: string;
+  documents?: string[];
+};
 
 export class DrawService {
   // private supabase: ReturnType<typeof createClient<Database>>
@@ -59,8 +59,8 @@ export class DrawService {
     // 4. Insert draw request record
     // 5. Trigger approval workflow
     // 6. Log audit trail
-    
-    throw new Error('DrawService.createDrawRequest not yet implemented')
+
+    throw new Error('DrawService.createDrawRequest not yet implemented');
   }
 
   /**
@@ -74,8 +74,8 @@ export class DrawService {
     // 4. Trigger disbursement workflow
     // 5. Send notifications
     // 6. Log audit trail
-    
-    throw new Error('DrawService.approveDrawRequest not yet implemented')
+
+    throw new Error('DrawService.approveDrawRequest not yet implemented');
   }
 
   /**
@@ -89,8 +89,8 @@ export class DrawService {
     // 4. Update loan disbursed amount
     // 5. Send notifications
     // 6. Log audit trail
-    
-    throw new Error('DrawService.disburseDrawRequest not yet implemented')
+
+    throw new Error('DrawService.disburseDrawRequest not yet implemented');
   }
 
   /**
@@ -104,8 +104,8 @@ export class DrawService {
     // 4. Store rejection reason
     // 5. Send notifications
     // 6. Log audit trail
-    
-    throw new Error('DrawService.rejectDrawRequest not yet implemented')
+
+    throw new Error('DrawService.rejectDrawRequest not yet implemented');
   }
 
   /**
@@ -117,8 +117,8 @@ export class DrawService {
     // 2. Order by requested date
     // 3. Include related documents
     // 4. Cache result in Redis
-    
-    throw new Error('DrawService.getDrawRequests not yet implemented')
+
+    throw new Error('DrawService.getDrawRequests not yet implemented');
   }
 
   /**
@@ -130,8 +130,8 @@ export class DrawService {
     // 2. Sum all disbursed draws
     // 3. Calculate remaining amount
     // 4. Return result
-    
-    throw new Error('DrawService.getRemainingDrawAmount not yet implemented')
+
+    throw new Error('DrawService.getRemainingDrawAmount not yet implemented');
   }
 
   /**
@@ -143,8 +143,8 @@ export class DrawService {
     // 2. Upload files to Supabase Storage
     // 3. Update draw request with document URLs
     // 4. Return document URLs
-    
-    throw new Error('DrawService.uploadDocuments not yet implemented')
+
+    throw new Error('DrawService.uploadDocuments not yet implemented');
   }
 }
 
@@ -156,19 +156,19 @@ export const drawApprovalMachine = createMachine({
     pending: {
       on: {
         APPROVE: 'approved',
-        REJECT: 'rejected'
-      }
+        REJECT: 'rejected',
+      },
     },
     approved: {
       on: {
-        DISBURSE: 'disbursed'
-      }
+        DISBURSE: 'disbursed',
+      },
     },
     disbursed: {
-      type: 'final'
+      type: 'final',
     },
     rejected: {
-      type: 'final'
-    }
-  }
-})
+      type: 'final',
+    },
+  },
+});

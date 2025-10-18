@@ -1,9 +1,9 @@
 # Phase 3 Summary: Construction Draw Management Foundation
 
-**Date:** October 11, 2025  
-**Status:** ✅ COMPLETE  
-**Duration:** 6 hours  
-**Story Points:** 8 (completed)  
+**Date:** October 11, 2025
+**Status:** ✅ COMPLETE
+**Duration:** 6 hours
+**Story Points:** 8 (completed)
 **Test Coverage:** 92% (target: 90%)
 
 ---
@@ -54,12 +54,12 @@ class DrawService {
     private inspectionService: InspectionService,
     private storageService: SupabaseStorageService
   ) {}
-  
-  async createDrawRequest(loanId: number, amount: number, purpose: string, category: string): Promise<Draw>
-  async approveDraw(drawId: number, approverId: number): Promise<Draw>
-  async completeInspection(drawId: number, inspectorId: number, photos: File[]): Promise<Draw>
-  async disburseDraw(drawId: number, disburserId: number): Promise<Draw>
-  async validateBudget(loanId: number, requestedAmount: number): Promise<boolean>
+
+  async createDrawRequest(loanId: number, amount: number, purpose: string, category: string): Promise<Draw>;
+  async approveDraw(drawId: number, approverId: number): Promise<Draw>;
+  async completeInspection(drawId: number, inspectorId: number, photos: File[]): Promise<Draw>;
+  async disburseDraw(drawId: number, disburserId: number): Promise<Draw>;
+  async validateBudget(loanId: number, requestedAmount: number): Promise<boolean>;
 }
 ```
 
@@ -75,11 +75,11 @@ class DrawService {
 **Key Methods:**
 ```typescript
 class InspectionService {
-  async assignInspector(drawId: number, propertyId: number): Promise<Inspector>
-  async scheduleInspection(inspectionId: number, scheduledDate: Date): Promise<Inspection>
-  async sendInspectorNotification(inspectorId: number, drawId: number): Promise<void>
-  async updateInspectionStatus(inspectionId: number, status: InspectionStatus): Promise<void>
-  async generateMobileUploadLink(drawId: number): Promise<string>
+  async assignInspector(drawId: number, propertyId: number): Promise<Inspector>;
+  async scheduleInspection(inspectionId: number, scheduledDate: Date): Promise<Inspection>;
+  async sendInspectorNotification(inspectorId: number, drawId: number): Promise<void>;
+  async updateInspectionStatus(inspectionId: number, status: InspectionStatus): Promise<void>;
+  async generateMobileUploadLink(drawId: number): Promise<string>;
 }
 ```
 
@@ -95,12 +95,12 @@ class InspectionService {
 **Key Methods:**
 ```typescript
 class SupabaseStorageService {
-  async uploadPhoto(drawId: number, file: File, category: string): Promise<PhotoUpload>
-  async uploadDocument(drawId: number, file: File, documentType: string): Promise<DocumentUpload>
-  async generatePresignedUrl(bucket: string, path: string): Promise<string>
-  async getFileMetadata(fileId: string): Promise<FileMetadata>
-  async deleteFile(fileId: string): Promise<void>
-  async generateThumbnail(photoId: string): Promise<string>
+  async uploadPhoto(drawId: number, file: File, category: string): Promise<PhotoUpload>;
+  async uploadDocument(drawId: number, file: File, documentType: string): Promise<DocumentUpload>;
+  async generatePresignedUrl(bucket: string, path: string): Promise<string>;
+  async getFileMetadata(fileId: string): Promise<FileMetadata>;
+  async deleteFile(fileId: string): Promise<void>;
+  async generateThumbnail(photoId: string): Promise<string>;
 }
 ```
 
@@ -152,11 +152,11 @@ export function MobileInspectorApp({ drawId }: { drawId: number }) {
   const [photos, setPhotos] = useState<File[]>([]);
   const [notes, setNotes] = useState('');
   const [isComplete, setIsComplete] = useState(false);
-  
+
   const handlePhotoCapture = async (file: File) => {
     // Photo capture and upload logic
   };
-  
+
   const handleInspectionComplete = async () => {
     // Complete inspection with photos and notes
   };
@@ -178,13 +178,18 @@ export function MobileInspectorApp({ drawId }: { drawId: number }) {
 **Key Test Cases:**
 ```typescript
 describe('DrawService', () => {
-  it('should create draw request with valid budget')
-  it('should reject draw request exceeding budget')
-  it('should transition states correctly: requested → reviewed → approved')
-  it('should handle inspection completion with photos')
-  it('should disburse draw through PaymentService')
-  it('should throw BudgetExceededError on overrun')
-})
+  it('should create draw request with valid budget');
+
+  it('should reject draw request exceeding budget');
+
+  it('should transition states correctly: requested → reviewed → approved');
+
+  it('should handle inspection completion with photos');
+
+  it('should disburse draw through PaymentService');
+
+  it('should throw BudgetExceededError on overrun');
+});
 ```
 
 #### `/tests/integration/DrawService.integration.test.ts` (189 lines)
@@ -221,7 +226,7 @@ describe('DrawService', () => {
 // State transitions: Requested → Reviewed → Approved → Inspected → Disbursed
 const drawStates = {
   REQUESTED: 'requested',
-  REVIEWED: 'reviewed', 
+  REVIEWED: 'reviewed',
   APPROVED: 'approved',
   INSPECTED: 'inspected',
   DISBURSED: 'disbursed',
@@ -255,7 +260,7 @@ const fileStructure = {
   'draw-documents/': {
     'draw-{drawId}/': {
       'invoices/': 'Invoice documents',
-      'receipts/': 'Receipt documents', 
+      'receipts/': 'Receipt documents',
       'lien-waivers/': 'Lien waiver documents'
     }
   }
@@ -270,11 +275,11 @@ async validateBudget(loanId: number, requestedAmount: number): Promise<boolean> 
   const existingDraws = await this.getDrawsByLoanId(loanId);
   const totalDrawn = existingDraws.reduce((sum, draw) => sum + draw.amount, 0);
   const remainingBudget = loan.constructionBudget - totalDrawn;
-  
+
   if (requestedAmount > remainingBudget) {
     throw new BudgetExceededError(requestedAmount, remainingBudget);
   }
-  
+
   return true;
 }
 ```
@@ -466,9 +471,9 @@ The platform is now ready for **Phase 4: Portfolio Analytics & Risk Management**
 
 ---
 
-**Phase 3 Status:** ✅ COMPLETE  
-**Next Phase:** Phase 4 - Portfolio Analytics & Risk Management  
-**Foundation Ready:** Draw management infrastructure established  
-**Test Coverage:** 92% (exceeding 90% target)  
-**Security:** RLS policies and state machine validation implemented  
+**Phase 3 Status:** ✅ COMPLETE
+**Next Phase:** Phase 4 - Portfolio Analytics & Risk Management
+**Foundation Ready:** Draw management infrastructure established
+**Test Coverage:** 92% (exceeding 90% target)
+**Security:** RLS policies and state machine validation implemented
 **Integration:** Seamless integration with LoanService, PaymentService, and Supabase

@@ -239,7 +239,7 @@ API Routes (HTTP Layer)
 
 **KPI Calculation Logic:**
 ```typescript
-interface PortfolioKPIs {
+type PortfolioKPIs = {
   totalFunded: number;
   outstandingBalance: number;
   delinquencyRate: number;
@@ -250,7 +250,7 @@ interface PortfolioKPIs {
   avgLTV: number;
   avgInterestRate: number;
   avgLoanSize: number;
-}
+};
 ```
 
 ### Risk Scoring Engine
@@ -264,7 +264,7 @@ interface PortfolioKPIs {
 
 **Risk Score Calculation:**
 ```typescript
-interface RiskScore {
+type RiskScore = {
   loanId: number;
   riskScore: number; // 1-10 scale
   riskFactors: {
@@ -276,7 +276,7 @@ interface RiskScore {
   };
   overallRisk: 'low' | 'medium' | 'high';
   lastUpdated: Date;
-}
+};
 ```
 
 ### Real-time Dashboard Integration
@@ -289,14 +289,14 @@ interface RiskScore {
 
 **Dashboard Data Structure:**
 ```typescript
-interface DashboardData {
+type DashboardData = {
   portfolio: PortfolioKPIs;
   risk: PortfolioRiskScore;
   trends: TrendAnalysis;
   alerts: RiskAlert[];
   geographic: GeographicConcentration;
   delinquency: DelinquencyMetrics;
-}
+};
 ```
 
 ### Database Schema Integration
@@ -326,11 +326,11 @@ interface DashboardData {
 
 **Implementation:**
 ```typescript
-interface UserRole {
+type UserRole = {
   role: 'admin' | 'lender' | 'servicer' | 'read-only';
   organizationId: string;
   permissions: string[];
-}
+};
 
 function checkAnalyticsAccess(userRole: UserRole, dataType: string): boolean {
   switch (userRole.role) {

@@ -1,11 +1,19 @@
 'use client';
 
-import { useState } from 'react';
 import { format } from 'date-fns';
-import { Search, Filter, Download } from 'lucide-react';
+import { Download, Filter, Search } from 'lucide-react';
+import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -14,14 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 
 // Mock data - will be replaced with real API calls
 const mockServicingIncome = [
@@ -59,13 +59,13 @@ export function ServicingIncomeTable() {
   const [statusFilter, setStatusFilter] = useState('all');
 
   const filteredData = mockServicingIncome.filter((item) => {
-    const matchesSearch = 
-      item.loanId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.borrowerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.feeType.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const matchesSearch
+      = item.loanId.toLowerCase().includes(searchTerm.toLowerCase())
+        || item.borrowerName.toLowerCase().includes(searchTerm.toLowerCase())
+        || item.feeType.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -99,11 +99,11 @@ export function ServicingIncomeTable() {
         {/* Search and Filters */}
         <div className="mb-4 flex items-center space-x-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search by loan ID, borrower, or fee type..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -135,24 +135,29 @@ export function ServicingIncomeTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredData.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    No servicing income records found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredData.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.loanId}</TableCell>
-                    <TableCell>{item.borrowerName}</TableCell>
-                    <TableCell>{item.feeType}</TableCell>
-                    <TableCell>${item.amount.toLocaleString()}</TableCell>
-                    <TableCell>{format(item.receivedDate, 'MMM dd, yyyy')}</TableCell>
-                    <TableCell>{getStatusBadge(item.status)}</TableCell>
-                  </TableRow>
-                ))
-              )}
+              {filteredData.length === 0
+                ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
+                        No servicing income records found
+                      </TableCell>
+                    </TableRow>
+                  )
+                : (
+                    filteredData.map(item => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.loanId}</TableCell>
+                        <TableCell>{item.borrowerName}</TableCell>
+                        <TableCell>{item.feeType}</TableCell>
+                        <TableCell>
+                          $
+                          {item.amount.toLocaleString()}
+                        </TableCell>
+                        <TableCell>{format(item.receivedDate, 'MMM dd, yyyy')}</TableCell>
+                        <TableCell>{getStatusBadge(item.status)}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
             </TableBody>
           </Table>
         </div>
@@ -160,7 +165,15 @@ export function ServicingIncomeTable() {
         {/* Pagination would go here */}
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <div>
-            Showing {filteredData.length} of {mockServicingIncome.length} records
+            Showing
+            {' '}
+            {filteredData.length}
+            {' '}
+            of
+            {' '}
+            {mockServicingIncome.length}
+            {' '}
+            records
           </div>
         </div>
       </CardContent>

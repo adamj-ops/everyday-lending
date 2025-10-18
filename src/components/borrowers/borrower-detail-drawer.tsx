@@ -1,8 +1,9 @@
 'use client';
 
-import * as React from 'react';
+import type { Borrower } from './borrower-table';
 import { MoreHorizontal } from 'lucide-react';
 
+import * as React from 'react';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,11 +20,10 @@ import {
   // SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-import type { Borrower } from './borrower-table';
-
-interface BorrowerDetailDrawerProps {
+type BorrowerDetailDrawerProps = {
   /**
    * Whether the drawer is open
    */
@@ -48,13 +48,13 @@ interface BorrowerDetailDrawerProps {
    * Callback for delete action
    */
   onDelete?: (borrower: Borrower) => void;
-}
+};
 
-interface DetailFieldProps {
+type DetailFieldProps = {
   label: string;
   value: string | number;
   mono?: boolean;
-}
+};
 
 function DetailField({ label, value, mono = false }: DetailFieldProps) {
   return (
@@ -94,8 +94,9 @@ export function BorrowerDetailDrawer({
   onEdit,
   onDelete,
 }: BorrowerDetailDrawerProps) {
-  if (!borrower)
+  if (!borrower) {
     return null;
+  }
 
   const getStatusVariant = (status: Borrower['status']) => {
     switch (status) {
@@ -112,7 +113,7 @@ export function BorrowerDetailDrawer({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-96 sm:w-[540px] p-0">
+      <SheetContent className="w-96 p-0 sm:w-[540px]">
         {/* Header */}
         <div className="border-b border-neutral-100 p-6">
           <div className="flex items-start gap-4">
@@ -130,7 +131,7 @@ export function BorrowerDetailDrawer({
               <SheetDescription className="mt-1">
                 {borrower.email}
               </SheetDescription>
-              <div className="flex gap-2 mt-3">
+              <div className="mt-3 flex gap-2">
                 <Badge variant={getStatusVariant(borrower.status)}>
                   {borrower.status.charAt(0).toUpperCase() + borrower.status.slice(1)}
                 </Badge>
@@ -160,17 +161,17 @@ export function BorrowerDetailDrawer({
 
         {/* Tabs */}
         <Tabs defaultValue="details" className="flex-1">
-          <TabsList className="w-full justify-start border-b border-neutral-100 rounded-none px-6">
+          <TabsList className="w-full justify-start rounded-none border-b border-neutral-100 px-6">
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
             <TabsTrigger value="notes">Notes</TabsTrigger>
             <TabsTrigger value="files">Files</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="details" className="p-6 space-y-6 mt-0">
+          <TabsContent value="details" className="mt-0 space-y-6 p-6">
             {/* Financial Information */}
             <div>
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Financial Information
               </h3>
               <dl className="space-y-4">
@@ -198,7 +199,7 @@ export function BorrowerDetailDrawer({
             </div>
 
             <div className="border-t border-neutral-100 pt-6">
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Personal Information
               </h3>
               <dl className="space-y-4">
@@ -222,13 +223,13 @@ export function BorrowerDetailDrawer({
             </div>
 
             <div className="border-t border-neutral-100 pt-6">
-              <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+              <h3 className="mb-3 text-sm font-semibold text-neutral-700">
                 Related Loans
               </h3>
               <div className="space-y-2">
                 {/* Placeholder for loan cards */}
-                <div className="p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 cursor-pointer">
-                  <div className="flex justify-between items-center">
+                <div className="cursor-pointer rounded-lg border border-neutral-200 p-4 hover:bg-neutral-50">
+                  <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         123 Main St, Springfield
@@ -240,8 +241,8 @@ export function BorrowerDetailDrawer({
                     </p>
                   </div>
                 </div>
-                <div className="p-4 border border-neutral-200 rounded-lg hover:bg-neutral-50 cursor-pointer">
-                  <div className="flex justify-between items-center">
+                <div className="cursor-pointer rounded-lg border border-neutral-200 p-4 hover:bg-neutral-50">
+                  <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-neutral-800">
                         456 Oak Ave, Riverside
@@ -257,38 +258,38 @@ export function BorrowerDetailDrawer({
             </div>
           </TabsContent>
 
-          <TabsContent value="activity" className="p-6 mt-0">
+          <TabsContent value="activity" className="mt-0 p-6">
             <div className="space-y-4">
               {/* Activity Timeline Placeholder */}
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-brand-500 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-brand-500" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Loan application submitted
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     2 hours ago
                   </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-neutral-300 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-neutral-300" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Credit check completed
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     Yesterday at 3:24 PM
                   </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="w-2 h-2 rounded-full bg-neutral-300 mt-2" />
+                <div className="mt-2 h-2 w-2 rounded-full bg-neutral-300" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-neutral-800">
                     Profile created
                   </p>
-                  <p className="text-xs text-neutral-500 mt-1">
+                  <p className="mt-1 text-xs text-neutral-500">
                     3 days ago
                   </p>
                 </div>
@@ -296,14 +297,14 @@ export function BorrowerDetailDrawer({
             </div>
           </TabsContent>
 
-          <TabsContent value="notes" className="p-6 mt-0">
-            <div className="text-neutral-500 text-center py-8">
+          <TabsContent value="notes" className="mt-0 p-6">
+            <div className="py-8 text-center text-neutral-500">
               No notes yet
             </div>
           </TabsContent>
 
-          <TabsContent value="files" className="p-6 mt-0">
-            <div className="text-neutral-500 text-center py-8">
+          <TabsContent value="files" className="mt-0 p-6">
+            <div className="py-8 text-center text-neutral-500">
               No files uploaded
             </div>
           </TabsContent>

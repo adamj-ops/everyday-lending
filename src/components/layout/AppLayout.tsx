@@ -152,7 +152,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-x-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent">
-                    <User className="h-4 w-4 text-accent-foreground" />
+                    <User className="text-accent-foreground h-4 w-4" />
                   </div>
                   <span className="hidden text-sm font-medium lg:block">John Doe</span>
                   <ChevronDown className="h-4 w-4" />

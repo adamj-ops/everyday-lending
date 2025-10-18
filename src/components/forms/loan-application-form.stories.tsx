@@ -50,7 +50,7 @@ export const FixAndFlipLoan: Story = {
         <h1 className="text-2xl font-semibold text-neutral-800">
           New Fix & Flip Loan Application
         </h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <p className="mt-1 text-sm text-neutral-500">
           Complete all steps to submit your loan application for review
         </p>
       </div>
@@ -68,7 +68,7 @@ export const BridgeLoan: Story = {
         <h1 className="text-2xl font-semibold text-neutral-800">
           New Bridge Loan Application
         </h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <p className="mt-1 text-sm text-neutral-500">
           Fast-track financing for time-sensitive property acquisitions
         </p>
       </div>
@@ -86,7 +86,7 @@ export const ConstructionLoan: Story = {
         <h1 className="text-2xl font-semibold text-neutral-800">
           New Construction Loan Application
         </h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <p className="mt-1 text-sm text-neutral-500">
           Financing for ground-up construction and major renovations
         </p>
       </div>
@@ -99,34 +99,34 @@ export const ConstructionLoan: Story = {
 
 export const EmbeddedInDashboard: Story = {
   render: args => (
-    <div className="h-screen flex">
+    <div className="flex h-screen">
       {/* Sidebar */}
       <div className="w-64 border-r border-neutral-200 bg-neutral-50 p-6">
-        <h2 className="text-lg font-semibold text-neutral-800 mb-4">
+        <h2 className="mb-4 text-lg font-semibold text-neutral-800">
           Loan Management
         </h2>
         <nav className="space-y-2">
           <a
             href="#"
-            className="block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-100 rounded"
+            className="block rounded px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-100"
           >
             All Loans
           </a>
           <a
             href="#"
-            className="block px-3 py-2 text-sm bg-brand-50 text-brand-600 rounded font-medium"
+            className="block rounded bg-brand-50 px-3 py-2 text-sm font-medium text-brand-600"
           >
             New Application
           </a>
           <a
             href="#"
-            className="block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-100 rounded"
+            className="block rounded px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-100"
           >
             Pending Approval
           </a>
           <a
             href="#"
-            className="block px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-100 rounded"
+            className="block rounded px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-100"
           >
             Active Loans
           </a>
@@ -139,7 +139,7 @@ export const EmbeddedInDashboard: Story = {
           <h1 className="text-2xl font-semibold text-neutral-800">
             New Loan Application
           </h1>
-          <p className="text-sm text-neutral-500 mt-1">
+          <p className="mt-1 text-sm text-neutral-500">
             Complete the wizard to create a new loan application
           </p>
         </div>

@@ -1,8 +1,8 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 // import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -36,8 +36,8 @@ import { useCreatePayment } from '@/hooks/use-payments-client';
 const paymentSchema = z.object({
   loanNumber: z.string().min(1, 'Loan number is required'),
   amount: z.string().min(1, 'Amount is required').refine(
-    (val) => !isNaN(Number(val)) && Number(val) > 0,
-    'Amount must be a positive number'
+    val => !isNaN(Number(val)) && Number(val) > 0,
+    'Amount must be a positive number',
   ),
   paymentDate: z.string().min(1, 'Payment date is required'),
   paymentMethod: z.enum(['ACH', 'Wire', 'Check', 'Card']),
@@ -47,11 +47,11 @@ const paymentSchema = z.object({
 
 type PaymentFormData = z.infer<typeof paymentSchema>;
 
-interface CreatePaymentDialogProps {
+type CreatePaymentDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
-}
+};
 
 export function CreatePaymentDialog({
   open,
@@ -88,7 +88,7 @@ export function CreatePaymentDialog({
           onOpenChange(false);
           onSuccess?.();
         },
-      }
+      },
     );
   };
 
@@ -106,7 +106,7 @@ export function CreatePaymentDialog({
             Record a new payment for a loan. This will update the loan balance and payment history.
           </DialogDescription>
         </DialogHeader>
-        
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -123,7 +123,7 @@ export function CreatePaymentDialog({
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="amount"
@@ -131,11 +131,11 @@ export function CreatePaymentDialog({
                   <FormItem>
                     <FormLabel>Amount</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        step="0.01" 
-                        placeholder="2500.00" 
-                        {...field} 
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="2500.00"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -143,7 +143,7 @@ export function CreatePaymentDialog({
                 )}
               />
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -158,7 +158,7 @@ export function CreatePaymentDialog({
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="paymentMethod"
@@ -183,7 +183,7 @@ export function CreatePaymentDialog({
                 )}
               />
             </div>
-            
+
             <FormField
               control={form.control}
               name="referenceNumber"
@@ -197,7 +197,7 @@ export function CreatePaymentDialog({
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="notes"
@@ -205,17 +205,17 @@ export function CreatePaymentDialog({
                 <FormItem>
                   <FormLabel>Notes (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Additional payment details..." 
-                      className="resize-none" 
-                      {...field} 
+                    <Textarea
+                      placeholder="Additional payment details..."
+                      className="resize-none"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancel

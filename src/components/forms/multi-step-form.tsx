@@ -1,20 +1,20 @@
 'use client';
 
-import * as React from 'react';
 import { Check } from 'lucide-react';
+import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-export interface FormStep {
+export type FormStep = {
   id: string;
   title: string;
   description?: string;
   component: React.ReactNode;
   validate?: () => boolean | Promise<boolean>;
-}
+};
 
-export interface MultiStepFormProps {
+export type MultiStepFormProps = {
   steps: FormStep[];
   onComplete: () => void | Promise<void>;
   onCancel?: () => void;
@@ -22,7 +22,7 @@ export interface MultiStepFormProps {
   allowSkip?: boolean;
   showStepNumbers?: boolean;
   className?: string;
-}
+};
 
 /**
  * MultiStepForm - Wizard-style form with progress indication
@@ -82,11 +82,9 @@ export function MultiStepForm({
           onStepChange?.(currentStepIndex + 1);
         }
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Validation error:', error);
-    }
-    finally {
+    } finally {
       setIsValidating(false);
     }
   };
@@ -107,12 +105,10 @@ export function MultiStepForm({
         if (!isValid) {
           return;
         }
-      }
-      catch (error) {
+      } catch (error) {
         console.error('Validation error:', error);
         return;
-      }
-      finally {
+      } finally {
         setIsValidating(false);
       }
     }
@@ -120,11 +116,9 @@ export function MultiStepForm({
     try {
       setIsSubmitting(true);
       await onComplete();
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Submit error:', error);
-    }
-    finally {
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -184,11 +178,15 @@ export function MultiStepForm({
                               : 'border-2 border-neutral-300 bg-white text-neutral-500',
                         )}
                       >
-                        {isCompleted ? (
-                          <Check className="h-5 w-5" />
-                        ) : showStepNumbers ? (
-                          index + 1
-                        ) : null}
+                        {isCompleted
+                          ? (
+                              <Check className="h-5 w-5" />
+                            )
+                          : showStepNumbers
+                            ? (
+                                index + 1
+                              )
+                            : null}
                       </span>
                       <span
                         className={cn(
@@ -218,13 +216,13 @@ export function MultiStepForm({
 
       {/* Step Content */}
       <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-3xl mx-auto">
+        <div className="mx-auto max-w-3xl">
           <div className="mb-6">
             <h2 className="text-2xl font-semibold text-neutral-800">
               {currentStep?.title}
             </h2>
             {currentStep?.description && (
-              <p className="text-sm text-neutral-500 mt-1">
+              <p className="mt-1 text-sm text-neutral-500">
                 {currentStep?.description}
               </p>
             )}
@@ -234,7 +232,7 @@ export function MultiStepForm({
       </div>
 
       {/* Navigation Footer */}
-      <div className="border-t border-neutral-200 bg-white px-6 py-4 flex items-center justify-between">
+      <div className="flex items-center justify-between border-t border-neutral-200 bg-white px-6 py-4">
         <div>
           {!isFirstStep && (
             <Button
@@ -258,23 +256,25 @@ export function MultiStepForm({
               Cancel
             </Button>
           )}
-          {!isLastStep ? (
-            <Button
-              type="button"
-              onClick={handleNext}
-              disabled={isValidating}
-            >
-              {isValidating ? 'Validating...' : 'Continue'}
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isValidating || isSubmitting}
-            >
-              {isSubmitting ? 'Submitting...' : 'Complete'}
-            </Button>
-          )}
+          {!isLastStep
+            ? (
+                <Button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={isValidating}
+                >
+                  {isValidating ? 'Validating...' : 'Continue'}
+                </Button>
+              )
+            : (
+                <Button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={isValidating || isSubmitting}
+                >
+                  {isSubmitting ? 'Submitting...' : 'Complete'}
+                </Button>
+              )}
         </div>
       </div>
     </div>

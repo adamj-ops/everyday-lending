@@ -66,18 +66,18 @@ bmad/bmm/agents/
 ```yaml
 agent:
   metadata:
-    name: 'Helper'
-    title: 'Simple Helper'
-    icon: '🤖'
-    type: 'simple'
+    name: Helper
+    title: Simple Helper
+    icon: 🤖
+    type: simple
   persona:
-    role: 'Simple Helper Role'
+    role: Simple Helper Role
     identity: '...'
     communication_style: '...'
     principles: ['...']
   menu:
     - trigger: calculate
-      description: 'Perform calculation'
+      description: Perform calculation
 ```
 
 **XML Structure (built):**
@@ -127,12 +127,12 @@ agent:
 ```yaml
 agent:
   metadata:
-    name: 'Domain Expert'
-    title: 'Specialist'
-    icon: '🎯'
-    type: 'expert'
+    name: Domain Expert
+    title: Specialist
+    icon: 🎯
+    type: expert
   persona:
-    role: 'Domain Specialist Role'
+    role: Domain Specialist Role
     identity: '...'
     communication_style: '...'
     principles: ['...']
@@ -142,7 +142,7 @@ agent:
     - 'ONLY access {user-folder}/diary/ - NO OTHER FOLDERS'
   menu:
     - trigger: analyze
-      description: 'Analyze domain-specific data'
+      description: Analyze domain-specific data
 ```
 
 **XML Structure (built):**
@@ -205,13 +205,13 @@ bmad/agents/expert-agent/
 ```yaml
 agent:
   metadata:
-    name: 'John'
-    title: 'Product Manager'
-    icon: '📋'
-    module: 'bmm'
-    type: 'module'
+    name: John
+    title: Product Manager
+    icon: 📋
+    module: bmm
+    type: module
   persona:
-    role: 'Product Management Expert'
+    role: Product Management Expert
     identity: '...'
     communication_style: '...'
     principles: ['...']
@@ -220,10 +220,10 @@ agent:
   menu:
     - trigger: create-prd
       workflow: '{project-root}/bmad/bmm/workflows/prd/workflow.yaml'
-      description: 'Create PRD'
+      description: Create PRD
     - trigger: validate
       exec: '{project-root}/bmad/core/tasks/validate-workflow.xml'
-      description: 'Validate document'
+      description: Validate document
 ```
 
 **XML Structure (built):**

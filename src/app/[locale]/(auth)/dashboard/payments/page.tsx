@@ -3,10 +3,10 @@
 import { motion } from 'framer-motion';
 import { DollarSign, Plus, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
+import { CreatePaymentDialog } from '@/components/payments/create-payment-dialog';
+import { PaymentsTable } from '@/components/payments/payments-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PaymentsTable } from '@/components/payments/payments-table';
-import { CreatePaymentDialog } from '@/components/payments/create-payment-dialog';
 import { usePaymentStats } from '@/hooks/use-payments-client';
 
 export default function PaymentsPage() {
@@ -70,7 +70,8 @@ export default function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${stats.totalPayments.toLocaleString()}
+              $
+              {stats.totalPayments.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
               This month
@@ -115,7 +116,8 @@ export default function PaymentsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {stats.successRate}%
+              {stats.successRate}
+              %
             </div>
             <p className="text-xs text-muted-foreground">
               Payment success rate

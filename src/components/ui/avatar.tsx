@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
+type AvatarProps = {
   /**
    * Image source URL
    */
@@ -27,7 +27,7 @@ interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
    * Custom className
    */
   className?: string;
-}
+} & React.HTMLAttributes<HTMLDivElement>;
 
 const sizeClasses = {
   sm: 'h-5 w-5 text-[10px]',
@@ -66,16 +66,18 @@ export function Avatar({
       )}
       {...props}
     >
-      {!showFallback && src ? (
-        <img
-          src={src}
-          alt={alt}
-          className="h-full w-full object-cover"
-          onError={() => setImageError(true)}
-        />
-      ) : (
-        <span className="select-none uppercase">{fallback}</span>
-      )}
+      {!showFallback && src
+        ? (
+            <img
+              src={src}
+              alt={alt}
+              className="h-full w-full object-cover"
+              onError={() => setImageError(true)}
+            />
+          )
+        : (
+            <span className="uppercase select-none">{fallback}</span>
+          )}
     </div>
   );
 }

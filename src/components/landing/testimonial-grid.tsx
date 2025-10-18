@@ -1,8 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 const testimonials = [
   {
@@ -45,15 +45,15 @@ const testimonials = [
 
 export function TestimonialGrid() {
   return (
-    <section className="bg-white border-b border-[#eeeff1] py-24 relative">
-      <div className="max-w-[1440px] mx-auto px-6">
-        <div className="max-w-[1252px] mx-auto">
+    <section className="relative border-b border-[#eeeff1] bg-white py-24">
+      <div className="mx-auto max-w-[1440px] px-6">
+        <div className="mx-auto max-w-[1252px]">
           {/* Header */}
           <div className="mb-16">
-            <h2 className="text-[48px] leading-tight font-bold text-foreground mb-4">
+            <h2 className="mb-4 text-[48px] leading-tight font-bold text-foreground">
               Loved by Builders.
             </h2>
-            <p className="text-base text-[#696a6c] max-w-[550px] mb-8">
+            <p className="mb-8 max-w-[550px] text-base text-[#696a6c]">
               Everyday Lending is the construction loan management platform for
               everyone who values collaboration and efficiency.
             </p>
@@ -67,13 +67,15 @@ export function TestimonialGrid() {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-white border border-[#eeeff1] rounded-lg p-6 hover:shadow-sm transition-shadow"
+                className="rounded-lg border border-[#eeeff1] bg-white p-6 transition-shadow hover:shadow-sm"
               >
-                <p className="text-sm text-foreground mb-4 italic">
-                  &quot;{testimonial.quote}&quot;
+                <p className="mb-4 text-sm text-foreground italic">
+                  &quot;
+                  {testimonial.quote}
+                  &quot;
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-md bg-[#19bbe8] text-white flex items-center justify-center text-[10px] font-bold">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#19bbe8] text-[10px] font-bold text-white">
                     {testimonial.author
                       .split(' ')
                       .map(n => n[0])
@@ -95,7 +97,7 @@ export function TestimonialGrid() {
       </div>
 
       {/* Gradient Fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+      <div className="pointer-events-none absolute right-0 bottom-0 left-0 h-64 bg-gradient-to-t from-white to-transparent" />
     </section>
   );
 }

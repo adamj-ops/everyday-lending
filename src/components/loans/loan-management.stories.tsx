@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-import { LoanTable } from './loan-table';
-import { LoanDetailDrawer } from './loan-detail-drawer';
 import type { Loan } from './loan-table';
+import { useState } from 'react';
+import { LoanDetailDrawer } from './loan-detail-drawer';
+import { LoanTable } from './loan-table';
 
 /**
  * Complete loan management interface showing the table and detail drawer working together.
@@ -154,10 +154,10 @@ const LoanManagement = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex h-screen flex-col">
       <div className="border-b border-neutral-200 p-6">
         <h1 className="text-2xl font-semibold text-neutral-800">Loans</h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <p className="mt-1 text-sm text-neutral-500">
           Manage loan portfolio and track performance
         </p>
       </div>
@@ -285,12 +285,12 @@ const ActiveLoansManagement = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex h-screen flex-col">
       <div className="border-b border-neutral-200 p-6">
         <h1 className="text-2xl font-semibold text-neutral-800">
           Active Loans
         </h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <p className="mt-1 text-sm text-neutral-500">
           Loans currently funded and performing
         </p>
       </div>
@@ -376,12 +376,12 @@ const PendingLoansManagement = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex h-screen flex-col">
       <div className="border-b border-neutral-200 p-6">
         <h1 className="text-2xl font-semibold text-neutral-800">
           Pending Loans
         </h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <p className="mt-1 text-sm text-neutral-500">
           Loans awaiting approval and funding
         </p>
       </div>
@@ -467,12 +467,12 @@ const HighValueLoansManagement = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="flex h-screen flex-col">
       <div className="border-b border-neutral-200 p-6">
         <h1 className="text-2xl font-semibold text-neutral-800">
           High Value Loans
         </h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <p className="mt-1 text-sm text-neutral-500">
           Loans with principal amount over $750,000
         </p>
       </div>

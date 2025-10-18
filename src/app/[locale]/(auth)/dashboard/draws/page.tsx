@@ -3,10 +3,10 @@
 import { motion } from 'framer-motion';
 import { CreditCard, Plus, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
+import { CreateDrawDialog } from '@/components/draws/create-draw-dialog';
+import { DrawsTable } from '@/components/draws/draws-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DrawsTable } from '@/components/draws/draws-table';
-import { CreateDrawDialog } from '@/components/draws/create-draw-dialog';
 
 export default function DrawsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);

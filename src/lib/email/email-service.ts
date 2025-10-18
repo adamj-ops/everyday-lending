@@ -1,41 +1,41 @@
 /**
  * Email Service
- * 
+ *
  * Handles email sending using Resend
  * Provides templates for common loan-related communications
- * 
+ *
  * Architecture: Enhanced Modular Monolith Service Layer
  * Dependencies: resend, react-email
  */
 
-import { Resend } from 'resend'
+import { Resend } from 'resend';
 
 // Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-export interface EmailTemplate {
-  to: string
-  subject: string
-  html: string
-  text?: string
-  from?: string
-}
+export type EmailTemplate = {
+  to: string;
+  subject: string;
+  html: string;
+  text?: string;
+  from?: string;
+};
 
-export interface LoanEmailData {
-  borrowerName: string
-  loanAmount: number
-  loanId: string
-  propertyAddress: string
-  lenderName: string
-  nextPaymentDate?: string
-  nextPaymentAmount?: number
-}
+export type LoanEmailData = {
+  borrowerName: string;
+  loanAmount: number;
+  loanId: string;
+  propertyAddress: string;
+  lenderName: string;
+  nextPaymentDate?: string;
+  nextPaymentAmount?: number;
+};
 
 export class EmailService {
-  private client: Resend
+  private client: Resend;
 
   constructor() {
-    this.client = resend
+    this.client = resend;
   }
 
   /**
@@ -48,19 +48,19 @@ export class EmailService {
         to: template.to,
         subject: template.subject,
         html: template.html,
-        text: template.text
-      })
+        text: template.text,
+      });
 
       if (error) {
-        console.error('Email send error:', error)
-        return false
+        console.error('Email send error:', error);
+        return false;
       }
 
-      console.log('Email sent successfully:', data?.id)
-      return true
+      console.log('Email sent successfully:', data?.id);
+      return true;
     } catch (error) {
-      console.error('Email service error:', error)
-      return false
+      console.error('Email service error:', error);
+      return false;
     }
   }
 
@@ -86,10 +86,10 @@ export class EmailService {
           <p>Next steps will be communicated by your loan officer.</p>
           <p>Thank you for choosing Everyday Lending.</p>
         </div>
-      `
-    }
+      `,
+    };
 
-    return await this.sendEmail(template)
+    return await this.sendEmail(template);
   }
 
   /**
@@ -97,7 +97,7 @@ export class EmailService {
    */
   async sendPaymentReminderEmail(data: LoanEmailData): Promise<boolean> {
     if (!data.nextPaymentDate || !data.nextPaymentAmount) {
-      throw new Error('Payment date and amount required for reminder')
+      throw new Error('Payment date and amount required for reminder');
     }
 
     const template: EmailTemplate = {
@@ -117,10 +117,10 @@ export class EmailService {
           <p>Please ensure your payment is processed before the due date to avoid late fees.</p>
           <p>Thank you for your prompt payment.</p>
         </div>
-      `
-    }
+      `,
+    };
 
-    return await this.sendEmail(template)
+    return await this.sendEmail(template);
   }
 
   /**
@@ -144,10 +144,10 @@ export class EmailService {
           <p>Funds will be transferred to your account within 1-2 business days.</p>
           <p>Thank you for using Everyday Lending.</p>
         </div>
-      `
-    }
+      `,
+    };
 
-    return await this.sendEmail(template)
+    return await this.sendEmail(template);
   }
 
   /**
@@ -171,12 +171,12 @@ export class EmailService {
           <p>If you have any questions, please contact your loan officer.</p>
           <p>Thank you for choosing Everyday Lending.</p>
         </div>
-      `
-    }
+      `,
+    };
 
-    return await this.sendEmail(template)
+    return await this.sendEmail(template);
   }
 }
 
 // Export singleton instance
-export const emailService = new EmailService()
+export const emailService = new EmailService();

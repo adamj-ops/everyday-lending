@@ -42,7 +42,7 @@ import { MetricCard } from '@/components/ui/metric-card';
   value="$24.8M"
   trend={12.5}
   trendContext="vs last month"
-/>
+/>;
 ```
 
 **Storybook:** `UI/MetricCard`
@@ -66,7 +66,7 @@ import { Avatar } from '@/components/ui/avatar';
   src="/avatar.jpg"
   fallback="JD"
   size="md"
-/>
+/>;
 ```
 
 ---
@@ -91,11 +91,11 @@ import { BorrowerTable } from '@/components/borrowers/borrower-table';
 
 <BorrowerTable
   borrowers={borrowers}
-  onRowClick={(borrower) => openDrawer(borrower)}
+  onRowClick={borrower => openDrawer(borrower)}
   onEdit={handleEdit}
   onDelete={handleDelete}
   showSearch={true}
-/>
+/>;
 ```
 
 **Storybook:** `Borrowers/BorrowerTable`
@@ -127,7 +127,7 @@ const [isOpen, setIsOpen] = useState(false);
   borrower={selectedBorrower}
   onEdit={handleEdit}
   onDelete={handleDelete}
-/>
+/>;
 ```
 
 ---
@@ -140,8 +140,8 @@ const [isOpen, setIsOpen] = useState(false);
 'use client';
 
 import { useState } from 'react';
-import { BorrowerTable } from '@/components/borrowers/borrower-table';
 import { BorrowerDetailDrawer } from '@/components/borrowers/borrower-detail-drawer';
+import { BorrowerTable } from '@/components/borrowers/borrower-table';
 import { useBorrowersClient } from '@/hooks/use-borrowers-client';
 
 export default function BorrowersPage() {
@@ -229,23 +229,23 @@ npm run storybook
 
 ```tsx
 // Brand Blue (Primary)
-className="bg-brand-500 text-white"
-className="hover:bg-brand-600"
+className = 'bg-brand-500 text-white';
+className = 'hover:bg-brand-600';
 
 // Accent Sky Blue (CTAs)
-className="bg-accent-500 text-white"
-className="hover:bg-accent-600"
+className = 'bg-accent-500 text-white';
+className = 'hover:bg-accent-600';
 
 // Neutrals
-className="text-neutral-600"        // Body text
-className="text-neutral-500"        // Secondary text
-className="border-neutral-200"      // Borders
-className="bg-neutral-50"           // Light background
+className = 'text-neutral-600'; // Body text
+className = 'text-neutral-500'; // Secondary text
+className = 'border-neutral-200'; // Borders
+className = 'bg-neutral-50'; // Light background
 
 // Status Colors
-className="text-success"            // Green
-className="text-warning"            // Yellow
-className="text-error"              // Red
+className = 'text-success'; // Green
+className = 'text-warning'; // Yellow
+className = 'text-error'; // Red
 ```
 
 ### Typography
@@ -274,7 +274,7 @@ Ensure your Borrower type in Cursor matches:
 
 ```typescript
 // Expected by components
-interface Borrower {
+type Borrower = {
   id: string;
   name: string;
   email: string;
@@ -282,7 +282,7 @@ interface Borrower {
   creditScore: number;
   totalLoans: number;
   status: 'active' | 'inactive' | 'pending';
-}
+};
 ```
 
 If your schema is different, create a mapper:
@@ -323,9 +323,9 @@ export function useBorrowersClient() {
 ### Step 3: Add to Dashboard
 
 ```tsx
+import { BorrowerDetailDrawer } from '@/components/borrowers/borrower-detail-drawer';
 // In Cursor: src/app/[locale]/(auth)/borrowers/page.tsx
 import { BorrowerTable } from '@/components/borrowers/borrower-table';
-import { BorrowerDetailDrawer } from '@/components/borrowers/borrower-detail-drawer';
 
 // Use the example code from above
 ```
@@ -463,7 +463,7 @@ Components handle empty/loading states:
 <BorrowerTable
   borrowers={[]}
   isLoading={false}
-/>
+/>;
 // Shows "No borrowers yet"
 ```
 

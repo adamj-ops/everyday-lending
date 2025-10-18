@@ -1,9 +1,9 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/ui/toast';
 
-export interface Payment {
+export type Payment = {
   id: number;
   loanId: number;
   paymentDate: string;
@@ -31,9 +31,9 @@ export interface Payment {
     lastName: string;
     email: string;
   };
-}
+};
 
-export interface PaymentStats {
+export type PaymentStats = {
   totalPayments: number;
   totalCount: number;
   pendingPayments: number;
@@ -41,24 +41,24 @@ export interface PaymentStats {
   successRate: number;
   month: number;
   year: number;
-}
+};
 
-export interface CreatePaymentData {
+export type CreatePaymentData = {
   loanNumber: string;
   amount: number;
   paymentDate: string;
   paymentMethod: 'ACH' | 'Wire' | 'Check' | 'Card';
   referenceNumber?: string;
   notes?: string;
-}
+};
 
-export interface UpdatePaymentData {
+export type UpdatePaymentData = {
   amount?: number;
   paymentDate?: string;
   paymentMethod?: 'ACH' | 'Wire' | 'Check' | 'Card';
   referenceNumber?: string;
   notes?: string;
-}
+};
 
 export function usePayments(search?: string, status?: string, page = 1, limit = 10) {
   return useQuery({
@@ -68,9 +68,13 @@ export function usePayments(search?: string, status?: string, page = 1, limit = 
         page: page.toString(),
         limit: limit.toString(),
       });
-      
-      if (search) params.append('search', search);
-      if (status) params.append('status', status);
+
+      if (search) {
+        params.append('search', search);
+      }
+      if (status) {
+        params.append('status', status);
+      }
 
       const response = await fetch(`/api/payments?${params}`);
       if (!response.ok) {
@@ -100,8 +104,12 @@ export function usePaymentStats(month?: number, year?: number) {
     queryKey: ['payment-stats', { month, year }],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (month) params.append('month', month.toString());
-      if (year) params.append('year', year.toString());
+      if (month) {
+        params.append('month', month.toString());
+      }
+      if (year) {
+        params.append('year', year.toString());
+      }
 
       const response = await fetch(`/api/payments/stats?${params}`);
       if (!response.ok) {

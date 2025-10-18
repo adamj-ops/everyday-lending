@@ -1,19 +1,10 @@
 'use client';
 
+import { Edit, Plus, Search, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { Search, Plus, Edit, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -23,7 +14,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 
 // Mock data - will be replaced with real API calls
@@ -66,9 +66,9 @@ export function FeeTypesTable() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
-  const filteredData = mockFeeTypes.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = mockFeeTypes.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    || item.description.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const getFeeTypeBadge = (feeType: string) => {
@@ -83,11 +83,13 @@ export function FeeTypesTable() {
   };
 
   const getStatusBadge = (isActive: boolean) => {
-    return isActive ? (
-      <Badge variant="default" className="bg-green-100 text-green-800">Active</Badge>
-    ) : (
-      <Badge variant="secondary" className="bg-gray-100 text-gray-800">Inactive</Badge>
-    );
+    return isActive
+      ? (
+          <Badge variant="default" className="bg-green-100 text-green-800">Active</Badge>
+        )
+      : (
+          <Badge variant="secondary" className="bg-gray-100 text-gray-800">Inactive</Badge>
+        );
   };
 
   const formatAmount = (feeType: string, amount: number) => {
@@ -152,11 +154,11 @@ export function FeeTypesTable() {
         {/* Search */}
         <div className="mb-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search fee types..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -176,33 +178,35 @@ export function FeeTypesTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredData.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    No fee types found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredData.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.name}</TableCell>
-                    <TableCell>{item.description}</TableCell>
-                    <TableCell>{getFeeTypeBadge(item.feeType)}</TableCell>
-                    <TableCell>{formatAmount(item.feeType, item.amount)}</TableCell>
-                    <TableCell>{getStatusBadge(item.isActive)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end space-x-2">
-                        <Button variant="ghost" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+              {filteredData.length === 0
+                ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
+                        No fee types found
+                      </TableCell>
+                    </TableRow>
+                  )
+                : (
+                    filteredData.map(item => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.name}</TableCell>
+                        <TableCell>{item.description}</TableCell>
+                        <TableCell>{getFeeTypeBadge(item.feeType)}</TableCell>
+                        <TableCell>{formatAmount(item.feeType, item.amount)}</TableCell>
+                        <TableCell>{getStatusBadge(item.isActive)}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end space-x-2">
+                            <Button variant="ghost" size="sm">
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
             </TableBody>
           </Table>
         </div>
@@ -210,7 +214,15 @@ export function FeeTypesTable() {
         {/* Pagination would go here */}
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <div>
-            Showing {filteredData.length} of {mockFeeTypes.length} fee types
+            Showing
+            {' '}
+            {filteredData.length}
+            {' '}
+            of
+            {' '}
+            {mockFeeTypes.length}
+            {' '}
+            fee types
           </div>
         </div>
       </CardContent>

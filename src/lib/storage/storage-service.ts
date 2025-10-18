@@ -1,35 +1,35 @@
 /**
  * Storage Service
- * 
+ *
  * Handles file uploads and storage using Supabase Storage
  * Provides secure file management for documents and images
- * 
+ *
  * Architecture: Enhanced Modular Monolith Service Layer
  * Dependencies: @supabase/supabase-js
  */
 
-import { createClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/supabase'
+import type { createClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/supabase';
 
-export interface UploadResult {
-  success: boolean
-  url?: string
-  path?: string
-  error?: string
-}
+export type UploadResult = {
+  success: boolean;
+  url?: string;
+  path?: string;
+  error?: string;
+};
 
-export interface FileMetadata {
-  name: string
-  size: number
-  type: string
-  lastModified: number
-}
+export type FileMetadata = {
+  name: string;
+  size: number;
+  type: string;
+  lastModified: number;
+};
 
 export class StorageService {
-  private supabase: ReturnType<typeof createClient<Database>>
+  private supabase: ReturnType<typeof createClient<Database>>;
 
   constructor(supabaseClient: ReturnType<typeof createClient<Database>>) {
-    this.supabase = supabaseClient
+    this.supabase = supabaseClient;
   }
 
   /**
@@ -40,10 +40,10 @@ export class StorageService {
     path: string,
     file: File,
     options?: {
-      cacheControl?: string
-      contentType?: string
-      upsert?: boolean
-    }
+      cacheControl?: string;
+      contentType?: string;
+      upsert?: boolean;
+    },
   ): Promise<UploadResult> {
     try {
       const { data, error } = await this.supabase.storage
@@ -51,30 +51,30 @@ export class StorageService {
         .upload(path, file, {
           cacheControl: options?.cacheControl || '3600',
           contentType: options?.contentType || file.type,
-          upsert: options?.upsert || false
-        })
+          upsert: options?.upsert || false,
+        });
 
       if (error) {
-        console.error('File upload error:', error)
-        return { success: false, error: error.message }
+        console.error('File upload error:', error);
+        return { success: false, error: error.message };
       }
 
       // Get public URL
       const { data: urlData } = this.supabase.storage
         .from(bucket)
-        .getPublicUrl(data.path)
+        .getPublicUrl(data.path);
 
       return {
         success: true,
         url: urlData.publicUrl,
-        path: data.path
-      }
+        path: data.path,
+      };
     } catch (error) {
-      console.error('Storage service error:', error)
+      console.error('Storage service error:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
@@ -85,17 +85,17 @@ export class StorageService {
     try {
       const { data, error } = await this.supabase.storage
         .from(bucket)
-        .download(path)
+        .download(path);
 
       if (error) {
-        console.error('File download error:', error)
-        return null
+        console.error('File download error:', error);
+        return null;
       }
 
-      return data
+      return data;
     } catch (error) {
-      console.error('Storage service error:', error)
-      return null
+      console.error('Storage service error:', error);
+      return null;
     }
   }
 
@@ -106,17 +106,17 @@ export class StorageService {
     try {
       const { error } = await this.supabase.storage
         .from(bucket)
-        .remove([path])
+        .remove([path]);
 
       if (error) {
-        console.error('File delete error:', error)
-        return false
+        console.error('File delete error:', error);
+        return false;
       }
 
-      return true
+      return true;
     } catch (error) {
-      console.error('Storage service error:', error)
-      return false
+      console.error('Storage service error:', error);
+      return false;
     }
   }
 
@@ -128,28 +128,28 @@ export class StorageService {
       const { data, error } = await this.supabase.storage
         .from(bucket)
         .list(path.split('/').slice(0, -1).join('/'), {
-          search: path.split('/').pop()
-        })
+          search: path.split('/').pop(),
+        });
 
       if (error || !data || data.length === 0) {
-        console.error('File metadata error:', error)
-        return null
+        console.error('File metadata error:', error);
+        return null;
       }
 
-      const file = data[0]
+      const file = data[0];
       if (!file) {
-        return null
+        return null;
       }
-      
+
       return {
         name: file.name,
         size: file.metadata?.size || 0,
         type: file.metadata?.mimetype || 'application/octet-stream',
-        lastModified: new Date(file.updated_at).getTime()
-      }
+        lastModified: new Date(file.updated_at).getTime(),
+      };
     } catch (error) {
-      console.error('Storage service error:', error)
-      return null
+      console.error('Storage service error:', error);
+      return null;
     }
   }
 
@@ -159,9 +159,9 @@ export class StorageService {
   getPublicUrl(bucket: string, path: string): string {
     const { data } = this.supabase.storage
       .from(bucket)
-      .getPublicUrl(path)
+      .getPublicUrl(path);
 
-    return data.publicUrl
+    return data.publicUrl;
   }
 
   /**
@@ -170,22 +170,22 @@ export class StorageService {
   async createSignedUrl(
     bucket: string,
     path: string,
-    expiresIn: number = 3600
+    expiresIn: number = 3600,
   ): Promise<string | null> {
     try {
       const { data, error } = await this.supabase.storage
         .from(bucket)
-        .createSignedUrl(path, expiresIn)
+        .createSignedUrl(path, expiresIn);
 
       if (error) {
-        console.error('Signed URL error:', error)
-        return null
+        console.error('Signed URL error:', error);
+        return null;
       }
 
-      return data.signedUrl
+      return data.signedUrl;
     } catch (error) {
-      console.error('Storage service error:', error)
-      return null
+      console.error('Storage service error:', error);
+      return null;
     }
   }
 
@@ -196,10 +196,10 @@ export class StorageService {
     bucket: string,
     path: string = '',
     options?: {
-      limit?: number
-      offset?: number
-      sortBy?: { column: string; order: 'asc' | 'desc' }
-    }
+      limit?: number;
+      offset?: number;
+      sortBy?: { column: string; order: 'asc' | 'desc' };
+    },
   ): Promise<any[]> {
     try {
       const { data, error } = await this.supabase.storage
@@ -207,18 +207,18 @@ export class StorageService {
         .list(path, {
           limit: options?.limit || 100,
           offset: options?.offset || 0,
-          sortBy: options?.sortBy || { column: 'updated_at', order: 'desc' }
-        })
+          sortBy: options?.sortBy || { column: 'updated_at', order: 'desc' },
+        });
 
       if (error) {
-        console.error('List files error:', error)
-        return []
+        console.error('List files error:', error);
+        return [];
       }
 
-      return data || []
+      return data || [];
     } catch (error) {
-      console.error('Storage service error:', error)
-      return []
+      console.error('Storage service error:', error);
+      return [];
     }
   }
 
@@ -229,18 +229,18 @@ export class StorageService {
     bucket: string,
     files: Array<{ file: File; path: string }>,
     options?: {
-      cacheControl?: string
-      upsert?: boolean
-    }
+      cacheControl?: string;
+      upsert?: boolean;
+    },
   ): Promise<Array<UploadResult>> {
-    const results: Array<UploadResult> = []
+    const results: Array<UploadResult> = [];
 
     for (const { file, path } of files) {
-      const result = await this.uploadFile(bucket, path, file, options)
-      results.push(result)
+      const result = await this.uploadFile(bucket, path, file, options);
+      results.push(result);
     }
 
-    return results
+    return results;
   }
 
   /**
@@ -250,17 +250,17 @@ export class StorageService {
     try {
       const { error } = await this.supabase.storage
         .from(bucket)
-        .remove(paths)
+        .remove(paths);
 
       if (error) {
-        console.error('Delete multiple files error:', error)
-        return false
+        console.error('Delete multiple files error:', error);
+        return false;
       }
 
-      return true
+      return true;
     } catch (error) {
-      console.error('Storage service error:', error)
-      return false
+      console.error('Storage service error:', error);
+      return false;
     }
   }
 }
@@ -270,15 +270,15 @@ export const StorageBuckets = {
   DOCUMENTS: 'loan-documents',
   IMAGES: 'property-images',
   TEMP: 'temp-uploads',
-  AVATARS: 'user-avatars'
-} as const
+  AVATARS: 'user-avatars',
+} as const;
 
 // Helper function to generate file paths
 export const generateFilePath = (entityType: string, entityId: string, fileName: string): string => {
-  const timestamp = Date.now()
-  const extension = fileName.split('.').pop()
-  const baseName = fileName.replace(/\.[^/.]+$/, '')
-  const sanitizedName = baseName.replace(/[^a-zA-Z0-9-_]/g, '_')
-  
-  return `${entityType}/${entityId}/${sanitizedName}_${timestamp}.${extension}`
-}
+  const timestamp = Date.now();
+  const extension = fileName.split('.').pop();
+  const baseName = fileName.replace(/\.[^/.]+$/, '');
+  const sanitizedName = baseName.replace(/[^\w-]/g, '_');
+
+  return `${entityType}/${entityId}/${sanitizedName}_${timestamp}.${extension}`;
+};

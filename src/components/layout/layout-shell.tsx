@@ -9,9 +9,10 @@ type LayoutShellProps = {
   children: React.ReactNode;
   title?: string;
   subtitle?: string;
+  locale?: string;
 };
 
-export function LayoutShell({ children, title, subtitle }: LayoutShellProps) {
+export function LayoutShell({ children, title, subtitle, locale }: LayoutShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -61,6 +62,7 @@ export function LayoutShell({ children, title, subtitle }: LayoutShellProps) {
           subtitle={subtitle}
           onMenuClick={() => setMobileMenuOpen(true)}
           showMenuButton={true}
+          locale={locale}
         />
 
         {/* Main Content */}

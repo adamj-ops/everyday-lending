@@ -1,5 +1,6 @@
 'use client';
 
+import type { Payment } from '@/hooks/use-payments-client';
 import { motion } from 'framer-motion';
 import { CheckCircle, Clock, XCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -22,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { usePayments, type Payment } from '@/hooks/use-payments-client';
+import { usePayments } from '@/hooks/use-payments-client';
 
 export function PaymentsTable() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,7 +40,7 @@ export function PaymentsTable() {
     const paymentDate = new Date(payment.paymentDate);
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    
+
     let status = 'successful';
     if (paymentDate < thirtyDaysAgo) {
       status = 'overdue';
@@ -64,7 +65,7 @@ export function PaymentsTable() {
     const paymentDate = new Date(payment.paymentDate);
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    
+
     let status = 'successful';
     if (paymentDate < thirtyDaysAgo) {
       status = 'overdue';
@@ -114,14 +115,14 @@ export function PaymentsTable() {
             </Button>
           </div>
         </div>
-        
+
         {/* Search and Filter Controls */}
         <div className="flex items-center space-x-4">
           <div className="flex-1">
             <Input
               placeholder="Search by borrower, loan number, or reference..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="max-w-sm"
             />
           </div>
@@ -139,7 +140,7 @@ export function PaymentsTable() {
           </Select>
         </div>
       </CardHeader>
-      
+
       <CardContent>
         <div className="rounded-md border">
           <Table>
@@ -156,79 +157,95 @@ export function PaymentsTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                    Loading payments...
-                  </TableCell>
-                </TableRow>
-              ) : payments.length > 0 ? (
-                payments.map((payment: Payment) => (
-                  <motion.tr
-                    key={payment.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                    className="hover:bg-muted/50"
-                  >
-                    <TableCell className="font-medium">
-                      {payment.loan?.loanNumber || 'N/A'}
-                    </TableCell>
-                    <TableCell>
-                      {payment.borrower ? `${payment.borrower.firstName} ${payment.borrower.lastName}` : 'N/A'}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {formatCurrency(payment.amount)}
-                    </TableCell>
-                    <TableCell>{formatDate(payment.paymentDate)}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        {getStatusIcon(payment)}
-                        {getStatusBadge(payment)}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{payment.paymentMethod}</Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {payment.referenceNumber || 'N/A'}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">
-                        View Details
-                      </Button>
-                    </TableCell>
-                  </motion.tr>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                    No payments found
-                  </TableCell>
-                </TableRow>
-              )}
+              {isLoading
+                ? (
+                    <TableRow>
+                      <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">
+                        Loading payments...
+                      </TableCell>
+                    </TableRow>
+                  )
+                : payments.length > 0
+                  ? (
+                      payments.map((payment: Payment) => (
+                        <motion.tr
+                          key={payment.id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.2 }}
+                          className="hover:bg-muted/50"
+                        >
+                          <TableCell className="font-medium">
+                            {payment.loan?.loanNumber || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            {payment.borrower ? `${payment.borrower.firstName} ${payment.borrower.lastName}` : 'N/A'}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {formatCurrency(payment.amount)}
+                          </TableCell>
+                          <TableCell>{formatDate(payment.paymentDate)}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              {getStatusIcon(payment)}
+                              {getStatusBadge(payment)}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{payment.paymentMethod}</Badge>
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {payment.referenceNumber || 'N/A'}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="sm">
+                              View Details
+                            </Button>
+                          </TableCell>
+                        </motion.tr>
+                      ))
+                    )
+                  : (
+                      <TableRow>
+                        <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">
+                          No payments found
+                        </TableCell>
+                      </TableRow>
+                    )}
             </TableBody>
           </Table>
         </div>
-        
+
         {/* Pagination */}
         {pagination && pagination.total > 0 && (
           <div className="flex items-center justify-between pt-4">
             <div className="text-sm text-muted-foreground">
-              Showing {pagination.page * pagination.limit - pagination.limit + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} payments
+              Showing
+              {' '}
+              {pagination.page * pagination.limit - pagination.limit + 1}
+              {' '}
+              to
+              {' '}
+              {Math.min(pagination.page * pagination.limit, pagination.total)}
+              {' '}
+              of
+              {' '}
+              {pagination.total}
+              {' '}
+              payments
             </div>
             <div className="flex items-center space-x-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 disabled={page === 1}
                 onClick={() => setPage(page - 1)}
               >
                 Previous
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 disabled={page >= pagination.totalPages}
                 onClick={() => setPage(page + 1)}
               >

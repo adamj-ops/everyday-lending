@@ -6,7 +6,7 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-[10px] border-0 px-[5px] py-0.5 text-xs font-bold whitespace-nowrap transition-colors h-[19px] [&>svg]:pointer-events-none [&>svg]:size-3',
+  'inline-flex h-[19px] w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-[10px] border-0 px-[5px] py-0.5 text-xs font-bold whitespace-nowrap transition-colors [&>svg]:pointer-events-none [&>svg]:size-3',
   {
     variants: {
       variant: {
@@ -17,7 +17,7 @@ const badgeVariants = cva(
         destructive:
           'bg-destructive text-white [a&]:hover:bg-destructive/90',
         outline:
-          'border border-[#dcdbdd] text-foreground bg-background [a&]:hover:bg-neutral-100',
+          'border border-[#dcdbdd] bg-background text-foreground [a&]:hover:bg-neutral-100',
         // Attio-style category tags (from Figma)
         category:
           'bg-neutral-100 text-foreground [a&]:hover:bg-neutral-200',

@@ -1,5 +1,6 @@
 'use client';
 
+import type { FormStep } from './multi-step-form';
 import * as React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,9 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { MultiStepForm, type FormStep } from './multi-step-form';
+import { MultiStepForm } from './multi-step-form';
 
-interface LoanApplicationData {
+type LoanApplicationData = {
   // Borrower Information
   borrowerName: string;
   borrowerEmail: string;
@@ -36,12 +37,12 @@ interface LoanApplicationData {
   // Lender Information
   lenderName: string;
   lenderEmail: string;
-}
+};
 
-interface LoanApplicationFormProps {
+type LoanApplicationFormProps = {
   onComplete: (data: LoanApplicationData) => void | Promise<void>;
   onCancel?: () => void;
-}
+};
 
 /**
  * LoanApplicationForm - Complete loan application wizard
@@ -273,14 +274,14 @@ export function LoanApplicationForm({
   // Step 5: Review & Confirm
   const ReviewStep = () => (
     <div className="space-y-6">
-      <div className="border border-neutral-200 rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+      <div className="rounded-lg border border-neutral-200 p-4">
+        <h3 className="mb-3 text-sm font-semibold text-neutral-700">
           Borrower Information
         </h3>
         <dl className="space-y-2 text-sm">
           <div className="flex justify-between">
             <dt className="text-neutral-500">Name:</dt>
-            <dd className="text-neutral-800 font-medium">
+            <dd className="font-medium text-neutral-800">
               {formData.borrowerName}
             </dd>
           </div>
@@ -290,15 +291,15 @@ export function LoanApplicationForm({
           </div>
           <div className="flex justify-between">
             <dt className="text-neutral-500">Credit Score:</dt>
-            <dd className="text-neutral-800 font-mono">
+            <dd className="font-mono text-neutral-800">
               {formData.creditScore}
             </dd>
           </div>
         </dl>
       </div>
 
-      <div className="border border-neutral-200 rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+      <div className="rounded-lg border border-neutral-200 p-4">
+        <h3 className="mb-3 text-sm font-semibold text-neutral-700">
           Property Information
         </h3>
         <dl className="space-y-2 text-sm">
@@ -318,14 +319,14 @@ export function LoanApplicationForm({
           </div>
           <div className="flex justify-between">
             <dt className="text-neutral-500">Purchase Price:</dt>
-            <dd className="text-neutral-800 font-mono">
+            <dd className="font-mono text-neutral-800">
               $
               {Number.parseInt(formData.purchasePrice).toLocaleString()}
             </dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-neutral-500">ARV:</dt>
-            <dd className="text-neutral-800 font-mono">
+            <dd className="font-mono text-neutral-800">
               $
               {Number.parseInt(formData.arv).toLocaleString()}
             </dd>
@@ -333,8 +334,8 @@ export function LoanApplicationForm({
         </dl>
       </div>
 
-      <div className="border border-neutral-200 rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+      <div className="rounded-lg border border-neutral-200 p-4">
+        <h3 className="mb-3 text-sm font-semibold text-neutral-700">
           Loan Details
         </h3>
         <dl className="space-y-2 text-sm">
@@ -344,14 +345,14 @@ export function LoanApplicationForm({
           </div>
           <div className="flex justify-between">
             <dt className="text-neutral-500">Principal Amount:</dt>
-            <dd className="text-neutral-800 font-mono">
+            <dd className="font-mono text-neutral-800">
               $
               {Number.parseInt(formData.principalAmount).toLocaleString()}
             </dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-neutral-500">Interest Rate:</dt>
-            <dd className="text-neutral-800 font-mono">
+            <dd className="font-mono text-neutral-800">
               {formData.interestRate}
               %
             </dd>
@@ -367,14 +368,14 @@ export function LoanApplicationForm({
         </dl>
       </div>
 
-      <div className="border border-neutral-200 rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-neutral-700 mb-3">
+      <div className="rounded-lg border border-neutral-200 p-4">
+        <h3 className="mb-3 text-sm font-semibold text-neutral-700">
           Lender Information
         </h3>
         <dl className="space-y-2 text-sm">
           <div className="flex justify-between">
             <dt className="text-neutral-500">Name:</dt>
-            <dd className="text-neutral-800 font-medium">
+            <dd className="font-medium text-neutral-800">
               {formData.lenderName}
             </dd>
           </div>

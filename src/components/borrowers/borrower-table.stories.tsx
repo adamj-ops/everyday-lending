@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
-import React from 'react';
-
 import type { Borrower } from './borrower-table';
+import { fn } from '@storybook/test';
+
+import React from 'react';
 import { BorrowerTable } from './borrower-table';
 
 const mockBorrowers: Borrower[] = [
@@ -171,15 +171,15 @@ export const FullPageLayout: Story = {
   render: (args) => {
     return (
       <div className="min-h-screen bg-neutral-50 p-6">
-        <div className="max-w-7xl mx-auto">
+        <div className="mx-auto max-w-7xl">
           {/* Page Header */}
           <div className="mb-6">
             <h1 className="text-4xl font-semibold text-neutral-800">Borrowers</h1>
-            <p className="text-neutral-500 mt-1">Manage your borrower relationships</p>
+            <p className="mt-1 text-neutral-500">Manage your borrower relationships</p>
           </div>
 
           {/* Table Card */}
-          <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden">
+          <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
             <BorrowerTable {...args} />
           </div>
         </div>

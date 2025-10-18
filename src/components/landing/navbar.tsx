@@ -1,19 +1,19 @@
 'use client';
 
-import * as React from 'react';
 import Link from 'next/link';
+import * as React from 'react';
 import { Button } from '@/components/ui/button';
 
 export function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-[#eeeff1]">
+    <nav className="sticky top-0 z-50 border-b border-[#eeeff1] bg-white">
       {/* Announcement Banner */}
-      <div className="bg-[#276bf0] text-white text-center py-3 px-4 text-xs font-semibold">
+      <div className="bg-[#276bf0] px-4 py-3 text-center text-xs font-semibold text-white">
         Everyday Lending - Modern Construction Loan Management
       </div>
 
       {/* Main Navigation */}
-      <div className="max-w-[1440px] mx-auto px-6 py-5">
+      <div className="mx-auto max-w-[1440px] px-6 py-5">
         <div className="flex items-center justify-between">
           {/* Logo & Navigation */}
           <div className="flex items-center gap-10">
@@ -21,34 +21,34 @@ export function Navbar() {
               Everyday Lending
             </Link>
 
-            <div className="hidden md:flex items-center gap-1">
+            <div className="hidden items-center gap-1 md:flex">
               <Link
                 href="#features"
-                className="px-4 py-2 text-xs font-semibold text-foreground hover:bg-neutral-100 rounded transition-colors"
+                className="rounded px-4 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-neutral-100"
               >
                 Features
               </Link>
               <Link
                 href="#solutions"
-                className="px-4 py-2 text-xs font-semibold text-foreground hover:bg-neutral-100 rounded transition-colors"
+                className="rounded px-4 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-neutral-100"
               >
                 Solutions
               </Link>
               <Link
                 href="#about"
-                className="px-4 py-2 text-xs font-semibold text-foreground hover:bg-neutral-100 rounded transition-colors"
+                className="rounded px-4 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-neutral-100"
               >
                 About
               </Link>
               <Link
                 href="#pricing"
-                className="px-4 py-2 text-xs font-semibold text-foreground hover:bg-neutral-100 rounded transition-colors"
+                className="rounded px-4 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-neutral-100"
               >
                 Pricing
               </Link>
               <Link
                 href="#contact"
-                className="px-4 py-2 text-xs font-semibold text-foreground hover:bg-neutral-100 rounded transition-colors"
+                className="rounded px-4 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-neutral-100"
               >
                 Contact
               </Link>

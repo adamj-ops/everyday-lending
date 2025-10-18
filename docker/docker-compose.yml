@@ -11,14 +11,14 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
       - everyday-lending-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [CMD-SHELL, pg_isready -U postgres]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,13 +28,13 @@ services:
     image: redis:7-alpine
     container_name: everyday-lending-redis
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data
     networks:
       - everyday-lending-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [CMD, redis-cli, ping]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -54,7 +54,7 @@ services:
       - ARCJET_KEY=ajkey_demo_key_for_development
       - NEXT_PUBLIC_SENTRY_DISABLED=true
     ports:
-      - "3003:3000"
+      - '3003:3000'
     volumes:
       - ..:/app
       - /app/node_modules
@@ -76,7 +76,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/everyday_lending
     ports:
-      - "4983:4983"
+      - '4983:4983'
     volumes:
       - ..:/app
     depends_on:

@@ -175,15 +175,15 @@ import { Avatar } from '@/components/ui/avatar';
 ### CSS Variables
 All colors are accessible via Tailwind utilities:
 ```tsx
-className="bg-primary text-primary-foreground"
-className="border-[#eeeff1]"
-className="text-[#696a6c]"
+className = 'bg-primary text-primary-foreground';
+className = 'border-[#eeeff1]';
+className = 'text-[#696a6c]';
 ```
 
 ### Design Tokens
 Import tokens for custom components:
 ```ts
-import { colors, typography, spacing } from '@/styles/design-tokens';
+import { colors, spacing, typography } from '@/styles/design-tokens';
 ```
 
 ## Success Metrics

@@ -311,26 +311,26 @@ Create install-module-config.yaml:
 
 ```yaml
 # {{module_name}} Installation Configuration
-module_name: { { module_name } }
-module_code: { { module_code } }
-installation_date: { { date } }
+module_name: {{module_name}}
+module_code: {{module_code}}
+installation_date: {{date}}
 
 # Installation steps
 install_steps:
-  - name: 'Create directories'
-    action: 'mkdir'
+  - name: Create directories
+    action: mkdir
     paths:
       - '{project-root}/bmad/{{module_code}}'
       - '{project-root}/bmad/{{module_code}}/data'
       - '{project-root}/bmad/{{module_code}}/agents'
 
-  - name: 'Copy configuration'
-    action: 'copy'
+  - name: Copy configuration
+    action: copy
     source: '{installer_path}/config.yaml'
     dest: '{project-root}/bmad/{{module_code}}/config.yaml'
 
-  - name: 'Register module'
-    action: 'register'
+  - name: Register module
+    action: register
     manifest: '{project-root}/bmad/_cfg/manifest.yaml'
 
 # External assets (if any)

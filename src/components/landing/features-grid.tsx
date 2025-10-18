@@ -43,15 +43,15 @@ const features = [
 
 export function FeaturesGrid() {
   return (
-    <section className="bg-white border-b border-[#eeeff1] py-24">
-      <div className="max-w-[1440px] mx-auto px-6">
-        <div className="max-w-[1252px] mx-auto">
+    <section className="border-b border-[#eeeff1] bg-white py-24">
+      <div className="mx-auto max-w-[1440px] px-6">
+        <div className="mx-auto max-w-[1252px]">
           {/* Header */}
           <div className="mb-16">
-            <h2 className="text-[48px] leading-tight font-bold text-foreground mb-4">
+            <h2 className="mb-4 text-[48px] leading-tight font-bold text-foreground">
               And so much more...
             </h2>
-            <p className="text-base text-[#696a6c] max-w-[464px]">
+            <p className="max-w-[464px] text-base text-[#696a6c]">
               Your construction loans are always evolving. Why should your
               lending platform be any different?
             </p>
@@ -63,12 +63,12 @@ export function FeaturesGrid() {
               {features.slice(0, 3).map((feature, index) => (
                 <div
                   key={index}
-                  className="border border-[#eeeff1] rounded-lg p-8 bg-white hover:shadow-sm transition-shadow"
+                  className="rounded-lg border border-[#eeeff1] bg-white p-8 transition-shadow hover:shadow-sm"
                 >
-                  <div className="w-12 h-12 rounded bg-[#19bbe8] text-white flex items-center justify-center text-2xl mb-4">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded bg-[#19bbe8] text-2xl text-white">
                     {feature.icon}
                   </div>
-                  <h3 className="text-base font-bold text-foreground mb-2">
+                  <h3 className="mb-2 text-base font-bold text-foreground">
                     {feature.title}
                   </h3>
                   <p className="text-sm text-[#696a6c]">{feature.description}</p>
@@ -80,12 +80,12 @@ export function FeaturesGrid() {
               {features.slice(3, 6).map((feature, index) => (
                 <div
                   key={index}
-                  className="border border-[#eeeff1] rounded-lg p-8 bg-white hover:shadow-sm transition-shadow"
+                  className="rounded-lg border border-[#eeeff1] bg-white p-8 transition-shadow hover:shadow-sm"
                 >
-                  <div className="w-12 h-12 rounded bg-[#19bbe8] text-white flex items-center justify-center text-2xl mb-4">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded bg-[#19bbe8] text-2xl text-white">
                     {feature.icon}
                   </div>
-                  <h3 className="text-base font-bold text-foreground mb-2">
+                  <h3 className="mb-2 text-base font-bold text-foreground">
                     {feature.title}
                   </h3>
                   <p className="text-sm text-[#696a6c]">{feature.description}</p>

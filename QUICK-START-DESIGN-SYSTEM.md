@@ -120,10 +120,10 @@ import { Search } from 'lucide-react';
 ### Attio Table Pattern
 ```tsx
 <Table>
-  <TableHeader className="sticky top-0 bg-white z-10">
-    <TableRow className="border-b border-[#eeeff1] h-[37px]">
+  <TableHeader className="sticky top-0 z-10 bg-white">
+    <TableRow className="h-[37px] border-b border-[#eeeff1]">
       <TableHead className="px-4">
-        <button className="flex items-center gap-2 font-medium text-sm">
+        <button className="flex items-center gap-2 text-sm font-medium">
           Column Name
           <ArrowUpDown className="h-4 w-4" />
         </button>
@@ -132,7 +132,7 @@ import { Search } from 'lucide-react';
   </TableHeader>
 
   <TableBody>
-    <TableRow className="cursor-pointer hover:bg-[#fbfbfb] border-b border-[#eeeff1] h-[37px]">
+    <TableRow className="h-[37px] cursor-pointer border-b border-[#eeeff1] hover:bg-[#fbfbfb]">
       <TableCell className="px-4">
         <span className="text-sm text-foreground">
           Cell content
@@ -140,7 +140,7 @@ import { Search } from 'lucide-react';
       </TableCell>
     </TableRow>
   </TableBody>
-</Table>
+</Table>;
 ```
 
 ### Key Table Specs
@@ -154,18 +154,18 @@ import { Search } from 'lucide-react';
 
 ### Search Bar
 ```tsx
-<div className="px-4 py-3 border-b border-[#eeeff1]">
+<div className="border-b border-[#eeeff1] px-4 py-3">
   <div className="relative">
-    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#b8b9bb]" />
+    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#b8b9bb]" />
     <Input
       type="search"
       placeholder="Search..."
-      className="pl-10 h-7"
+      className="h-7 pl-10"
       value={query}
-      onChange={(e) => setQuery(e.target.value)}
+      onChange={e => setQuery(e.target.value)}
     />
   </div>
-</div>
+</div>;
 ```
 
 ### User Info with Avatar
@@ -177,38 +177,46 @@ import { Search } from 'lucide-react';
     size="md"
   />
   <div>
-    <p className="font-medium text-sm text-foreground">
+    <p className="text-sm font-medium text-foreground">
       {user.name}
     </p>
-    <p className="text-xs text-[#696a6c] font-semibold">
+    <p className="text-xs font-semibold text-[#696a6c]">
       {user.email}
     </p>
   </div>
-</div>
+</div>;
 ```
 
 ### Footer Count
 ```tsx
-<div className="px-4 py-3 border-t border-[#eeeff1]">
+<div className="border-t border-[#eeeff1] px-4 py-3">
   <p className="text-sm text-[#696a6c]">
-    Showing {filtered.length} of {total.length} items
+    Showing
+    {' '}
+    {filtered.length}
+    {' '}
+    of
+    {' '}
+    {total.length}
+    {' '}
+    items
   </p>
-</div>
+</div>;
 ```
 
 ## 📏 Spacing System
 
 Use consistent 4px-based spacing:
 ```tsx
-gap-1   // 4px
-gap-2   // 8px
-gap-3   // 12px
-gap-4   // 16px (most common)
-gap-6   // 24px
+gap - 1; // 4px
+gap - 2; // 8px
+gap - 3; // 12px
+gap - 4; // 16px (most common)
+gap - 6; // 24px
 
-px-4    // 16px horizontal padding (tables, cards)
-py-3    // 12px vertical padding (search, footer)
-py-4    // 16px vertical padding (content)
+px - 4; // 16px horizontal padding (tables, cards)
+py - 3; // 12px vertical padding (search, footer)
+py - 4; // 16px vertical padding (content)
 ```
 
 ## 🔤 Typography
@@ -220,16 +228,16 @@ py-4    // 16px vertical padding (content)
 ### Common Text Styles
 ```tsx
 // Headers
-className="font-medium text-sm"          // Table headers
-className="font-semibold text-lg"        // Section titles
+className = 'font-medium text-sm'; // Table headers
+className = 'font-semibold text-lg'; // Section titles
 
 // Content
-className="text-sm text-foreground"      // Primary content
-className="text-xs text-[#696a6c]"       // Secondary/muted
-className="text-xs font-semibold"        // Small labels
+className = 'text-sm text-foreground'; // Primary content
+className = 'text-xs text-[#696a6c]'; // Secondary/muted
+className = 'text-xs font-semibold'; // Small labels
 
 // Bold Actions
-className="text-xs font-bold"            // Buttons, badges
+className = 'text-xs font-bold'; // Buttons, badges
 ```
 
 ## ✅ Do's and Don'ts
@@ -263,7 +271,7 @@ className="text-xs font-bold"            // Buttons, badges
   <Button variant="ghost" size="md">
     More Options
   </Button>
-</div>
+</div>;
 ```
 
 ### Category Tags
@@ -272,14 +280,14 @@ className="text-xs font-bold"            // Buttons, badges
   <Badge variant="category">B2B</Badge>
   <Badge variant="category">E-commerce</Badge>
   <Badge variant="category">Finance</Badge>
-</div>
+</div>;
 ```
 
 ### Status Indicator
 ```tsx
-{status === 'active' && <Badge variant="success">Active</Badge>}
-{status === 'pending' && <Badge variant="warning">Pending</Badge>}
-{status === 'inactive' && <Badge variant="category">Inactive</Badge>}
+{ status === 'active' && <Badge variant="success">Active</Badge>; }
+{ status === 'pending' && <Badge variant="warning">Pending</Badge>; }
+{ status === 'inactive' && <Badge variant="category">Inactive</Badge>; }
 ```
 
 ---

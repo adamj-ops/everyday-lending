@@ -1,6 +1,6 @@
 import type { NextFetchEvent, NextRequest } from 'next/server';
 import { detectBot } from '@arcjet/next';
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { createServerClient } from '@supabase/ssr';
 import createMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
 import arcjet from '@/libs/Arcjet';
@@ -8,17 +8,8 @@ import { routing } from './libs/I18nRouting';
 
 const handleI18nRouting = createMiddleware(routing);
 
-const isProtectedRoute = createRouteMatcher([
-  '/dashboard(.*)',
-  '/:locale/dashboard(.*)',
-]);
-
-const isAuthPage = createRouteMatcher([
-  '/sign-in(.*)',
-  '/:locale/sign-in(.*)',
-  '/sign-up(.*)',
-  '/:locale/sign-up(.*)',
-]);
+const protectedRoutes = ['/dashboard'];
+const authRoutes = ['/sign-in', '/sign-up'];
 
 // Improve security with Arcjet
 const aj = arcjet.withRule(
@@ -36,7 +27,7 @@ const aj = arcjet.withRule(
 
 export default async function middleware(
   request: NextRequest,
-  event: NextFetchEvent,
+  _event: NextFetchEvent,
 ) {
   // Verify the request with Arcjet
   // Use `process.env` instead of Env to reduce bundle size in middleware
@@ -53,31 +44,62 @@ export default async function middleware(
     }
   }
 
-  // Check if Clerk is properly configured
-  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-  const hasValidClerkKey = publishableKey
-    && publishableKey !== 'pk_test_demo_key_for_development'
-    && publishableKey.startsWith('pk_');
+  // Check if Supabase is properly configured
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const hasValidSupabaseConfig = supabaseUrl && supabaseAnonKey;
 
-  // Clerk keyless mode doesn't work with i18n, this is why we need to run the middleware conditionally
-  if (
-    hasValidClerkKey && (isAuthPage(request) || isProtectedRoute(request))
-  ) {
-    return clerkMiddleware(async (auth, req) => {
-      if (isProtectedRoute(req)) {
-        const locale = req.nextUrl.pathname.match(/(\/.*)\/dashboard/)?.at(1) ?? '';
+  if (hasValidSupabaseConfig) {
+    let response = NextResponse.next({ request });
 
-        const signInUrl = new URL(`${locale}/sign-in`, req.url);
-
-        const { userId } = await auth();
-        
-        if (!userId) {
-          return NextResponse.redirect(signInUrl);
-        }
+    // Create Supabase client
+    const supabase = createServerClient(
+      supabaseUrl,
+      supabaseAnonKey,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              request.cookies.set(name, value);
+              response.cookies.set(name, value, options);
+            });
+          },
+        },
       }
+    );
 
-      return handleI18nRouting(req);
-    })(request, event);
+    // Get user session
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const pathname = request.nextUrl.pathname;
+    const locale = pathname.match(/^\/([^/]+)/)?.[1] || '';
+    
+    // Check if route is protected
+    const isProtected = protectedRoutes.some(route => 
+      pathname.includes(route)
+    );
+    
+    const isAuthPage = authRoutes.some(route => 
+      pathname.includes(route)
+    );
+
+    // Redirect to sign-in if accessing protected route without auth
+    if (isProtected && !user) {
+      const signInUrl = new URL(`/${locale}/sign-in`, request.url);
+      return NextResponse.redirect(signInUrl);
+    }
+
+    // Redirect to dashboard if accessing auth pages while authenticated
+    if (isAuthPage && user) {
+      const dashboardUrl = new URL(`/${locale}/dashboard`, request.url);
+      return NextResponse.redirect(dashboardUrl);
+    }
+
+    // Apply i18n routing
+    return handleI18nRouting(request);
   }
 
   return handleI18nRouting(request);

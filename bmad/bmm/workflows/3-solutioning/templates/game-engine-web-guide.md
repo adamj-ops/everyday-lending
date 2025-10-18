@@ -90,7 +90,7 @@ class PreloadScene extends Phaser.Scene {
   preload() {
     // Show progress bar
     this.load.on('progress', (value: number) => {
-      console.log('Loading: ' + Math.round(value * 100) + '%');
+      console.log(`Loading: ${Math.round(value * 100)}%`);
     });
 
     // Load assets
@@ -138,7 +138,7 @@ class BulletPool {
   }
 
   spawn(x: number, y: number, velocityX: number, velocityY: number): Bullet | null {
-    const bullet = this.pool.find((b) => !b.active);
+    const bullet = this.pool.find(b => !b.active);
     if (bullet) {
       bullet.spawn(x, y, velocityX, velocityY);
     }
@@ -196,14 +196,14 @@ class GameScene extends Phaser.Scene {
 **LocalStorage pattern:**
 
 ```typescript
-interface GameSaveData {
+type GameSaveData = {
   level: number;
   score: number;
   playerStats: {
     health: number;
     lives: number;
   };
-}
+};
 
 class SaveManager {
   private static SAVE_KEY = 'game_save_data';
@@ -293,12 +293,14 @@ describe('Player', () => {
   test('takes damage correctly', () => {
     player.health = 100;
     player.takeDamage(20);
+
     expect(player.health).toBe(80);
   });
 
   test('dies when health reaches zero', () => {
     player.health = 10;
     player.takeDamage(20);
+
     expect(player.alive).toBe(false);
   });
 });
@@ -446,7 +448,7 @@ const game = new Phaser.Game(config);
 const app = new PIXI.Application({
   width: 800,
   height: 600,
-  backgroundColor: 0x1099bb,
+  backgroundColor: 0x1099BB,
 });
 
 document.body.appendChild(app.view);
@@ -470,7 +472,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const material = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { UserButton } from '@clerk/nextjs';
+import { useAuth } from '@/hooks/use-auth';
 import {
   Building2,
   ChevronLeft,
@@ -83,6 +83,7 @@ type SidebarProps = {
 
 export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const pathname = usePathname();
+  const { user } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
 
   const handleToggle = () => {
@@ -101,7 +102,7 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         {!isCollapsed && (
           <div className="flex items-center space-x-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
-              <span className="text-sm font-semibold text-accent-foreground">EL</span>
+              <span className="text-accent-foreground text-sm font-semibold">EL</span>
             </div>
             <div>
               <h1 className="text-lg font-semibold text-foreground">Everyday Lending</h1>
@@ -163,30 +164,11 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       {/* Footer */}
       <div className="space-y-3 border-t border-border p-4">
         <div className="flex justify-center">
-          {(() => {
-            const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-            const hasValidClerkKey = publishableKey && 
-              publishableKey !== 'pk_test_demo_key_for_development' &&
-              publishableKey.startsWith('pk_');
-            
-            if (!hasValidClerkKey) {
-              return (
-                <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground">👤</span>
-                </div>
-              );
-            }
-            
-            return (
-              <UserButton
-                appearance={{
-                  elements: {
-                    avatarBox: 'h-8 w-8',
-                  },
-                }}
-              />
-            );
-          })()}
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+            <span className="text-xs text-muted-foreground">
+              {user?.email?.charAt(0).toUpperCase() || '👤'}
+            </span>
+          </div>
         </div>
         {!isCollapsed && (
           <div className="text-center text-xs text-muted-foreground">

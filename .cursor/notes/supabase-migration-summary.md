@@ -12,7 +12,7 @@ Successfully migrated from Airtable-synced pipeline system to the Everyday Lendi
 
 **Dropped Old Tables:**
 - `pipelines` (4 rows)
-- `pipeline_stages` (21 rows)  
+- `pipeline_stages` (21 rows)
 - `records` (2,116 rows)
 - `pipeline_movements` (0 rows)
 - `pipeline_rules` (0 rows)
@@ -216,7 +216,7 @@ Currently using **Drizzle ORM** for database access. Options:
 
 ```sql
 -- Count records in each table
-SELECT 
+SELECT
   'borrowers' as table_name, COUNT(*) as count FROM borrowers
 UNION ALL
 SELECT 'lenders', COUNT(*) FROM lenders
@@ -287,7 +287,7 @@ fee_types (5) ──> servicing_income (0)
 
 **Likely Cause:** Database connection string not configured
 
-**Solution:** 
+**Solution:**
 1. Check `.env.local` has `DATABASE_URL`
 2. For Supabase: Use connection pooler URL (not direct connection)
 3. Format: `postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-us-west-1.pooler.supabase.com:6543/postgres`
@@ -328,4 +328,3 @@ fee_types (5) ──> servicing_income (0)
 *Migration completed: October 11, 2025*
 *Database: Supabase (replacing Airtable-synced system)*
 *Schema: Everyday Lending Platform v1.0*
-

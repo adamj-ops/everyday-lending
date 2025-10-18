@@ -192,7 +192,7 @@ const loan = await db
 
 **Test Pattern Example:**
 ```typescript
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoanService } from '@/services/LoanService';
 
 describe('LoanService', () => {
@@ -207,6 +207,7 @@ describe('LoanService', () => {
   it('should create a loan with valid data', async () => {
     const loanData = { /* ... */ };
     const result = await loanService.createLoan(loanData);
+
     expect(result.id).toBeDefined();
     expect(result.loanNumber).toMatch(/^L-\d{6}$/);
   });
@@ -352,4 +353,3 @@ Add to `tsconfig.json`:
 **Story Points:** 5 (Estimated)
 **Epic:** 1.0 (Foundation - Pre-Epic 1 foundational work)
 **Priority:** P0 (Blocker for loan lifecycle features)
-

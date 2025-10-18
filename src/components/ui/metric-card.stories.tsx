@@ -105,7 +105,7 @@ export const DashboardGrid: Story = {
     value: 'Multiple Cards',
   },
   render: () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 p-6">
+    <div className="grid grid-cols-1 gap-4 p-6 md:grid-cols-2 xl:grid-cols-4">
       <MetricCard
         label="Total Loans"
         value="$24.8M"

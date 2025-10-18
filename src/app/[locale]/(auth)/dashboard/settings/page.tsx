@@ -1,15 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Settings, User, Shield, Bell, Palette } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Bell, Palette, Settings, Shield, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function SettingsPage() {
   return (
@@ -129,7 +129,7 @@ export default function SettingsPage() {
                   <Switch id="login-notifications" />
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="current-password">Current Password</Label>
@@ -181,7 +181,7 @@ export default function SettingsPage() {
                   <div className="space-y-1">
                     <Label htmlFor="push-notifications">Push Notifications</Label>
                     <p className="text-sm text-muted-foreground">
-                     952Receive browser push notifications
+                      952Receive browser push notifications
                     </p>
                   </div>
                   <Switch id="push-notifications" defaultChecked />
@@ -253,7 +253,7 @@ export default function SettingsPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="language">Language</Label>
                   <Select defaultValue="en">

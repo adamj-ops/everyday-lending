@@ -17,15 +17,15 @@ const companies = [
 
 export function TrustedBy() {
   return (
-    <section className="bg-white border-b border-[#eeeff1] py-16">
-      <div className="max-w-[1440px] mx-auto px-6">
-        <div className="max-w-[1252px] mx-auto">
+    <section className="border-b border-[#eeeff1] bg-white py-16">
+      <div className="mx-auto max-w-[1440px] px-6">
+        <div className="mx-auto max-w-[1252px]">
           {/* First Row */}
-          <div className="grid grid-cols-6 gap-8 mb-8">
+          <div className="mb-8 grid grid-cols-6 gap-8">
             {companies.slice(0, 6).map(company => (
               <div
                 key={company}
-                className="flex items-center justify-center h-16 text-xs font-bold text-[#696a6c]"
+                className="flex h-16 items-center justify-center text-xs font-bold text-[#696a6c]"
               >
                 {company}
               </div>
@@ -37,7 +37,7 @@ export function TrustedBy() {
             {companies.slice(6, 10).map(company => (
               <div
                 key={company}
-                className="flex items-center justify-center h-16 text-xs font-bold text-[#696a6c]"
+                className="flex h-16 items-center justify-center text-xs font-bold text-[#696a6c]"
               >
                 {company}
               </div>

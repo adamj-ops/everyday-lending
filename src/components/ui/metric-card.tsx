@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 
 import { Card } from './card';
 
-export interface MetricCardProps {
+export type MetricCardProps = {
   /**
    * Label for the metric (e.g., "Total Loans")
    */
@@ -36,7 +36,7 @@ export interface MetricCardProps {
    * Additional CSS classes
    */
   className?: string;
-}
+};
 
 /**
  * MetricCard - Display key metrics with optional trends and charts
@@ -73,18 +73,18 @@ export function MetricCard({
           <p className="text-sm text-neutral-500">{label}</p>
 
           {/* Value */}
-          <p className="text-3xl font-semibold text-neutral-800 mt-1">
+          <p className="mt-1 text-3xl font-semibold text-neutral-800">
             {value}
           </p>
 
           {/* Trend Indicator */}
           {trend !== undefined && (
-            <div className="flex items-center gap-2 mt-2">
+            <div className="mt-2 flex items-center gap-2">
               {isPositiveTrend && (
-                <TrendingUp className="w-4 h-4 text-success" aria-label="Trending up" />
+                <TrendingUp className="h-4 w-4 text-success" aria-label="Trending up" />
               )}
               {isNegativeTrend && (
-                <TrendingDown className="w-4 h-4 text-error" aria-label="Trending down" />
+                <TrendingDown className="h-4 w-4 text-error" aria-label="Trending down" />
               )}
               <span
                 className={cn(
@@ -94,7 +94,8 @@ export function MetricCard({
                 )}
               >
                 {isPositiveTrend && '+'}
-                {Math.abs(trend)}%
+                {Math.abs(trend)}
+                %
               </span>
               <span className="text-xs text-neutral-400">{trendContext}</span>
             </div>
@@ -103,7 +104,7 @@ export function MetricCard({
 
         {/* Mini Chart Area */}
         {chart && (
-          <div className="w-24 h-16 ml-4">
+          <div className="ml-4 h-16 w-24">
             {chart}
           </div>
         )}
