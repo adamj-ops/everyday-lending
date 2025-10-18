@@ -32,12 +32,13 @@ const paymentService = new PaymentService(loanService, stripeService, plaidServi
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const paymentId = Number.parseInt(params.id);
+    const { id } = await params;
+    const paymentId = Number.parseInt(id);
 
-    if (isNaN(paymentId)) {
+    if (Number.isNaN(paymentId)) {
       return NextResponse.json(
         { success: false, error: 'Invalid payment ID' },
         { status: 400 },
@@ -76,7 +77,7 @@ export async function POST(
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Invalid request data', details: error.errors },
+        { success: false, error: 'Invalid request data', details: error.issues },
         { status: 400 },
       );
     }

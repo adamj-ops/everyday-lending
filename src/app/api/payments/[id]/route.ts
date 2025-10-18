@@ -34,13 +34,14 @@ const paymentService = new PaymentService(loanService, stripeService, plaidServi
  * Get payment by ID
  */
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } },
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const paymentId = Number.parseInt(params.id);
+    const { id } = await params;
+    const paymentId = Number.parseInt(id);
 
-    if (isNaN(paymentId)) {
+    if (Number.isNaN(paymentId)) {
       return NextResponse.json(
         { success: false, error: 'Invalid payment ID' },
         { status: 400 },
@@ -76,12 +77,13 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const paymentId = Number.parseInt(params.id);
+    const { id } = await params;
+    const paymentId = Number.parseInt(id);
 
-    if (isNaN(paymentId)) {
+    if (Number.isNaN(paymentId)) {
       return NextResponse.json(
         { success: false, error: 'Invalid payment ID' },
         { status: 400 },
@@ -119,7 +121,7 @@ export async function PATCH(
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Invalid request data', details: error.errors },
+        { success: false, error: 'Invalid request data', details: error.issues },
         { status: 400 },
       );
     }
@@ -136,13 +138,14 @@ export async function PATCH(
  * Delete payment
  */
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } },
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const paymentId = Number.parseInt(params.id);
+    const { id } = await params;
+    const paymentId = Number.parseInt(id);
 
-    if (isNaN(paymentId)) {
+    if (Number.isNaN(paymentId)) {
       return NextResponse.json(
         { success: false, error: 'Invalid payment ID' },
         { status: 400 },
