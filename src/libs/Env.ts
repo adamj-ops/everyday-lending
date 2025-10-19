@@ -4,12 +4,13 @@ import z from 'zod';
 export const Env = createEnv({
   server: {
     ARCJET_KEY: z.string().startsWith('ajkey_').optional(),
-    CLERK_SECRET_KEY: z.string().min(1),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
     DATABASE_URL: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().optional(),
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
+    NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).optional(),
     NEXT_PUBLIC_BETTER_STACK_SOURCE_TOKEN: z.string().optional(),
     NEXT_PUBLIC_BETTER_STACK_INGESTING_HOST: z.string().optional(),
     NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
@@ -21,11 +22,11 @@ export const Env = createEnv({
   // You need to destructure all the keys manually
   runtimeEnv: {
     ARCJET_KEY: process.env.ARCJET_KEY,
-    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
-      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_BETTER_STACK_SOURCE_TOKEN: process.env.NEXT_PUBLIC_BETTER_STACK_SOURCE_TOKEN,
     NEXT_PUBLIC_BETTER_STACK_INGESTING_HOST: process.env.NEXT_PUBLIC_BETTER_STACK_INGESTING_HOST,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,

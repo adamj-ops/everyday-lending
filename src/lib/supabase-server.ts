@@ -1,6 +1,6 @@
 /**
  * Supabase Server Helper
- * 
+ *
  * Server-side Supabase client for Next.js App Router
  */
 

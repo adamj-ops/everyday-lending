@@ -1,6 +1,6 @@
 /**
  * Supabase Client Helper
- * 
+ *
  * Client-side Supabase client for browser usage
  */
 
