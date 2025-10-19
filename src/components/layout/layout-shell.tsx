@@ -1,8 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { Sidebar } from './sidebar';
+import { AceternitySidebar } from './AceternitySidebar';
 import { Topbar } from './topbar';
 
 type LayoutShellProps = {
@@ -13,55 +12,15 @@ type LayoutShellProps = {
 };
 
 export function LayoutShell({ children, title, subtitle, locale }: LayoutShellProps) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
-    <div className="flex h-screen overflow-hidden bg-muted/30">
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:flex lg:flex-shrink-0">
-        <Sidebar
-          collapsed={sidebarCollapsed}
-          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-        />
-      </div>
-
-      {/* Mobile Sidebar Overlay */}
-      {mobileMenuOpen && (
-        <motion.div
-          className="fixed inset-0 z-50 lg:hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <div
-            className="fixed inset-0 bg-background/80 backdrop-blur-sm"
-            onClick={() => setMobileMenuOpen(false)}
-            onKeyDown={e => e.key === 'Escape' && setMobileMenuOpen(false)}
-            role="button"
-            tabIndex={0}
-          />
-          <motion.div
-            className="fixed top-0 left-0 h-full w-64 border-r border-border bg-background shadow-lg"
-            initial={{ x: -256 }}
-            animate={{ x: 0 }}
-            exit={{ x: -256 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-          >
-            <Sidebar />
-          </motion.div>
-        </motion.div>
-      )}
-
-      {/* Main Content Area */}
-      <div className="flex min-w-0 flex-1 flex-col">
+    <AceternitySidebar>
+      <div className="flex flex-1 flex-col overflow-hidden bg-muted/30">
         {/* Topbar */}
         <Topbar
           title={title}
           subtitle={subtitle}
-          onMenuClick={() => setMobileMenuOpen(true)}
-          showMenuButton={true}
+          onMenuClick={() => {}}
+          showMenuButton={false}
           locale={locale}
         />
 
@@ -77,6 +36,6 @@ export function LayoutShell({ children, title, subtitle, locale }: LayoutShellPr
           </div>
         </motion.main>
       </div>
-    </div>
+    </AceternitySidebar>
   );
 }
