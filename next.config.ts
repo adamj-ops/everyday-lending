@@ -15,7 +15,7 @@ const baseConfig: NextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
-  outputFileTracingRoot: '/Users/adamjudeh/everyday-lending',
+  outputFileTracingRoot: '/Users/adamjudeh/everyday_co/everyday-lending',
   outputFileTracingIncludes: {
     '/': ['./migrations/**/*'],
   },
