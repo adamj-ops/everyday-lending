@@ -83,3 +83,4 @@ local.db/
 *.bak
 *.backup
 .DS_Store
+.cursor/plans/
