@@ -2,22 +2,22 @@
 
 import { useEffect, useRef } from 'react';
 
-interface SvelteCounterProps {
+type SvelteCounterProps = {
   initialCount?: number;
   onCountChange?: (count: number) => void;
   className?: string;
-}
+};
 
 /**
  * React wrapper for the Svelte Counter Web Component
- * 
+ *
  * This component demonstrates embedding Svelte components within a React application
  * using Web Components/Custom Elements as a bridge.
  */
-export function SvelteCounter({ 
-  initialCount = 0, 
+export function SvelteCounter({
+  initialCount = 0,
   onCountChange,
-  className 
+  className,
 }: SvelteCounterProps) {
   const ref = useRef<HTMLElement>(null);
   const scriptLoadedRef = useRef(false);
@@ -29,11 +29,11 @@ export function SvelteCounter({
       script.src = '/svelte-components/svelte-components.es.js';
       script.type = 'module';
       script.async = true;
-      
+
       script.onload = () => {
         scriptLoadedRef.current = true;
       };
-      
+
       script.onerror = (error) => {
         console.error('Failed to load Svelte web component:', error);
       };
@@ -44,7 +44,9 @@ export function SvelteCounter({
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
+    if (!element) {
+      return;
+    }
 
     // Set initial count attribute
     if (initialCount !== undefined) {
@@ -67,10 +69,9 @@ export function SvelteCounter({
   }, [initialCount, onCountChange]);
 
   return (
-    <svelte-counter 
+    <svelte-counter
       ref={ref as any}
       className={className}
     />
   );
 }
-

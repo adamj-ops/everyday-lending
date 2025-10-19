@@ -4,7 +4,7 @@ import type { LinkProps } from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, use, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 type Links = {
@@ -24,7 +24,7 @@ const SidebarContext = createContext<SidebarContextProps | undefined>(
 );
 
 export const useSidebar = () => {
-  const context = useContext(SidebarContext);
+  const context = use(SidebarContext);
   if (!context) {
     throw new Error('useSidebar must be used within a SidebarProvider');
   }
