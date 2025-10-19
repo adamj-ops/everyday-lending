@@ -2328,4 +2328,702 @@ everyday-lending/
 
 ---
 
-**Architecture Document Complete.** Ready to begin Week 1 implementation. 🚀
+## Phase 3 Architecture Additions
+
+### Analytics Architecture
+
+**Purpose:** Real-time portfolio analytics and risk management with sub-300ms query performance.
+
+#### Database Schema Additions
+
+**1. Loan Daily Snapshots Table**
+```sql
+CREATE TABLE loan_daily_snapshots (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  loan_id UUID NOT NULL REFERENCES loans(id) ON DELETE CASCADE,
+  as_of_date DATE NOT NULL,
+  organization_id UUID NOT NULL REFERENCES organizations(id),
+
+  -- Balance metrics
+  principal_balance DECIMAL(12,2) NOT NULL,
+  interest_accrued DECIMAL(12,2) NOT NULL,
+  fees_outstanding DECIMAL(12,2) NOT NULL,
+  total_balance DECIMAL(12,2) NOT NULL,
+
+  -- Status metrics
+  status loan_status NOT NULL,
+  days_past_due INTEGER NOT NULL DEFAULT 0,
+  delinquency_bucket VARCHAR(10), -- 'current', '30dpd', '60dpd', '90dpd+'
+
+  -- Rate and terms
+  interest_rate DECIMAL(5,4) NOT NULL,
+  original_term_months INTEGER NOT NULL,
+  remaining_term_months INTEGER NOT NULL,
+
+  -- Calculated flags
+  is_active BOOLEAN NOT NULL,
+  is_delinquent BOOLEAN NOT NULL,
+  is_performing BOOLEAN NOT NULL,
+
+  -- Metadata
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+  UNIQUE(loan_id, as_of_date)
+);
+
+-- Indexes for performance
+CREATE INDEX idx_snapshots_loan_date ON loan_daily_snapshots(loan_id, as_of_date DESC);
+CREATE INDEX idx_snapshots_org_date ON loan_daily_snapshots(organization_id, as_of_date DESC);
+CREATE INDEX idx_snapshots_status ON loan_daily_snapshots(status) WHERE is_active = TRUE;
+CREATE INDEX idx_snapshots_delinquent ON loan_daily_snapshots(is_delinquent, as_of_date DESC) WHERE is_delinquent = TRUE;
+```
+
+**2. Portfolio KPIs Daily Table**
+```sql
+CREATE TABLE portfolio_kpis_daily (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  organization_id UUID NOT NULL REFERENCES organizations(id),
+  as_of_date DATE NOT NULL,
+
+  -- Portfolio metrics
+  total_balance DECIMAL(15,2) NOT NULL,
+  loan_count INTEGER NOT NULL,
+  active_loan_count INTEGER NOT NULL,
+  weighted_avg_coupon DECIMAL(5,4) NOT NULL,
+
+  -- Delinquency metrics
+  dpd_current_count INTEGER NOT NULL,
+  dpd_30_count INTEGER NOT NULL,
+  dpd_60_count INTEGER NOT NULL,
+  dpd_90_plus_count INTEGER NOT NULL,
+  npl_rate DECIMAL(5,4) NOT NULL, -- Non-performing loan rate
+
+  -- Activity metrics (trailing 30d)
+  fundings_30d INTEGER NOT NULL,
+  payoffs_30d INTEGER NOT NULL,
+  payment_collection_rate DECIMAL(5,4) NOT NULL,
+
+  -- Yield metrics
+  portfolio_yield DECIMAL(5,4) NOT NULL,
+
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+  UNIQUE(organization_id, as_of_date)
+);
+
+CREATE INDEX idx_kpis_org_date ON portfolio_kpis_daily(organization_id, as_of_date DESC);
+```
+
+**3. Materialized Views**
+
+```sql
+-- Portfolio Overview (refreshed nightly)
+CREATE MATERIALIZED VIEW mv_portfolio_overview AS
+SELECT
+  organization_id,
+  MAX(as_of_date) as as_of_date,
+  SUM(total_balance) as total_balance,
+  COUNT(*) as loan_count,
+  SUM(CASE WHEN is_active THEN 1 ELSE 0 END) as active_count,
+  SUM(total_balance * interest_rate) / NULLIF(SUM(total_balance), 0) as weighted_avg_coupon,
+  SUM(CASE WHEN delinquency_bucket = '30dpd' THEN 1 ELSE 0 END) as dpd_30_count,
+  SUM(CASE WHEN delinquency_bucket = '60dpd' THEN 1 ELSE 0 END) as dpd_60_count,
+  SUM(CASE WHEN delinquency_bucket = '90dpd+' THEN 1 ELSE 0 END) as dpd_90_plus_count,
+  SUM(CASE WHEN delinquency_bucket = '90dpd+' THEN total_balance ELSE 0 END) / NULLIF(SUM(total_balance), 0) as npl_rate
+FROM loan_daily_snapshots
+WHERE as_of_date = CURRENT_DATE - INTERVAL '1 day'
+GROUP BY organization_id;
+
+CREATE UNIQUE INDEX ON mv_portfolio_overview(organization_id);
+
+-- Delinquency Buckets
+CREATE MATERIALIZED VIEW mv_delinquency_buckets AS
+SELECT
+  organization_id,
+  as_of_date,
+  delinquency_bucket,
+  COUNT(*) as loan_count,
+  SUM(total_balance) as total_balance,
+  AVG(days_past_due) as avg_days_past_due
+FROM loan_daily_snapshots
+WHERE is_active = TRUE
+GROUP BY organization_id, as_of_date, delinquency_bucket;
+
+CREATE INDEX ON mv_delinquency_buckets(organization_id, as_of_date DESC);
+```
+
+#### Snapshot Job Specification
+
+**Schedule:** Daily at 2 AM UTC
+**Idempotency:** UPSERT on `(loan_id, as_of_date)`
+**Window:** T-1 (previous day's snapshot)
+**Timeout:** 5 minutes for 10,000 loans
+**Retry:** 3x with exponential backoff
+
+```typescript
+// Supabase Scheduled Function or Inngest job
+export const generateDailySnapshots = inngest.createFunction(
+  { id: 'generate-daily-snapshots' },
+  { cron: '0 2 * * *' }, // 2 AM UTC daily
+  async ({ step }) => {
+    const asOfDate = step.run('calculate-date', () => {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      return yesterday.toISOString().split('T')[0];
+    });
+
+    const loans = await step.run('fetch-active-loans', async () => {
+      return supabase
+        .from('loans')
+        .select('*')
+        .in('status', ['funded', 'servicing', 'delinquent']);
+    });
+
+    await step.run('generate-snapshots', async () => {
+      const snapshots = loans.data.map(loan => ({
+        loan_id: loan.id,
+        as_of_date: asOfDate,
+        organization_id: loan.organization_id,
+        principal_balance: calculatePrincipalBalance(loan, asOfDate),
+        interest_accrued: calculateInterestAccrued(loan, asOfDate),
+        // ... other metrics
+        delinquency_bucket: calculateDelinquencyBucket(loan),
+      }));
+
+      return supabase
+        .from('loan_daily_snapshots')
+        .upsert(snapshots, { onConflict: 'loan_id,as_of_date' });
+    });
+
+    await step.run('refresh-materialized-views', async () => {
+      await supabase.rpc('refresh_mv_portfolio_overview');
+      await supabase.rpc('refresh_mv_delinquency_buckets');
+    });
+  }
+);
+```
+
+**Backfill Strategy:**
+- Initial backfill: 90 days (extendable to 365 days post-MVP)
+- Function: `backfillSnapshots(fromDate, toDate)` - loops daily windows
+- Same idempotency guarantees as nightly job
+
+#### API v1 Endpoint Structure
+
+**Base Path:** `/api/v1`
+
+**Analytics Endpoints:**
+```
+GET  /api/v1/analytics/portfolio/overview
+GET  /api/v1/analytics/portfolio/delinquency
+GET  /api/v1/analytics/portfolio/trends
+GET  /api/v1/analytics/loans/:id/performance
+```
+
+**Example Response Contract:**
+```typescript
+// GET /api/v1/analytics/portfolio/overview
+type PortfolioOverviewResponse = {
+  asOfDate: string; // ISO 8601
+  metrics: {
+    totalBalance: {
+      value: number;
+      change: number; // percentage vs previous period
+      vsDate: string;
+    };
+    loanCount: {
+      value: number;
+      change: number;
+      vsDate: string;
+    };
+    wac: { // Weighted Average Coupon
+      value: number;
+      change: number;
+    };
+    nplRate: { // Non-Performing Loan Rate
+      value: number;
+      change: number;
+    };
+    dpdBuckets: {
+      current: number;
+      dpd30: number;
+      dpd60: number;
+      dpd90plus: number;
+    };
+  };
+  trends: {
+    balance30d: Array<{ date: string; value: number }>; // 30 points for sparkline
+    payoffs30d: number;
+    fundings30d: number;
+  };
+};
+```
+
+**Performance Target:** <300ms P95 response time (achieved via materialized views)
+
+#### Row Level Security (RLS)
+
+```sql
+-- Analytics tables: read access for org members, write access for service role only
+ALTER TABLE loan_daily_snapshots ENABLE ROW LEVEL SECURITY;
+ALTER TABLE portfolio_kpis_daily ENABLE ROW LEVEL SECURITY;
+
+-- Read policy: users can read their organization's data
+CREATE POLICY "org_members_read_snapshots" ON loan_daily_snapshots
+  FOR SELECT
+  USING (
+    organization_id IN (
+      SELECT organization_id FROM user_organizations
+      WHERE user_id = auth.uid()
+    )
+  );
+
+-- Write policy: only service role can write
+CREATE POLICY "service_role_write_snapshots" ON loan_daily_snapshots
+  FOR INSERT
+  WITH CHECK (auth.jwt()->>'role' = 'service_role');
+
+-- Same for portfolio_kpis_daily
+CREATE POLICY "org_members_read_kpis" ON portfolio_kpis_daily
+  FOR SELECT
+  USING (
+    organization_id IN (
+      SELECT organization_id FROM user_organizations
+      WHERE user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "service_role_write_kpis" ON portfolio_kpis_daily
+  FOR INSERT
+  WITH CHECK (auth.jwt()->>'role' = 'service_role');
+```
+
+---
+
+### Architecture Decision Records (Phase 3)
+
+#### ADR-017: API Versioning Strategy
+
+**Date:** October 19, 2025
+**Status:** Accepted
+**Context:**
+
+The platform currently has unversioned API routes (`/api/loans`, `/api/payments`, etc.). As we expand features and may need breaking changes, we need a versioning strategy that:
+- Allows backward compatibility for existing clients
+- Enables parallel development of v1 and v2 features
+- Minimizes operational complexity (no multiple codebases)
+
+**Decision:**
+
+Adopt URL-based API versioning with `/api/v1` prefix:
+
+1. **New routes mount under `/api/v1`:**
+   - `/api/v1/loans`
+   - `/api/v1/analytics/portfolio/overview`
+   - `/api/v1/payments`
+
+2. **Legacy routes proxy to v1 for 1 sprint (deprecation period):**
+   ```typescript
+   // /api/loans -> /api/v1/loans (with deprecation warning)
+   export async function GET(request: Request) {
+     console.warn('⚠️ /api/loans is deprecated. Use /api/v1/loans');
+     return fetch(new URL('/api/v1/loans', request.url));
+   }
+   ```
+
+3. **Remove legacy proxies after 1 sprint**
+
+**Consequences:**
+- ✅ Clear versioning for future breaking changes
+- ✅ Gradual migration path for clients
+- ✅ API documentation explicitly shows version
+- ⚠️ Slight duplication during migration period (acceptable)
+
+**Alternatives Considered:**
+- Header-based versioning (`Accept: application/vnd.api+json;version=1`) - Rejected: harder to test in browser
+- No versioning - Rejected: breaks on future changes
+
+---
+
+#### ADR-018: Analytics Data Model (Snapshots + Materialized Views)
+
+**Date:** October 19, 2025
+**Status:** Accepted
+**Context:**
+
+Portfolio analytics require fast queries (<300ms) over large datasets (10K+ loans, 365 days history). Real-time aggregation from transactional tables would be too slow:
+- `SUM(payments.amount) GROUP BY loan` on 100K+ payment records = 2-5s queries
+- Complex delinquency bucket calculations require loan + payment joins
+
+**Decision:**
+
+Implement **event-sourced snapshot model** with **materialized views** for dashboard queries:
+
+1. **Nightly snapshot job** (2 AM UTC):
+   - Captures loan state as of T-1 (previous day)
+   - Stores in `loan_daily_snapshots` table
+   - Idempotent: UPSERT on `(loan_id, as_of_date)`
+
+2. **Materialized views** for common queries:
+   - `mv_portfolio_overview` - top-level KPIs
+   - `mv_delinquency_buckets` - DPD distribution
+   - Refreshed after snapshot job completes
+
+3. **Backfill strategy**:
+   - Initial: 90 days (45K rows for 500 loans)
+   - Extended: 365 days post-MVP (180K rows)
+
+**Consequences:**
+- ✅ Dashboard queries <100ms (materialized view lookups)
+- ✅ Historical trend analysis without recomputation
+- ✅ Snapshot job handles complex business logic once (not per query)
+- ⚠️ 24-hour latency for snapshot data (acceptable for dashboard)
+- ⚠️ Storage cost: ~180K rows/year for 500 loans (manageable)
+
+**Alternatives Considered:**
+- Real-time aggregation - Rejected: too slow (2-5s queries)
+- Third-party analytics DB (ClickHouse, Snowflake) - Rejected: operational complexity for MVP
+- Postgres aggregate tables without snapshots - Rejected: loses historical point-in-time accuracy
+
+---
+
+#### ADR-019: Test Quality Gates (80% Coverage, E2E on PR)
+
+**Date:** October 19, 2025
+**Status:** Accepted
+**Context:**
+
+Phase 5 delivered ~7K LOC with 58/100 test score. Adding Epic 4-6 features (~10K more LOC) without test infrastructure creates maintenance risk:
+- Regression bugs during refactoring
+- Fear of changing "working" code
+- Difficulty onboarding new developers
+
+**Decision:**
+
+Establish **test quality gates in CI/CD** before adding new features:
+
+1. **Coverage thresholds** (Vitest):
+   - Global: ≥80% line coverage (BLOCKING)
+   - Changed files: ≥90% coverage (WARNING only)
+   - Generate HTML coverage report as artifact
+
+2. **E2E tests** (Playwright):
+   - 3 critical flows: Application Wizard, Payment Flow, Portfolio Dashboard
+   - Run on every PR (2x retry, <3% flaky rate)
+   - Seed test data in fixtures (idempotent)
+
+3. **CI workflow checks:**
+   - TypeScript strict mode (no errors)
+   - ESLint (max-warnings: 0)
+   - Unit tests (80% threshold)
+   - E2E tests (all passing)
+   - **Merge blocked if any fail**
+
+**Consequences:**
+- ✅ Prevents regression bugs
+- ✅ Confidence to refactor
+- ✅ Onboarding developers can run tests to understand behavior
+- ⚠️ Slower PR merge times (adds ~3-5 min CI time) - acceptable tradeoff
+
+**Alternatives Considered:**
+- No coverage threshold - Rejected: coverage would drift down over time
+- 100% coverage requirement - Rejected: diminishing returns, slow velocity
+- E2E optional - Rejected: critical paths must be tested
+
+---
+
+#### ADR-020: Domain Component Conventions (Tremor + Shadcn)
+
+**Date:** October 19, 2025
+**Status:** Accepted
+**Context:**
+
+Analytics dashboard (Epic 6) requires specialized data visualization components:
+- Charts: sparklines, area charts, bar charts, distribution charts
+- Metrics: KPI cards, trend deltas, comparison cards
+- Tables: risk tables with color coding, sortable columns
+
+Existing Shadcn UI covers CRUD forms/tables but not data viz. Need consistent patterns for:
+- Component composition (how to combine primitives)
+- State management (loading, empty, error states)
+- Styling (alignment with Attio aesthetic)
+
+**Decision:**
+
+Introduce **Domain Component Layer** above Shadcn primitives, using **Tremor** for charts:
+
+**Layer 1: Shadcn UI** (existing)
+- Forms, buttons, dialogs, tables
+- Use for CRUD operations, navigation, layouts
+
+**Layer 2: Tremor** (new)
+- Charts: AreaChart, BarChart, DonutChart, LineChart
+- Metrics: Card, Metric, BadgeDelta
+- Reason: Built for Tailwind, small bundle (~40KB), Attio aesthetic
+
+**Layer 3: Domain Components** (new)
+- Compose layers 1+2 into domain-specific components
+- Examples:
+  ```tsx
+  <MetricCard value="$47.2M" trend={+8.3} spark={<AreaChart />} />
+  <RiskTable data={loans} columns={riskColumns} />
+  <DistributionChart data={dpdBuckets} />
+  ```
+
+**Component State Pattern:**
+All domain components must handle 4 states:
+```tsx
+type ComponentState = 'loading' | 'empty' | 'error' | 'dense';
+
+<MetricCard.Skeleton /> // loading
+<MetricCard empty="No data" action={...} /> // empty
+<MetricCard error="Failed to load" retry={...} /> // error
+<MetricCard value={...} /> // dense (normal)
+```
+
+**Consequences:**
+- ✅ Consistent data viz patterns across dashboard
+- ✅ Tremor's Tailwind integration matches existing design system
+- ✅ Small bundle size (40KB vs 120KB for Recharts)
+- ✅ Domain components encapsulate business logic
+- ⚠️ New library to learn (Tremor) - mitigated by good docs
+
+**Alternatives Considered:**
+- Recharts - Rejected: larger bundle (120KB), verbose prop API, harder to style with Tailwind
+- Headless charts (Visx) - Rejected: too low-level, requires custom styling
+- No charting library (custom SVG) - Rejected: too much work for MVP
+
+---
+
+#### ADR-021: Error Model & Trace Propagation
+
+**Date:** October 19, 2025
+**Status:** Accepted
+**Context:**
+
+Current error handling is inconsistent:
+- Some routes return `{ error: string }`
+- Some throw exceptions caught by Next.js default handler
+- No correlation IDs for debugging multi-service flows
+- Frontend error messages are generic ("Something went wrong")
+
+**Decision:**
+
+Standardize on **JSON error model** with **trace ID propagation**:
+
+**1. Error Response Format:**
+```typescript
+type APIError = {
+  code: string; // Machine-readable error code (e.g., "LOAN_NOT_FOUND")
+  message: string; // Human-readable message
+  details?: unknown; // Optional context (validation errors, etc.)
+  traceId: string; // Correlation ID for debugging
+  statusCode: number; // HTTP status code
+};
+```
+
+**2. Trace ID Propagation:**
+```typescript
+// Middleware injects x-trace-id header
+export function middleware(req: NextRequest) {
+  const traceId = req.headers.get('x-trace-id') || crypto.randomUUID();
+  req.headers.set('x-trace-id', traceId);
+  return NextResponse.next();
+}
+
+// All error responses include trace ID
+throw new AppError('LOAN_NOT_FOUND', 'Loan not found', { traceId });
+```
+
+**3. Error Code Registry:**
+Maintain `src/lib/errors/codes.ts` with all error codes:
+```typescript
+export const ERROR_CODES = {
+  // Auth (1xxx)
+  UNAUTHORIZED: { code: 1001, message: 'Authentication required' },
+  FORBIDDEN: { code: 1002, message: 'Insufficient permissions' },
+
+  // Loans (2xxx)
+  LOAN_NOT_FOUND: { code: 2001, message: 'Loan not found' },
+  INVALID_LOAN_STATUS: { code: 2002, message: 'Invalid loan status transition' },
+  // ...
+} as const;
+```
+
+**Consequences:**
+- ✅ Consistent error format across all API routes
+- ✅ Trace IDs enable debugging complex flows (payment → loan → notification)
+- ✅ Frontend can map error codes to user-friendly messages
+- ✅ Sentry integration can group errors by code
+- ⚠️ Requires refactoring existing error handling (acceptable, ~20 routes)
+
+**Alternatives Considered:**
+- HTTP status codes only - Rejected: loses granular error context
+- GraphQL error format - Rejected: we're using REST, not GraphQL
+- No trace IDs - Rejected: debugging multi-service flows is too hard
+
+---
+
+#### ADR-022: RLS Policy for Analytics (Org-Scoped Read, Service-Role Write)
+
+**Date:** October 19, 2025
+**Status:** Accepted
+**Context:**
+
+Analytics tables (`loan_daily_snapshots`, `portfolio_kpis_daily`) contain sensitive portfolio data. Multi-tenancy requires:
+- Users can only see their organization's data
+- Snapshot job needs elevated permissions (service role)
+- No user can manipulate snapshot data (audit integrity)
+
+Standard RLS pattern (user-scoped) won't work because:
+- Snapshot job runs as service role (not a user)
+- Users should read but not write
+
+**Decision:**
+
+Implement **organization-scoped RLS with service-role write policy**:
+
+**1. Read Policy (for users):**
+```sql
+CREATE POLICY "org_members_read_snapshots" ON loan_daily_snapshots
+  FOR SELECT
+  USING (
+    organization_id IN (
+      SELECT organization_id FROM user_organizations
+      WHERE user_id = auth.uid()
+    )
+  );
+```
+- Users can read any row where `organization_id` matches their org membership
+- Leverages existing `user_organizations` join table
+
+**2. Write Policy (for service role):**
+```sql
+CREATE POLICY "service_role_write_snapshots" ON loan_daily_snapshots
+  FOR INSERT
+  WITH CHECK (auth.jwt()->>'role' = 'service_role');
+```
+- Only service role can insert/update snapshots
+- Prevents users from tampering with audit data
+
+**3. Service Role Usage:**
+```typescript
+// Snapshot job uses service role client
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY // Elevated permissions
+);
+
+await supabaseAdmin.from('loan_daily_snapshots').upsert(snapshots);
+```
+
+**Consequences:**
+- ✅ Multi-tenant data isolation (org-scoped)
+- ✅ Audit trail integrity (users can't modify snapshots)
+- ✅ Service role can operate across all orgs (for nightly job)
+- ⚠️ Snapshot job must use service role key (securely stored in env)
+
+**Alternatives Considered:**
+- User-scoped RLS - Rejected: snapshot job runs as service, not user
+- No RLS (app-level filtering) - Rejected: database-level security is more reliable
+- Separate read/write tables - Rejected: operational complexity
+
+---
+
+#### ADR-023: Charting Library Selection (Tremor)
+
+**Date:** October 19, 2025
+**Status:** Accepted
+**Context:**
+
+Analytics dashboard requires charts for:
+- Sparklines (30-day balance trends)
+- Area charts (portfolio growth over time)
+- Bar charts (DPD bucket distribution)
+- Donut charts (lender participation breakdown)
+
+Evaluation criteria:
+1. **Aesthetic alignment:** Must match Attio-style minimalist design
+2. **Bundle size:** Target <50KB (dashboard performance budget)
+3. **Tailwind integration:** Should use Tailwind classes (existing design system)
+4. **TypeScript support:** Strong type inference
+5. **Maintainability:** Active community, good documentation
+
+**Options Evaluated:**
+
+| Library | Bundle Size | Tailwind | Aesthetic | TypeScript | Decision |
+|---------|-------------|----------|-----------|------------|----------|
+| **Tremor** | 40KB | ✅ Native | ✅ Modern | ✅ Excellent | **SELECTED** |
+| Recharts | 120KB | ❌ Custom CSS | ⚠️ Dated | ✅ Good | Rejected |
+| Visx (Airbnb) | 60KB | ⚠️ Manual | ✅ Flexible | ✅ Good | Rejected |
+| Chart.js | 180KB | ❌ Canvas | ❌ Basic | ⚠️ Weak | Rejected |
+| Victory | 150KB | ❌ Custom CSS | ⚠️ Dated | ⚠️ Weak | Rejected |
+
+**Decision:**
+
+Select **Tremor** for analytics dashboard:
+
+**Why Tremor:**
+1. **Built for Tailwind:** Uses Tailwind classes, matches existing design system
+2. **Attio aesthetic:** Clean, minimal, modern look out-of-box
+3. **Small bundle:** 40KB (fits in 250KB dashboard budget)
+4. **Composable:** Easy to wrap in domain components
+5. **Maintained:** Active development, good docs, growing community
+
+**Example Usage:**
+```tsx
+import { AreaChart, BarChart, Card } from '@tremor/react';
+
+<Card>
+  <AreaChart
+    data={balanceTrend}
+    index="date"
+    categories={['balance']}
+    colors={['blue']}
+    className="h-20"
+  />
+</Card>;
+```
+
+**Consequences:**
+- ✅ Fast implementation (components work out-of-box)
+- ✅ Small bundle size (meets performance budget)
+- ✅ Consistent styling (Tailwind classes)
+- ✅ Sally (UX Expert) can prototype faster
+- ⚠️ New dependency (~40KB) - acceptable for value delivered
+
+**Alternatives Considered:**
+- Recharts - Rejected: 3x larger bundle (120KB), harder to style with Tailwind
+- Visx - Rejected: too low-level (requires custom SVG rendering)
+- Build custom with SVG - Rejected: too much work for MVP (4-6 weeks vs 1 week)
+
+**Migration Path:**
+- Install: `npm install @tremor/react`
+- No breaking changes to existing code (new components only)
+- Can replace Tremor later if needed (domain components abstract the library)
+
+---
+
+### Technology Stack Updates
+
+**New Dependencies (Phase 3):**
+
+| Category | Library | Version | Rationale |
+|----------|---------|---------|-----------|
+| **Data Visualization** | @tremor/react | ^3.14.0 | Tailwind-native charting library for analytics dashboard (ADR-023) |
+| **Testing - Unit** | vitest | ^1.2.0 | Fast unit test runner with native ESM support |
+| **Testing - Coverage** | @vitest/coverage-v8 | ^1.2.0 | V8-based coverage reporting (faster than Istanbul) |
+| **Testing - E2E** | @playwright/test | ^1.41.0 | Browser automation for critical path testing |
+| **Job Scheduling** | inngest | ^3.14.0 | Background jobs for nightly snapshot generation |
+
+**Updated Services:**
+
+| Service | Previous | Updated | Changes |
+|---------|----------|---------|---------|
+| **Supabase** | Database only | + Scheduled Functions | Analytics snapshot job (2 AM UTC daily) |
+| **Vercel** | Hosting | + CI/CD gates | Added test coverage checks, E2E tests on PR |
+| **Sentry** | Error tracking | + Trace correlation | x-trace-id propagation for multi-service flows |
+
+---
+
+**Architecture Document Updated.** Phase 3 additions complete. Ready to generate Sprint 1 tech spec. 🚀
