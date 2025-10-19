@@ -201,11 +201,10 @@ export function calculateBreakEvenPrice(params: {
 }): number {
   const totalCosts
     = params.loanAmount
-    + params.totalInterest
-    + params.totalFees
-    + (params.rehabBudget - params.loanAmount)
-    + params.sellingCosts;
+      + params.totalInterest
+      + params.totalFees
+      + (params.rehabBudget - params.loanAmount)
+      + params.sellingCosts;
 
   return Math.round(totalCosts * 100) / 100;
 }
-

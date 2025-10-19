@@ -81,20 +81,19 @@ export function getKeyDisplay(key: string): string {
 
   const keyMap: Record<string, string> = {
     '⌘': isMac ? '⌘' : 'Ctrl',
-    cmd: isMac ? '⌘' : 'Ctrl',
-    meta: isMac ? '⌘' : 'Ctrl',
-    ctrl: 'Ctrl',
-    alt: isMac ? '⌥' : 'Alt',
-    shift: '⇧',
-    enter: '↵',
-    esc: 'Esc',
-    escape: 'Esc',
-    space: 'Space',
-    tab: 'Tab',
-    backspace: '⌫',
-    delete: 'Del',
+    'cmd': isMac ? '⌘' : 'Ctrl',
+    'meta': isMac ? '⌘' : 'Ctrl',
+    'ctrl': 'Ctrl',
+    'alt': isMac ? '⌥' : 'Alt',
+    'shift': '⇧',
+    'enter': '↵',
+    'esc': 'Esc',
+    'escape': 'Esc',
+    'space': 'Space',
+    'tab': 'Tab',
+    'backspace': '⌫',
+    'delete': 'Del',
   };
 
   return keyMap[key.toLowerCase()] || key.toUpperCase();
 }
-

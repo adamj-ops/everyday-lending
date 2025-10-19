@@ -1,15 +1,14 @@
 'use client';
 
+import type { LoanCreateData, LoanUpdateData, LoanWithDetails } from '@/services/frontend/LoanService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { 
+import {
   FrontendLoanService,
-  type LoanWithDetails,
-  type LoanUpdateData,
-  type LoanCreateData,
+
 } from '@/services/frontend/LoanService';
 
 // Re-export types for backward compatibility
-export type { LoanWithDetails, LoanUpdateData, LoanCreateData };
+export type { LoanCreateData, LoanUpdateData, LoanWithDetails };
 
 // Query keys
 const QUERY_KEYS = {
@@ -60,7 +59,7 @@ export function useUpdateLoan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: LoanUpdateData }) => 
+    mutationFn: ({ id, data }: { id: number; data: LoanUpdateData }) =>
       FrontendLoanService.updateLoan(id, data),
     onSuccess: (updatedLoan, { id }) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.loans });

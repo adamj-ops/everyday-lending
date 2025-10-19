@@ -6,7 +6,7 @@
  */
 
 import type { NextRequest } from 'next/server';
-import { and, count as drizzleCount, desc, eq } from 'drizzle-orm';
+import { and, desc, count as drizzleCount, eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/libs/DB';

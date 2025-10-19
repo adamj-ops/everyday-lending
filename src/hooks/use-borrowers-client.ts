@@ -1,15 +1,14 @@
 'use client';
 
+import type { BorrowerCreateData, BorrowerUpdateData, BorrowerWithLoans } from '@/services/frontend/BorrowerService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+
   FrontendBorrowerService,
-  type BorrowerWithLoans,
-  type BorrowerUpdateData,
-  type BorrowerCreateData,
 } from '@/services/frontend/BorrowerService';
 
 // Re-export types for backward compatibility
-export type { BorrowerWithLoans, BorrowerUpdateData, BorrowerCreateData };
+export type { BorrowerCreateData, BorrowerUpdateData, BorrowerWithLoans };
 
 // Query keys
 const QUERY_KEYS = {

@@ -57,7 +57,7 @@ export class NotificationService {
   /**
    * Get notifications for a user
    */
-  static async getNotifications(userId: string, unreadOnly = false): Promise<Notification[]> {
+  static async getNotifications(_userId: string, unreadOnly = false): Promise<Notification[]> {
     try {
       const params = new URLSearchParams();
       if (unreadOnly) {
@@ -164,7 +164,7 @@ export class NotificationService {
    * Update notification preferences
    */
   static async updatePreferences(
-    userId: string,
+    _userId: string,
     preferences: Partial<NotificationPreferences>,
   ): Promise<NotificationPreferences> {
     try {
